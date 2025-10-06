@@ -1,2 +1,5 @@
 # projekt-kosy
-placeholder
+Daniel Kozak -
+Emilia Małecka -
+Kamil Pasierski - 43870
+Wiktor Semp - 
