@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista użytkowników</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center">Użytkownicy</h1>
+    <ul id="user-list" class="space-y-4"></ul>
+  </div>
+
+  <script>
+    fetch('http://localhost:8000/api/')
+      .then(response => response.json())
+      .then(data => {
+        const list = document.getElementById('user-list');
+        data.forEach(user => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <div class="bg-white p-4 rounded shadow">
+              <h2 class="text-xl font-semibold">${user.name}</h2>
+              <p class="text-gray-600">${user.id}</p>
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      })
+      .catch(err => {
+        console.error('Błąd podczas pobierania danych:', err);
+      });
+  </script>
+</body>
+</html>
