@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+
+@theme {
+    --breakpoint-xs: 480px;
+    --breakpoint-sm: 768px;
+    --breakpoint-md: 1060px;
+    --color-gray-20: #F3F8F1;
+    --color-gray-50: #E5EDE2;
+    --color-gray-100: #CBD8C9;
+    --color-gray-500: #2E4D2E;
+    --color-primary-100: #DFF7E1;
+    --color-primary-300: #9FE6A8;
+    --color-primary-500: #4CD964;
+    --color-secondary-400: #A3E8B0;
+    --color-secondary-500: #7BD98D;
+
+
+    --font-family-dmsans: "DM Sans", sans-serif;
+    --font-family-montserrat: "Montserrat", sans-serif;
+}
+
+html,
+body,
+#root,
+.app{
+    height: 100%;
+    width: 100%;
+    font-family: "DM Sans", sans-serif;
+    @apply text-gray-500;
+}

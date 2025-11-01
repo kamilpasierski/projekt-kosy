@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+  # Usługa backendu (Python/Django)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000" # Mapujemy port Django 8000
+    volumes:
+      # Synchronizuje pliki między hostem a kontenerem
+      - ./backend:/app
+      # Montuje plik bazy danych, aby dane przetrwały restart
+      # WAŻNE: Upewnij się, że plik db.sqlite3 istnieje w folderze ./backend
+      # Jeśli nie, utwórz pusty plik lub uruchom 'migrate'
+      - ./backend/db.sqlite3:/app/db.sqlite3
+    environment:
+      # Przekazujemy zmienną środowiskową do Django
+      - DJANGO_SETTINGS_MODULE=Pilkarskie_Kosy.settings
+    networks:
+      - kosy-net
+
+  # Usługa frontendu (React/Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Dostęp do aplikacji przez port 3000
+    networks:
+      - kosy-net
+    depends_on:
+      - backend # Uruchom dopiero, gdy backend będzie gotowy
+
+# Definicja wspólnej sieci
+networks:
+  kosy-net:
+    driver: bridge

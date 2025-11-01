@@ -1,2 +1,87 @@
+# #############################################################
+# Plik .gitignore dla monorepo (Django + React/Vite)
+# Umieść ten plik w GŁÓWNYM folderze projektu (np. PilkarskieKosy-Monorepo/)
+# #############################################################
+
+# -------------------------------------------------------------
+# Ogólne (System operacyjny, IDE)
+# -------------------------------------------------------------
+
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Pliki IDE (PyCharm, VSCode, IntelliJ)
+.idea/
+.vscode/
+*.iml
+*.iws
+
+# Logi
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# -------------------------------------------------------------
+# Python / Django (Backend)
+# -------------------------------------------------------------
+
+# Środowiska wirtualne
+venv/
+env/
+.venv/
+.env/
+
+# Pliki cache Pythona
 __pycache__/
 *.py[cod]
+
+# Pliki bazy danych SQLite (BARDZO WAŻNE!)
+# Nigdy nie wysyłaj bazy danych deweloperskiej do repozytorium
+backend/db.sqlite3
+db.sqlite3
+
+# Pliki .env (przechowują sekrety!)
+.env
+.env.*
+
+# Pliki mediów (ładowane przez użytkowników)
+media/
+backend/media/
+
+# Pliki statyczne (zbierane przez 'collectstatic')
+staticfiles/
+backend/staticfiles/
+
+
+# -------------------------------------------------------------
+# Node.js / React / Vite (Frontend)
+# -------------------------------------------------------------
+
+# Zależności (NAJWAŻNIEJSZE)
+node_modules/
+frontend/node_modules/
+
+# Pliki .env (przechowują sekrety!)
+frontend/.env
+frontend/.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build output
+dist/
+frontend/dist/
+build/
+frontend/build/
+
+# Pliki cache
+.npm
+.yarn-cache
+
+# Pliki konfiguracyjne specyficzne dla lokalnego środowiska
+vite.config.ts.local

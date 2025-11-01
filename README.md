@@ -1,17 +1,16 @@
 # projekt-kosy
+
 Daniel Kozak -  44497  
 Emilia Małecka -  44500  
 Kamil Pasierski - 43870  
-Oskar Kuklewski -   
+Oskar Kuklewski -  
 Wiktor Semp -  43883
 
 # Docker - how to run
 
-Go to -> \PycharmProjects\projekt-kosy\Pilkarskie_Kosy>
+git clone https://github.com/kamilpasierski/projekt-kosy
 
-And run following command:
+cd projekt-kosy
 
-docker-compose build
-
-docker-compose up
+docker-compose up --build
 
