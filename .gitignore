@@ -38,15 +38,12 @@ env/
 # Pliki cache Pythona
 __pycache__/
 *.py[cod]
-
-# Pliki tymczasowe Python
-__pycache__/
 *.pyc
 
 # Pliki bazy danych SQLite (BARDZO WAŻNE!)
 # Nigdy nie wysyłaj bazy danych deweloperskiej do repozytorium
-backend/db.sqlite3
-db.sqlite3
+# Ignoruj pliki bazy danych
+backend/db_storage/db.sqlite3
 
 # Pliki .env (przechowują sekrety!)
 .env
