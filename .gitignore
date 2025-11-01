@@ -39,6 +39,10 @@ env/
 __pycache__/
 *.py[cod]
 
+# Pliki tymczasowe Python
+__pycache__/
+*.pyc
+
 # Pliki bazy danych SQLite (BARDZO WAŻNE!)
 # Nigdy nie wysyłaj bazy danych deweloperskiej do repozytorium
 backend/db.sqlite3
