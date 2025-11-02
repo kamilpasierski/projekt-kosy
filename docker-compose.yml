@@ -17,9 +17,6 @@ services:
       - DJANGO_SETTINGS_MODULE=Pilkarskie_Kosy.settings
     networks:
       - kosy-net
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
 
   # Usługa frontendu (React/Nginx)
   frontend:
