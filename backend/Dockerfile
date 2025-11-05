@@ -19,7 +19,7 @@ RUN chmod +x /app/entrypoint.sh
 
 
 # Ustawienie skryptu startowego
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 # Skopiuj resztę kodu backendu
 COPY . .
