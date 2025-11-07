@@ -5,6 +5,7 @@ import Link from "./Link.tsx";
 import { SelectedPage } from "../../shared/types.ts";
 import useMediaQuery from "../../hooks/useMediaQuery.ts";
 import ActionButton from "../../shared/ActionButton.tsx";
+import { useNavigate } from 'react-router-dom';
 
 
 type Props = {
@@ -18,6 +19,7 @@ const Navbar = ({  isTopOfPage, selectedPage, setSelectedPage} : Props) => {
     const isAboveMediumScreens = useMediaQuery("(min-width: 1060px)");
     const [isMenuToggled, setIsMenuToggled] = useState<boolean>(false);
     const navbarBackground = isTopOfPage ? "" : "bg-primary-100 drop-shadow";
+    const navigate = useNavigate();
 
     return <nav>
         <div
@@ -51,8 +53,7 @@ const Navbar = ({  isTopOfPage, selectedPage, setSelectedPage} : Props) => {
                             />
                         </div>
                         <div className={`${flexBetween} gap-8`}>
-                            <p>Sign In</p>
-                            <ActionButton setSelectedPage={setSelectedPage}>Sign</ActionButton>
+                            <ActionButton onClick={() => navigate('register')}>Sign In</ActionButton>
                         </div>
                     </div>
                         ) : (

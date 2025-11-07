@@ -1,6 +1,20 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import Navbar from "./scenes/navbar";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { SelectedPage } from "./shared/types.ts";
+
+import RegisterScene from './scenes/register';
+
+const MainPage = () => {
+
+    return (
+        <div>
+            <div style={{ paddingTop: '100px', height: '200vh' }}>
+            </div>
+        </div>
+    );
+};
 
 
 function App() {
@@ -19,14 +33,22 @@ function App() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-  return (
-      <div className="app bg-gray-20">
-          <Navbar
-              isTopOfPage={isTopOfPage}
-              selectedPage={selectedPage} setSelectedPage={setSelectedPage}
-          />
-      </div>
-  )
+    return (
+        <div className="app bg-gray-20">
+            <BrowserRouter>
+                <Navbar
+                    isTopOfPage={isTopOfPage}
+                    selectedPage={selectedPage}
+                    setSelectedPage={setSelectedPage}
+                />
+
+                <Routes>
+                    <Route path="/" element={<MainPage />} />
+                    <Route path="/register" element={<RegisterScene />} />
+                </Routes>
+            </BrowserRouter>
+        </div>
+    )
 }
 
-export default App
+export default App;
