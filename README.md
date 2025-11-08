@@ -3,7 +3,7 @@
 Daniel Kozak -  44497  
 Emilia Małecka -  44500  
 Kamil Pasierski - 43870  
-Oskar Kuklewski -  
+Oskar Kuklewski -  43858
 Wiktor Semp -  43883
 
 
