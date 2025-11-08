@@ -4,6 +4,7 @@ import Navbar from "./scenes/navbar";
 
 import RegisterScene from './scenes/register';
 import LoginScene from "./scenes/login";
+import {AuthProvider} from "./context/AuthContext.tsx";
 
 const MainPage = () => {
 
@@ -21,6 +22,7 @@ function App() {
     return (
         <div className="app bg-gray-20">
             <BrowserRouter>
+                <AuthProvider>
                 <Navbar/>
 
                 <Routes>
@@ -28,6 +30,7 @@ function App() {
                     <Route path="/register" element={<RegisterScene />} />
                     <Route path="/login" element={<LoginScene />} />
                 </Routes>
+                </AuthProvider>
             </BrowserRouter>
         </div>
     )

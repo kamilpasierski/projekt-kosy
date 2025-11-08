@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios, { isAxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ActionButton from '../../shared/ActionButton';
+import { useAuth } from "../../hooks/useAurh.ts";
 
 interface DjangoErrorResponse {
     [key: string]: string[];
@@ -20,7 +21,11 @@ const LoginScene = () => {
     });
 
     const [error, setError] = useState<string | null>(null);
+    const { login } = useAuth();
+
     const navigate = useNavigate();
+
+    const [rememberMe, setRememberMe] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -28,6 +33,10 @@ const LoginScene = () => {
             [e.target.name]: e.target.value,
         });
     };
+
+    const handleRememberMe = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRememberMe(e.target.checked);
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,12 +50,7 @@ const LoginScene = () => {
 
             // Zapisywanie tokenów po logowaniu
             if (response.data && response.data.access) {
-                // Zapisywanie tokenów w pamięci przeglądarki
-                localStorage.setItem('accessToken', response.data.access);
-                localStorage.setItem('refreshToken', response.data.refresh);
-
-                // Domyślny nagłówek 'Authorization' dla wszystkich przyszłych zapytań axios
-                axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
+                login(response.data.access, response.data.refresh, rememberMe);
 
                 navigate('/');
             } else {
@@ -131,6 +135,19 @@ const LoginScene = () => {
                             onChange={handleChange}
                             required
                         />
+                    </div>
+
+                    <div className="flex items-center justify-center mb-2">
+                        <input
+                            id="remember-me"
+                            type="checkbox"
+                            name="rememberMe"
+                            onChange={handleRememberMe}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
+                        />
+                        <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                            Nie wylogowywuj mnie
+                        </label>
                     </div>
 
                     {/* Sekcja błędów */}

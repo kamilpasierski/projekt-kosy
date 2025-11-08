@@ -5,12 +5,15 @@ import useMediaQuery from "../../hooks/useMediaQuery.ts";
 import ActionButton from "../../shared/ActionButton.tsx";
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAurh.ts";
 
 const Navbar = () => {
         const flexBetween = "flex items-center justify-between";
         const isAboveMediumScreens = useMediaQuery("(min-width: 1060px)");
         const [isMenuToggled, setIsMenuToggled] = useState<boolean>(false);
         const navigate = useNavigate();
+        const { isLoggedIn, logout } = useAuth();
+
 
         const [isTopOfPage, setIsTopOfPage] = useState<boolean>(true);
         useEffect(() => {
@@ -28,7 +31,13 @@ const Navbar = () => {
 
         const navbarBackground = isTopOfPage ? "" : "bg-primary-100 drop-shadow";
 
-        return <nav>
+        const isLoggedOut = !isLoggedIn;
+        const handleLogout = () => {
+            logout();
+            navigate('/');
+        }
+
+    return <nav>
             <div
                 className={`${navbarBackground} ${flexBetween} fixed top-0 z-30 w-full py-6`}
             >
@@ -48,10 +57,16 @@ const Navbar = () => {
                                     <Link to="/placeholder2">Placeholder</Link>
 
                                 </div>
-                                <div className={`${flexBetween} gap-8`}>
+                                {isLoggedOut ? (
+                                    <div className={`${flexBetween} gap-8`}>
                                     <Link to="/login">Zaloguj się</Link>
                                     <ActionButton onClick={() => navigate('register')}>Zarejestruj się</ActionButton>
-                                </div>
+                                    </div>
+                                ) : (
+                                    <div className={`${flexBetween} gap-8`}>
+                                        <ActionButton onClick={handleLogout}>Wyloguj się</ActionButton>
+                                    </div>
+                                    )}
                             </div>
                         ) : (
                             <button
