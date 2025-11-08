@@ -153,7 +153,7 @@ const RegisterScene = () => {
                         </div>
                     )}
 
-                    {/* Przycisk Submit - wyśrodkowany */}
+                    {/* Przycisk Submit */}
                     <div className="flex justify-center mt-4">
                         <ActionButton type="submit">
                             Zarejestruj się
