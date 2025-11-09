@@ -55,6 +55,7 @@ const RegisterScene = () => {
                 email: formData.email,
                 username: formData.username,
                 password: formData.password,
+                re_password: formData.re_password,
             };
 
             await axios.post(API_URL, dataToSend);
