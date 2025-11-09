@@ -19,8 +19,10 @@ from django.contrib.auth.tokens import default_token_generator as token_generato
 @csrf_exempt
 @api_view(['POST'])
 def register_user(request):
+
     serializer = RegisterSerializer(data=request.data)
     print("Requested data:", request.data)
+
     if serializer.is_valid():
         user = serializer.save()
 
