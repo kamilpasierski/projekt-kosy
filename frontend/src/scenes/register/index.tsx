@@ -9,6 +9,7 @@ interface DjangoErrorResponse {
 
 const RegisterScene = () => {
     const [formData, setFormData] = useState({
+        email: '',
         username: '',
         password: '',
         re_password: '',
@@ -49,8 +50,17 @@ const RegisterScene = () => {
 
         try {
             const API_URL = 'http://127.0.0.1:8000/api/register/';
-            await axios.post(API_URL, formData);
+
+            const dataToSend = {
+                email: formData.email,
+                username: formData.username,
+                password: formData.password,
+                re_password: formData.re_password,
+            };
+
+            await axios.post(API_URL, dataToSend);
             navigate('/login');
+
         } catch (err: unknown) {
             let errorMessage = 'Błąd sieci. Spróbuj ponownie.';
 
@@ -89,6 +99,24 @@ const RegisterScene = () => {
                     onSubmit={handleSubmit}
                     className="mt-10 flex flex-col gap-4 w-full max-w-md mx-auto bg-white p-8 rounded-xl shadow-xl"
                 >
+                    <div>
+                        <label
+                            htmlFor="email"
+                            className="block text-sm font-bold text-primary-500 mb-2"
+                        >
+                            Adres E-mail
+                        </label>
+                        <input
+                            className={inputStyles}
+                            type="text"
+                            id="email"
+                            name="email"
+                            placeholder="Wpisz swój e-mail"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
                     <div>
                         <label
                             htmlFor="username"
