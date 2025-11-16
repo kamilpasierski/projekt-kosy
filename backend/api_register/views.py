@@ -32,18 +32,18 @@ def register_user(request):
 
         # Wysłanie maila aktywacyjnego
 
-        subject = "Aktywuj swoje konto"
-        message = render_to_string('emails/activation_email.txt', {
+        context = {
             'user': user,
             'activation_link': activation_link,
-        })
+            'site_name': 'My Awesome Site',
+            'expiration_days': 1,
+        }
 
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-        )
+        subject = "Aktywuj swoje konto"
+
+        message = render_to_string('emails/activation_email.txt', context)
+        send_mail(subject, message, 'no-reply@pilkarskiekosy.com', [user.email])
+
 
         return Response(
             {"message": "Użytkownik został utworzony. Sprawdź e-mail, aby aktywować konto."},
