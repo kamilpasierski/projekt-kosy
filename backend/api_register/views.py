@@ -28,7 +28,7 @@ def register_user(request):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = token_generator.make_token(user)
-        activation_link = f"http://localhost:3000/activate/{uid}/{token}"
+        activation_link = f"http://localhost:8000/api/register/activate/{uid}/{token}"
 
         # Wysłanie maila aktywacyjnego
 
@@ -42,7 +42,7 @@ def register_user(request):
         subject = "Aktywuj swoje konto"
 
         message = render_to_string('emails/activation_email.txt', context)
-        send_mail(subject, message, 'no-reply@pilkarskiekosy.com', [user.email])
+        send_mail(subject, message, 'no-reply@pilkarskie-kosy.pl', [user.email])
 
 
         return Response(

@@ -49,7 +49,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
             username=validated_data['username'],
             password=validated_data['password'],
-            email="test@email.com",
+            email=validated_data['email'],
             is_active=False
 
         )
