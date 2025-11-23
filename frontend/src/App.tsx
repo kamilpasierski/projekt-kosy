@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Navbar from "./scenes/navbar";
-import { useEffect, useState } from "react";
-import { SelectedPage } from "./shared/types.ts";
-
 import RegisterScene from './scenes/register';
+import LoginScene from "./scenes/login";
+import MapScene from "./scenes/map";
+
+import 'leaflet/dist/leaflet.css';
+import {AuthProvider} from "./context/AuthContext.tsx";
 
 const MainPage = () => {
 
@@ -18,34 +20,20 @@ const MainPage = () => {
 
 
 function App() {
-    const [selectedPage, setSelectedPage] = useState<SelectedPage>(SelectedPage.Home);
-    const [isTopOfPage, setIsTopOfPage] = useState<boolean>(true);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY === 0) {
-                setIsTopOfPage(true);
-                setSelectedPage(SelectedPage.Home);
-            }
-            else setIsTopOfPage(false);
-        }
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
 
     return (
         <div className="app bg-gray-20">
             <BrowserRouter>
-                <Navbar
-                    isTopOfPage={isTopOfPage}
-                    selectedPage={selectedPage}
-                    setSelectedPage={setSelectedPage}
-                />
+                <AuthProvider>
+                <Navbar/>
 
                 <Routes>
                     <Route path="/" element={<MainPage />} />
+                    <Route path="/mapa" element={<MapScene />} />
                     <Route path="/register" element={<RegisterScene />} />
+                    <Route path="/login" element={<LoginScene />} />
                 </Routes>
+                </AuthProvider>
             </BrowserRouter>
         </div>
     )

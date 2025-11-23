@@ -30,7 +30,7 @@ INSTALLED_APPS = [
 
     'rest_framework_simplejwt',
     'rest_framework',
-    'api_register',
+    'rest_framework.authtoken',
     'corsheaders'
 ]
 

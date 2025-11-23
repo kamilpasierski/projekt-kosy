@@ -2,21 +2,30 @@ import React, { useState } from 'react';
 import axios, { isAxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ActionButton from '../../shared/ActionButton';
+import { useAuth } from "../../hooks/useAurh.ts";
 
 interface DjangoErrorResponse {
     [key: string]: string[];
 }
 
-const RegisterScene = () => {
+// interfejs dla odpowiedzi z tokenem
+interface TokenResponse {
+    access: string;
+    refresh: string;
+}
+
+const LoginScene = () => {
     const [formData, setFormData] = useState({
-        email: '',
         username: '',
         password: '',
-        re_password: '',
     });
 
     const [error, setError] = useState<string | null>(null);
+    const { login } = useAuth();
+
     const navigate = useNavigate();
+
+    const [rememberMe, setRememberMe] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -25,56 +34,47 @@ const RegisterScene = () => {
         });
     };
 
-    const validatePassword = (password: string): string | null => {
-        if (password.length < 8) return "Hasło musi mieć min. 8 znaków.";
-        if (!/[A-Z]/.test(password)) return "Hasło musi zawierać dużą literę.";
-        if (!/\d/.test(password)) return "Hasło musi zawierać cyfrę.";
-        if (/^[a-zA-Z0-9]+$/.test(password)) return "Hasło musi zawierać znak specjalny.";
-        return null;
-    };
+    const handleRememberMe = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRememberMe(e.target.checked);
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
-        if (formData.password !== formData.re_password) {
-            setError('Hasła nie są zgodne!');
-            return;
-        }
-
-        const passwordError = validatePassword(formData.password);
-        if (passwordError) {
-            setError(passwordError);
-            return;
-        }
-
         try {
-            const API_URL = 'http://127.0.0.1:8000/api/register/';
+            const API_URL = 'http://127.0.0.1:8000/api/token/';
 
-            const dataToSend = {
-                email: formData.email,
-                username: formData.username,
-                password: formData.password,
-                re_password: formData.re_password,
-            };
+            // Oczekiwanie na odpowiedzi z tokenami
+            const response = await axios.post<TokenResponse>(API_URL, formData);
 
-            await axios.post(API_URL, dataToSend);
-            navigate('/login');
+            // Zapisywanie tokenów po logowaniu
+            if (response.data && response.data.access) {
+                login(response.data.access, response.data.refresh, rememberMe);
+
+                navigate('/');
+            } else {
+                setError('Nie udało się uzyskać tokenu z serwera.');
+            }
 
         } catch (err: unknown) {
             let errorMessage = 'Błąd sieci. Spróbuj ponownie.';
 
             if (isAxiosError(err) && err.response) {
-                const data = err.response.data as DjangoErrorResponse;
-
-                if (data) {
-                    errorMessage = Object.values(data).flat().join(' ');
+                // Błąd 401 (Unauthorized) - złe dane logowania
+                if (err.response.status === 401) {
+                    errorMessage = 'Nieprawidłowa nazwa użytkownika lub hasło.';
                 } else {
-                    errorMessage = 'Wystąpił nieznany błąd odpowiedzi.';
+                    const data = err.response.data as DjangoErrorResponse;
+                    if (data) {
+                        errorMessage = Object.values(data).flat().join(' ');
+                    } else {
+                        errorMessage = 'Wystąpił nieznany błąd odpowiedzi.';
+                    }
                 }
             }
 
-            setError(errorMessage || 'Błąd rejestracji.');
+            setError(errorMessage || 'Błąd logowania.');
         }
     };
 
@@ -87,11 +87,11 @@ const RegisterScene = () => {
             <div className="md:mt-16 md:w-3/5 mx-auto">
                 {/* Nagłówek */}
                 <h1 className="basis-3/5 font-montserrat text-3xl font-bold mb-8 text-center">
-                    DOŁĄCZ DO NAS JUŻ <span className="text-primary-500">TERAZ</span>
+                    <span className="text-primary-500">Witaj</span> Ponownie
                 </h1>
 
                 <p className="my-5 text-sm text-center">
-                    Wypełnij formularz, aby utworzyć nowe konto.
+                    Zaloguj się poniżej
                 </p>
 
                 {/* Formularz */}
@@ -99,24 +99,6 @@ const RegisterScene = () => {
                     onSubmit={handleSubmit}
                     className="mt-10 flex flex-col gap-4 w-full max-w-md mx-auto bg-white p-8 rounded-xl shadow-xl"
                 >
-                    <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-sm font-bold text-primary-500 mb-2"
-                        >
-                            Adres E-mail
-                        </label>
-                        <input
-                            className={inputStyles}
-                            type="text"
-                            id="email"
-                            name="email"
-                            placeholder="Wpisz swój e-mail"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
                     <div>
                         <label
                             htmlFor="username"
@@ -155,23 +137,17 @@ const RegisterScene = () => {
                         />
                     </div>
 
-                    <div>
-                        <label
-                            htmlFor="re_password"
-                            className="block text-sm font-bold text-primary-500 mb-2"
-                        >
-                            Potwierdź hasło
-                        </label>
+                    <div className="flex items-center justify-center mb-2">
                         <input
-                            className={inputStyles}
-                            type="password"
-                            id="re_password"
-                            name="re_password"
-                            placeholder="••••••••"
-                            value={formData.re_password}
-                            onChange={handleChange}
-                            required
+                            id="remember-me"
+                            type="checkbox"
+                            name="rememberMe"
+                            onChange={handleRememberMe}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
                         />
+                        <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                            Nie wylogowywuj mnie
+                        </label>
                     </div>
 
                     {/* Sekcja błędów */}
@@ -184,7 +160,7 @@ const RegisterScene = () => {
                     {/* Przycisk Submit */}
                     <div className="flex justify-center mt-4">
                         <ActionButton type="submit">
-                            Zarejestruj się
+                            Zaloguj się
                         </ActionButton>
                     </div>
                 </form>
@@ -193,4 +169,4 @@ const RegisterScene = () => {
     );
 };
 
-export default RegisterScene;
+export default LoginScene;
