@@ -1,0 +1,14 @@
+Hi {{ user.get_full_name|default:user.username }},
+
+Thank you for signing up on {{ site_name }}!
+
+To activate your account, please click the link below or copy and paste it into your browser:
+
+{{ activation_link }}
+
+This link will expire in {{ expiration_days }} days.
+
+If you didn’t request this email, you can safely ignore it.
+
+Best regards,
+The {{ site_name }} Team
