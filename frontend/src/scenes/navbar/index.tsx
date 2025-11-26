@@ -1,107 +1,92 @@
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import Logo from "@/assets/Logo.png";
-import Link from "./Link.tsx";
-import useMediaQuery from "../../hooks/useMediaQuery.ts";
 import ActionButton from "../../shared/ActionButton.tsx";
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/useAurh.ts";
 
-const Navbar = () => {
-        const flexBetween = "flex items-center justify-between";
-        const isAboveMediumScreens = useMediaQuery("(min-width: 1060px)");
-        const [isMenuToggled, setIsMenuToggled] = useState<boolean>(false);
-        const navigate = useNavigate();
-        const { isLoggedIn, logout } = useAuth();
+const NavbarRigid = () => {
+    const navigate = useNavigate();
+    const { isLoggedIn, logout } = useAuth();
 
+    const isLoggedOut = !isLoggedIn;
 
-        const [isTopOfPage, setIsTopOfPage] = useState<boolean>(true);
-        useEffect(() => {
-            const handleScroll = () => {
-                if (window.scrollY === 0) {
-                    setIsTopOfPage(true);
-                } else {
-                    setIsTopOfPage(false);
-                }
-            };
-            window.addEventListener("scroll", handleScroll);
-            return () => window.removeEventListener("scroll", handleScroll);
-        }, []);
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    }
 
+    // Style tekstowe z Figmy (wyciągnięte dla czytelności, ale zachowujące fonty)
+    //const textStyle = "text-white text-base font-semibold font-['Montserrat'] leading-5 hover:text-red-500 transition-colors cursor-pointer";
 
-        const navbarBackground = isTopOfPage ? "" : "bg-primary-100 drop-shadow";
+    // Styl "szklanej" kulki z Figmy
+    //const glassBubbleStyle = "w-11 h-11 bg-neutral-700 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] flex items-center justify-center hover:bg-neutral-600 transition-colors cursor-pointer";
 
-        const isLoggedOut = !isLoggedIn;
-        const handleLogout = () => {
-            logout();
-            navigate('/');
-        }
+    return (
+        // GLÓWNY KONTENER
+        // flex: ustawia elementy w rzędzie
+        // items-center: centruje w pionie
+        // px-4 lg:px-8: odstępy od krawędzi ekranu
+        <nav className="w-full h-24 flex items-center px-4 lg:px-8 relative bg-transparent z-50">
 
-    return <nav>
-            <div
-                className={`${navbarBackground} ${flexBetween} fixed top-0 z-30 w-full py-6`}
-            >
-                <div className={`${flexBetween} mx-auto w-5/6`}>
-                    <div className={`${flexBetween} w-full gap-16`}>
+            {/* --- 1. LEWA STRONA: LOGO --- */}
+            <div className="relative w-80 h-24 shrink-0">
+                {/* Tło pod logo (Twoje style) */}
+                <div className="w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]"></div>
 
-                        {/* lewa strona */}
-                        <Link to="/"> <img alt={"logo"} src={Logo} /> </Link>
-                        {/* prawa strona */}
-                        {isAboveMediumScreens ? (
-                            <div className={`${flexBetween} w-full`}>
-                                <div className={`${flexBetween} gap-8 text-sm`}>
-
-                                    <Link to="/">Strona główna</Link>
-                                    <Link to="/mapa">Mapa</Link>
-                                    <Link to="/placeholder1">Placeholder</Link>
-                                    <Link to="/placeholder2">Placeholder</Link>
-
-                                </div>
-                                {isLoggedOut ? (
-                                    <div className={`${flexBetween} gap-8`}>
-                                    <Link to="/login">Zaloguj się</Link>
-                                    <ActionButton onClick={() => navigate('register')}>Zarejestruj się</ActionButton>
-                                    </div>
-                                ) : (
-                                    <div className={`${flexBetween} gap-8`}>
-                                        <ActionButton onClick={handleLogout}>Wyloguj się</ActionButton>
-                                    </div>
-                                    )}
-                            </div>
-                        ) : (
-                            <button
-                                className="rounded-full bg-secondary-500 p-2"
-                                onClick={() => setIsMenuToggled (!isMenuToggled)}
-                            >
-                                <Bars3Icon className="h-6 w-6 text-white"/>
-                            </button>
-                        )}
-                    </div>
+                {/* Tekst */}
+                <div className="left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold font-['Montserrat'] leading-6 tracking-widest whitespace-nowrap">
+                    PIŁKARSKIE KOSY
                 </div>
+
+                {/* Obrazek Logo */}
+                <Link to="/">
+                    <img className="w-24 h-24 left-0 top-0 absolute cursor-pointer hover:scale-105 transition-transform" src={Logo} alt="Logo" />
+                </Link>
             </div>
-            {/* menu mobilne */}
-            {!isAboveMediumScreens && isMenuToggled && (
-                <div className="fixed right-0 bottom-0 z-40 h-full w-[300px] bg-primary-100 drop-shadow-xl">
-                    {/* ikonka zamykania */}
-                    <div className="flex justify-end p-12">
-                        <button onClick={() => setIsMenuToggled (!isMenuToggled)}>
-                            <XMarkIcon className="h-6 w-6 text-gray-400" />
-                        </button>
-                    </div>
-                    {/* zawartość menu mobilnego */}
-                    <div className="ml-[33%] flex flex-col gap-10 text-2xl">
 
-                        <Link to="/" onClick={() => setIsMenuToggled(!isMenuToggled)}>Strona główna</Link>
-                        <Link to="/mapa" onClick={() => setIsMenuToggled(!isMenuToggled)}>Mapa</Link>
-                        <Link to="/placeholder" onClick={() => setIsMenuToggled(!isMenuToggled)}>placeholder</Link>
-                        <Link to="/placeholder" onClick={() => setIsMenuToggled(!isMenuToggled)}>placeholder</Link>
+            {/* --- 2. LEWA STRONA (zaraz za logiem): LINKI --- */}
+            {/* ml-4: mały odstęp od logo */}
+            {/* hidden md: flex: ukrywamy na telefonach, pokazujemy od tabletu */}
+            <div className="hidden md:flex items-center gap-6 ml-4">
+                <Link
+                    to="/mapa"
+                    className="text-white text-base font-semibold font-['Montserrat'] leading-5 hover:text-green-400 transition-colors whitespace-nowrap"
+                >
+                    Mapa klubów
+                </Link>
+                <Link
+                    to="/obserwowani"
+                    className="text-white text-base font-semibold font-['Montserrat'] leading-5 hover:text-green-400 transition-colors whitespace-nowrap"
+                >
+                    Obserwowane
+                </Link>
+            </div>
 
+            {/* --- 3. PRAWA STRONA: LOGOWANIE / REJESTRACJA --- */}
+            {/* ml-auto: TO JEST KLUCZ wypycha ten kontener maksymalnie w prawo */}
+            <div className="flex items-center gap-6 ml-auto">
+                {isLoggedOut ? (
+                    // WIDOK DLA NIEZALOGOWANEGO
+                        <>
+                            <ActionButton
+                                onClick={() => navigate('auth')}
+                            >
+                                Zarejestruj się
+                            </ActionButton>
+                        </>
+                ) : (
+                    // WIDOK DLA ZALOGOWANEGO
+                    <button
+                        onClick={handleLogout}
+                        className="bg-gray-500 hover:bg-gray-700 text-white px-5 py-2 rounded-full font-semibold text-sm lg:text-base transition-colors shadow-lg whitespace-nowrap cursor-pointer"
+                    >
+                        Wyloguj
+                    </button>
+                )}
 
-                    </div>
-                </div>
-            )}
+            </div>
+
         </nav>
+    )
     };
 
-
-    export default Navbar;
+export default NavbarRigid;
