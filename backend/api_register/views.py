@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view
-from .serializers import RegisterSerializer
+from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from rest_framework import generics, status
@@ -60,6 +60,6 @@ def activate_account(request, uidb64, token):
     if token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return Response({'message': 'Konto zostało aktywowane!'}, status=status.HTTP_200_OK)
+        return HttpResponseRedirect("http://localhost:3000/")
     else:
         return Response({'error': 'Token jest nieprawidłowy lub wygasł'}, status=status.HTTP_400_BAD_REQUEST)
