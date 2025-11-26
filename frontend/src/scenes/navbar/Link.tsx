@@ -12,7 +12,7 @@ const Link = ({ to, children, onClick }: Props) => {
     const baseClasses = "transition duration-500 hover:text-primary-300";
 
     // Klasy, które zostaną dodane tylko, gdy link jest aktywny
-    const activeClasses = "text-primary-500 font-bold"; // np. zmiana koloru i pogrubienie
+    const activeClasses = "text-primary-500 font-bold";
 
     return (
         <NavLink
