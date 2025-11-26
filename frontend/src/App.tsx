@@ -1,38 +1,30 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import Navbar from "./scenes/navbar";
-import RegisterScene from './scenes/register';
-import LoginScene from "./scenes/login";
+import Home from "./scenes/home";
+import AuthScene from "./scenes/auth";
+import LoginScene from "./scenes/auth";
 import MapScene from "./scenes/map";
 
 import 'leaflet/dist/leaflet.css';
 import {AuthProvider} from "./context/AuthContext.tsx";
-
-const MainPage = () => {
-
-    return (
-        <div>
-            <div style={{ paddingTop: '100px', height: '200vh' }}>
-            </div>
-        </div>
-    );
-};
+import MainLayout from "./layouts/MainLayout.tsx";
 
 
 function App() {
-
     return (
-        <div className="app bg-gray-20">
+        <div className="app bg-basic-dark">
             <BrowserRouter>
                 <AuthProvider>
-                <Navbar/>
 
                 <Routes>
-                    <Route path="/" element={<MainPage />} />
+                    <Route element={<MainLayout />}>
+                    <Route path="/" element={<Home />} />
                     <Route path="/mapa" element={<MapScene />} />
-                    <Route path="/register" element={<RegisterScene />} />
+                    </Route>
+
+                    <Route path="/auth" element={<AuthScene />} />
                     <Route path="/login" element={<LoginScene />} />
                 </Routes>
+
                 </AuthProvider>
             </BrowserRouter>
         </div>
