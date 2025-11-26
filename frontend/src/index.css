@@ -6,19 +6,64 @@
     --breakpoint-xs: 480px;
     --breakpoint-sm: 768px;
     --breakpoint-md: 1060px;
-    --color-gray-20: #F3F8F1;
-    --color-gray-50: #E5EDE2;
-    --color-gray-100: #CBD8C9;
-    --color-gray-500: #2E4D2E;
-    --color-primary-100: #DFF7E1;
-    --color-primary-300: #9FE6A8;
-    --color-primary-500: #4CD964;
-    --color-secondary-400: #A3E8B0;
-    --color-secondary-500: #7BD98D;
-
 
     --font-family-dmsans: "DM Sans", sans-serif;
     --font-family-montserrat: "Montserrat", sans-serif;
+
+
+    /* Basic Colors */
+    --color-basic-dark: #1F1F1F;
+    --color-basic-white: #FFFFFF;
+
+    /* Gray */
+    --color-gray-50: #F9FAFB;
+    --color-gray-100: #F3F4F6;
+    --color-gray-200: #E5E7EB;
+    --color-gray-300: #D1D5DB;
+    --color-gray-400: #9CA3AF;
+    --color-gray-500: #6B7280;
+    --color-gray-600: #4B5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1F2937;
+    --color-gray-900: #111827;
+
+    /* Primary Color */
+    --color-primary-main: #199125;
+    --color-primary-50: #F1EBFE; /*POPRAW*/
+    --color-primary-100: #BB9DFB; /*POPRAW*/
+
+    /* Secondary Color */
+    --color-secondary-main: #274FDE;
+    --color-secondary-50: #8699DC;
+    --color-secondary-100: #0F2162;
+
+    /* Info Color */
+    --color-info-100: #E0F2FE;
+    --color-info-300: #BAE6FD;
+    --color-info-500: #0EA5E9;
+    --color-info-600: #075985;
+    --color-info-800: #082F49;
+
+    /* Error Color */
+    --color-error-200: #FECACA;
+    --color-error-300: #F90000;
+    --color-error-400: #CB0000;
+    --color-error-500: #8A2525;
+    --color-error-600: #450A0A;
+
+    /* Warning Color */
+    --color-warning-50: #FFFBEB;
+    --color-warning-100: #FEF3C7;
+    --color-warning-200: #FDE68A;
+    --color-warning-300: #FBF201;
+    --color-warning-400: #D5D107;
+
+    /* Success Color */
+    --color-success-100: #DCFCE7;
+    --color-success-300: #BBF7D0;
+    --color-success-500: #065F46; /*POPRAW*/
+    --color-success-600: #247F46;
+    --color-success-800: #064E3B;
 }
 
 html,
