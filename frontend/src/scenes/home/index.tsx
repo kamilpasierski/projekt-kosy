@@ -31,13 +31,13 @@ const Home = () => {
 
                     {/* Główny Nagłówek */}
                     {/* text-3xl na mobile -> text-5xl na desktopie */}
-                    <h1 className="text-white text-3xl md:text-5xl font-bold font-['Montserrat'] leading-tight tracking-[2px] lg:tracking-[4.80px] drop-shadow-md">
+                    <h1 className="text-white text-3xl md:text-5xl font-bold leading-tight tracking-[2px] lg:tracking-[4.80px] drop-shadow-md">
                         ZNAJDŹ KLUB <br/>
                         ZNAJ RYWALI
                     </h1>
 
                     {/* Podtytuł */}
-                    <p className="text-sky-500 text-base md:text-lg font-semibold font-['Montserrat'] leading-6">
+                    <p className="text-sky-500 text-base md:text-lg font-semibold leading-6">
                         Bezpieczeństwo na meczu to podstawa.
                     </p>
 
@@ -46,7 +46,7 @@ const Home = () => {
                         onClick={() => navigate('/mapa')} // Zakładam, że ma szukać na mapie
                         className="group relative w-56 h-16 bg-blue-700 rounded-[40px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] hover:bg-blue-600 transition-all active:scale-95 flex items-center justify-center cursor-pointer"
                     >
-                        <span className="text-white text-lg font-semibold font-['Montserrat'] uppercase tracking-wide">
+                        <span className="text-white text-lg font-semibold uppercase tracking-wide">
                             WYSZUKAJ KLUB
                         </span>
                     </button>
