@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))
@@ -21,6 +22,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,9 +32,11 @@ INSTALLED_APPS = [
 
     'api_register',
     'rest_framework_simplejwt',
-    'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders'
+    'corsheaders',
+
+    # REST
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -45,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -113,3 +118,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+GOOGLE_CLIENT_ID = "591435600928-jkcr94pim0taieevj0mlcv112j85verk.apps.googleusercontent.com"
+
+# LOGIN_REDIRECT_URL = "http://localhost:3000/"
+# LOGOUT_REDIRECT_URL = "http://localhost:3000/"
+
