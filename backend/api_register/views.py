@@ -60,6 +60,6 @@ def activate_account(request, uidb64, token):
     if token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return HttpResponseRedirect("http://localhost:3000/")
+        return HttpResponseRedirect("http://localhost:3000/?status=activated")
     else:
         return Response({'error': 'Token jest nieprawidłowy lub wygasł'}, status=status.HTTP_400_BAD_REQUEST)
