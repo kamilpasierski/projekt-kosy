@@ -33,7 +33,7 @@ const NavbarRigid = () => {
                 <div className="w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]"></div>
 
                 {/* Tekst */}
-                <div className="left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold font-['Montserrat'] leading-6 tracking-widest whitespace-nowrap">
+                <div className="left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold leading-6 tracking-widest whitespace-nowrap">
                     PIŁKARSKIE KOSY
                 </div>
 
@@ -49,13 +49,13 @@ const NavbarRigid = () => {
             <div className="hidden md:flex items-center gap-6 ml-4">
                 <Link
                     to="/mapa"
-                    className="text-white text-base font-semibold font-['Montserrat'] leading-5 hover:text-green-400 transition-colors whitespace-nowrap"
+                    className="text-white text-base font-semibold leading-5 hover:text-green-400 transition-colors whitespace-nowrap"
                 >
                     Mapa klubów
                 </Link>
                 <Link
                     to="/obserwowani"
-                    className="text-white text-base font-semibold font-['Montserrat'] leading-5 hover:text-green-400 transition-colors whitespace-nowrap"
+                    className="text-white text-base font-semibold leading-5 hover:text-green-400 transition-colors whitespace-nowrap"
                 >
                     Obserwowane
                 </Link>

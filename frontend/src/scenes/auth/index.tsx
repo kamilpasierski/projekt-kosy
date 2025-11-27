@@ -165,7 +165,7 @@ const AuthScene = () => {
             <div className="absolute top-4 left-4 z-20 scale-75 lg:scale-100 origin-top-left">
                 <Link to="/" className="block w-80 h-24 relative">
                     <div className="w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]"></div>
-                    <div className="left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold font-['Montserrat'] leading-6 tracking-widest">PIŁKARSKIE KOSY</div>
+                    <div className="left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold leading-6 tracking-widest">PIŁKARSKIE KOSY</div>
                     <img className="w-24 h-24 left-0 top-0 absolute" src={Logo} alt="Logo" />
                 </Link>
             </div>
@@ -184,18 +184,17 @@ const AuthScene = () => {
 
                 {/* Nagłówek */}
                 <div className="text-center mb-8 space-y-2 max-w-md">
-                    <h2 className="text-white text-2xl lg:text-3xl font-semibold font-['Montserrat'] tracking-wide transition-all duration-300">
+                    <h2 className="text-white text-2xl lg:text-3xl font-semibold tracking-wide transition-all duration-300">
                         {getHeaderTitle()}
                     </h2>
                     <div className="flex justify-center items-center gap-1">
                         {view === 'buttons' && (
                             <>
-                                <span className="text-white text-sm font-semibold font-['Montserrat'] capitalize leading-4">T</span>
-                                <span className="text-white text-sm font-semibold font-['Montserrat'] lowercase leading-4">WOJE BEZPIECZEŃSTWO ZACZYNA SIĘ TUTAJ</span>
+                                <span className="text-white text-sm font-semibold leading-4">Twoje bezpieczeństwo zaczyna się tutaj</span>
                             </>
                         )}
                         {view !== 'buttons' && (
-                            <span className="text-gray-400 text-sm font-['Montserrat']">
+                            <span className="text-gray-400 text-sm">
                         Wypełnij poniższe dane.
                     </span>
                         )}
@@ -221,7 +220,7 @@ const AuthScene = () => {
                                     <div className="w-3.5 h-3.5 left-[17.77px] top-[14.67px] absolute opacity-95 bg-blue-500"></div>
                                     <div className="w-6 h-3 left-[4.38px] top-[20.39px] absolute opacity-95 bg-green-600"></div>
                                 </div>
-                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium font-['Montserrat'] leading-5">Kontynuuj z kontem Google</div>
+                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium leading-5">Kontynuuj z kontem Google</div>
                             </button>
 
                             {/* Facebook */}
@@ -234,7 +233,7 @@ const AuthScene = () => {
                                     <div className="w-9 h-9 left-0 top-0 absolute bg-blue-600 rounded-sm"></div>
                                     <div className="w-3.5 h-7 left-[10.32px] top-[6.84px] absolute bg-white"></div>
                                 </div>
-                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium font-['Montserrat'] leading-5">Kontynuuj z Facebookiem</div>
+                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium leading-5">Kontynuuj z Facebookiem</div>
                             </button>
 
                             {/* Email KLIKNIĘCIE OTWIERA REJESTRACJĘ */}
@@ -253,12 +252,12 @@ const AuthScene = () => {
                                         <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
                                     </svg>
                                 </div>
-                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium font-['Montserrat'] leading-5">Kontynuuj z adresem email</div>
+                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium leading-5">Kontynuuj z adresem email</div>
                             </button>
                             {/*DO POPRAWY*/}
                             <Link to="/">Powrót do strony głównej</Link>
 
-                            <div className="mt-8 text-center text-gray-400 text-xs font-semibold font-['Montserrat'] leading-4 max-w-xs">
+                            <div className="mt-8 text-center text-gray-400 text-xs font-semibold leading-4 max-w-xs">
                                 Klikając dowolny przycisk „kontynuuj z”, wyrażasz zgodę na "warunki użytkowania" i akceptujesz naszą "politykę prywatności" na naszej stronie internetowej.                            </div>
                         </div>
                     )}
@@ -323,13 +322,13 @@ const AuthScene = () => {
 
                             {/* Switcher do Logowania */}
                             <div className="mt-4 text-center">
-                        <span className="text-gray-400 text-sm font-medium font-['Montserrat']">
+                        <span className="text-gray-400 text-sm font-medium">
                             Posiadasz już konto?
                         </span>
                                 <button
                                     type="button"
                                     onClick={() => setView('login')}
-                                    className="text-green-500 hover:text-green-400 text-sm font-bold font-['Montserrat'] hover:underline ml-1 cursor-pointer"
+                                    className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
                                 >
                                     Zaloguj się tutaj.
                                 </button>
@@ -394,13 +393,13 @@ const AuthScene = () => {
 
                             {/* Switcher do resetu hasła */}
                             <div className="mt-4 text-center">
-                        <span className="text-gray-400 text-sm font-medium font-['Montserrat']">
+                        <span className="text-gray-400 text-sm font-medium">
                             Nie pamiętasz hasła?
                         </span>
                                 <button
                                     type="button"
                                     onClick={() => setView('reset')}
-                                    className="text-green-500 hover:text-green-400 text-sm font-bold font-['Montserrat'] hover:underline ml-1 cursor-pointer"
+                                    className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
                                 >
                                     Resetuj hasło.
                                 </button>
@@ -408,13 +407,13 @@ const AuthScene = () => {
 
                             {/* Switcher do Rejestracji */}
                             <div className="text-center">
-                        <span className="text-gray-400 text-sm font-medium font-['Montserrat']">
+                        <span className="text-gray-400 text-sm font-medium">
                             Nie masz jeszcze konta?
                         </span>
                                 <button
                                     type="button"
                                     onClick={() => setView('register')}
-                                    className="text-green-500 hover:text-green-400 text-sm font-bold font-['Montserrat'] hover:underline ml-1 cursor-pointer"
+                                    className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
                                 >
                                     Zarejestruj się tutaj.
                                 </button>
@@ -430,7 +429,7 @@ const AuthScene = () => {
                     {view === 'reset' && (
                         <form onSubmit={handleResetPassword} className="flex flex-col gap-4 animate-in fade-in slide-in-from-right-8 duration-300">
 
-                            <div className="text-gray-300 text-sm text-center mb-2 font-['Montserrat']">
+                            <div className="text-gray-300 text-sm text-center mb-2">
                                 Wpisz swój login, a wyślemy Ci link do zmiany hasła.
                             </div>
 
