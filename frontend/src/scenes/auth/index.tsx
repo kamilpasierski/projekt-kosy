@@ -34,6 +34,7 @@ const AuthScene = () => {
     const { login } = useAuth();
     const [rememberMe, setRememberMe] = useState<boolean>(false);
     const navigate = useNavigate();
+    const [resetLogin, setResetLogin] = useState<string>('');
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,11 +143,32 @@ const AuthScene = () => {
         }
     };
 
-    const handleResetPassword = (e: React.FormEvent) => {
+    const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
-        setView('login')
-        console.log("Wysyłanie prośby o reset hasła...");
-        alert("Sprawdź skrzynkę mailową, aby zresetować hasło.")
+        setError(null);
+
+        if (!resetLogin) {
+            setError("Podaj login.");
+            return;
+        }
+
+        try {
+            const API_URL = 'http://127.0.0.1:8000/api/login/forgot-password/';
+
+            // WAŻNE: Backend oczekuje klucza "username"
+            await axios.post(API_URL, { username: resetLogin });
+
+            // Sukces
+            alert("Jeśli podany login istnieje, wysłaliśmy link na przypisany do niego email.");
+            setView('login');
+            setResetLogin('');
+
+        } catch (err: unknown) {
+            // Tutaj celowo nie pokazujemy szczegółowych błędów (security),
+            // chyba że to błąd sieci.
+            console.error(err);
+            setError('Wystąpił błąd podczas wysyłania żądania. Spróbuj ponownie.');
+        }
     }
 
     // Helper do renderowania odpowiedniego nagłówka
@@ -433,7 +455,10 @@ const AuthScene = () => {
                                 Wpisz swój login, a wyślemy Ci link do zmiany hasła.
                             </div>
 
-                            <input type="login" placeholder="Wpisz swój Login" className={inputStyles} />
+                            <input type="text" placeholder="Wpisz swój Login" className={inputStyles} value={resetLogin}
+                                   onChange={(e) => setResetLogin(e.target.value)}
+                                   required
+                            />
 
                             <ActionButton type="submit">
                                 Wyślij link resetujący
