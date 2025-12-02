@@ -7,6 +7,7 @@ import MapScene from "./scenes/map";
 import 'leaflet/dist/leaflet.css';
 import {AuthProvider} from "./context/AuthContext.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
+import ResetPasswordConfirm from "./scenes/reset_password";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
                     <Route path="/mapa" element={<MapScene />} />
                     </Route>
 
+                    <Route path="/reset-password/:uid/:token" element={<ResetPasswordConfirm />} />
                     <Route path="/auth" element={<AuthScene />} />
                     <Route path="/login" element={<LoginScene />} />
                 </Routes>
