@@ -12,12 +12,12 @@ yarn-error.log*
 venv/
 env/
 .venv/
-.env/
+backend/.env/
 __pycache__/
 *.py[cod]
 *.pyc
 backend/db_storage/db.sqlite3
-.env
+backend/.env
 .env.*
 media/
 backend/media/
