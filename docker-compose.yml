@@ -1,6 +1,7 @@
 
 services:
 
+
   backend:
     build:
       context: ./backend
@@ -17,17 +18,37 @@ services:
     networks:
       - kosy-net
 
-  # Usługa frontendu (React/Nginx)
+# frontend (DEV)
   frontend:
+    # Wskazujemy nowy plik Dockerfile.dev
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+
+    # Montowanie wolumenów
+    volumes:
+      - ./frontend:/app           # 1. Twój kod nadpisuje kod w kontenerze (Hot Reload)
+      - /app/node_modules         # 2. <--- TO JEST KLUCZ DO SUKCESU! (Chroni biblioteki)
+
     ports:
-      - "3000:80" # Dostęp do aplikacji przez port 3000
-    networks:
-      - kosy-net
-    depends_on:
-      - backend # Uruchom dopiero, gdy backend będzie gotowy
+      - "3000:3000"
+
+    # Opcjonalnie: włącz polling jeśli hot-reload nie działa na Windows/Docker Desktop
+    environment:
+      - WATCHPACK_POLLING=true
+
+
+  # Usługa frontendu (React/Nginx)
+  #frontend:
+   # build:
+    #  context: ./frontend
+     # dockerfile: frontend/Dockerfile.prod
+   # ports:
+    #  - "3000:80" # Dostęp do aplikacji przez port 3000
+    #networks:
+     # - kosy-net
+    #depends_on:
+     # - backend # Uruchom dopiero, gdy backend będzie gotowy
 
 # Definicja wspólnej sieci
 networks:
