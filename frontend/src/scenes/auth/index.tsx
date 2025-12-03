@@ -298,7 +298,7 @@ const AuthScene = () => {
 
                             {/* Email KLIKNIĘCIE OTWIERA REJESTRACJĘ */}
                             <button
-                                onClick={() => setView('register')}
+                                onClick={() => setView('login')}
                                 className="w-80 h-14 relative group cursor-pointer transition-transform active:scale-95"
                             >
                                 <div className="w-80 h-14 left-0 top-0 absolute">

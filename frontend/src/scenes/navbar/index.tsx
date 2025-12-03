@@ -70,7 +70,7 @@ const NavbarRigid = () => {
                             <ActionButton
                                 onClick={() => navigate('auth')}
                             >
-                                Zarejestruj się
+                                Zaloguj się
                             </ActionButton>
                         </>
                 ) : (
