@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate} from 'react-router-dom';
-import axios, { isAxiosError } from 'axios';
+import React, {useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import axios, {isAxiosError} from 'axios';
 import ActionButton from '../../shared/ActionButton';
 import Logo from "@/assets/Logo.png";
 import Start_1 from "@/assets/Start_1.png";
 import {useAuth} from "../../hooks/useAurh.ts";
+import {GoogleLogin, type CredentialResponse} from "@react-oauth/google";
 
 interface DjangoErrorResponse {
     [key: string]: string[];
@@ -34,7 +35,7 @@ const AuthScene = () => {
     const { login } = useAuth();
     const [rememberMe, setRememberMe] = useState<boolean>(false);
     const navigate = useNavigate();
-    const [resetLogin, setResetLogin] = useState<string>('');
+    const [resetEmail, setResetEmail] = useState<string>('');
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +104,43 @@ const AuthScene = () => {
         setRememberMe(e.target.checked);
     }
 
+    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+        const googleToken = credentialResponse.credential;
+
+        if (!googleToken) {
+            console.error("Nie otrzymano tokenu od Google");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/google_register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    token: googleToken
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log('Sukces Google:', data);
+
+                localStorage.setItem('accessToken', data.access);
+                localStorage.setItem('refreshToken', data.refresh);
+
+                window.location.href = '/dashboard';
+            } else {
+                console.error('Błąd backendu:', data);
+                alert('Logowanie nieudane: ' + (data.error || 'Błąd serwera'));
+            }
+        } catch (error) {
+            console.error('Błąd sieci:', error);
+        }
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
@@ -147,21 +185,21 @@ const AuthScene = () => {
         e.preventDefault();
         setError(null);
 
-        if (!resetLogin) {
-            setError("Podaj login.");
+        if (!resetEmail) {
+            setError("Podaj adres e-mail.");
             return;
         }
 
         try {
-            const API_URL = 'http://127.0.0.1:8000/api/login/forgot-password/';
+            const API_URL = 'http://127.0.0.1:8000/password-reset/';
 
             // WAŻNE: Backend oczekuje klucza "username"
-            await axios.post(API_URL, { username: resetLogin });
+            await axios.post(API_URL, { username: resetEmail });
 
             // Sukces
-            alert("Jeśli podany login istnieje, wysłaliśmy link na przypisany do niego email.");
+            alert("Jeśli podany e-mail jest przypisany do konta, wysłaliśmy link na niego link.");
             setView('login');
-            setResetLogin('');
+            setResetEmail('');
 
         } catch (err: unknown) {
             // Tutaj celowo nie pokazujemy szczegółowych błędów (security),
@@ -231,19 +269,20 @@ const AuthScene = () => {
                         <div className="flex flex-col gap-6 w-full items-center animate-in fade-in zoom-in-95 duration-300">
 
                             {/* Google */}
-                            <button className="w-80 h-14 relative group cursor-pointer transition-transform active:scale-95">
-                                <div className="w-80 h-14 left-0 top-0 absolute">
-                                    <div className="w-80 h-14 left-0 top-0 absolute bg-neutral-700 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] group-hover:bg-neutral-600 transition-colors"></div>
-                                    <div className="w-10 h-10 left-[24.93px] top-[10px] absolute"></div>
+                                <div className="mt-4 flex flex-col items-center w-full">
+
+                                    <div className="mt-2">
+                                            <GoogleLogin
+                                                onSuccess={handleGoogleSuccess}
+                                                onError={() => console.log('Błąd logowania Google')}
+                                                theme="filled_black"
+                                                shape="pill"
+                                                locale="pl"
+                                                text="signin_with"
+                                                width="250"
+                                            />
+                                    </div>
                                 </div>
-                                <div className="w-9 h-9 left-[24px] top-[12px] absolute overflow-hidden">
-                                    <div className="w-6 h-3 left-[4.26px] top-[2.19px] absolute opacity-95 bg-red-500"></div>
-                                    <div className="w-1.5 h-3.5 left-[2.73px] top-[10.76px] absolute opacity-95 bg-yellow-400"></div>
-                                    <div className="w-3.5 h-3.5 left-[17.77px] top-[14.67px] absolute opacity-95 bg-blue-500"></div>
-                                    <div className="w-6 h-3 left-[4.38px] top-[20.39px] absolute opacity-95 bg-green-600"></div>
-                                </div>
-                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium leading-5">Kontynuuj z kontem Google</div>
-                            </button>
 
                             {/* Facebook */}
                             <button className="w-80 h-14 relative group cursor-pointer transition-transform active:scale-95">
@@ -455,8 +494,8 @@ const AuthScene = () => {
                                 Wpisz swój login, a wyślemy Ci link do zmiany hasła.
                             </div>
 
-                            <input type="text" placeholder="Wpisz swój Login" className={inputStyles} value={resetLogin}
-                                   onChange={(e) => setResetLogin(e.target.value)}
+                            <input type="email" placeholder="Wpisz swój E-mail" className={inputStyles} value={resetEmail}
+                                   onChange={(e) => setResetEmail(e.target.value)}
                                    required
                             />
 

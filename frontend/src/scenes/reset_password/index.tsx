@@ -60,13 +60,12 @@ const ResetPasswordConfirm = () => {
         }
 
         try {
-            const API_URL = 'http://127.0.0.1:8000/api/login/reset-password-confirm/';
+            const API_URL = 'http://127.0.0.1:8000/password-reset/confirm/';
 
             await axios.post(API_URL, {
-                uidb64: uid,       // Backend oczekuje 'uidb64'
-                token: token,      // Token z URL
-                new_password: formData.new_password,
-                re_password: formData.re_password
+                uid: uid,
+                token: token,
+                password: formData.new_password
             });
 
             setSuccess(true);
