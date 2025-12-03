@@ -193,8 +193,7 @@ const AuthScene = () => {
         try {
             const API_URL = 'http://127.0.0.1:8000/password-reset/';
 
-            // WAŻNE: Backend oczekuje klucza "username"
-            await axios.post(API_URL, { username: resetEmail });
+            await axios.post(API_URL, { email: resetEmail });
 
             // Sukces
             alert("Jeśli podany e-mail jest przypisany do konta, wysłaliśmy link na niego link.");
