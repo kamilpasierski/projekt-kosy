@@ -1,18 +1,39 @@
-import Logo from "@/assets/Logo.png";
-import ActionButton from "../../shared/ActionButton.tsx";
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/useAurh.ts";
+import { BellIcon, UserIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import Logo from "@/assets/Logo.png";
+import ActionButton from "../../shared/ActionButton.tsx";
 
 const NavbarRigid = () => {
     const navigate = useNavigate();
     const { isLoggedIn, logout } = useAuth();
-
     const isLoggedOut = !isLoggedIn;
-
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
     const handleLogout = () => {
         logout();
+        setIsDropdownOpen(false);
         navigate('/');
     }
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const iconContainerStyles = "w-11 h-11 relative bg-neutral-700 rounded-full shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] flex items-center justify-center text-white hover:bg-neutral-600 transition-colors cursor-pointer";
 
     // Style tekstowe z Figmy (wyciągnięte dla czytelności, ale zachowujące fonty)
     //const textStyle = "text-white text-base font-semibold font-['Montserrat'] leading-5 hover:text-red-500 transition-colors cursor-pointer";
@@ -75,18 +96,46 @@ const NavbarRigid = () => {
                         </>
                 ) : (
                     // WIDOK DLA ZALOGOWANEGO
-                    <button
-                        onClick={handleLogout}
-                        className="bg-gray-500 hover:bg-gray-700 text-white px-5 py-2 rounded-full font-semibold text-sm lg:text-base transition-colors shadow-lg whitespace-nowrap cursor-pointer"
-                    >
-                        Wyloguj
-                    </button>
-                )}
+                    <div className="flex items-center gap-4">
+                        {/* --- IKONA POWIADOMIEŃ --- */}
+                        <button className={iconContainerStyles} aria-label="Powiadomienia">
+                            <BellIcon className="w-6 h-6" />
+                            {/* Tutaj w przyszłości dodamy czerwoną kropkę z liczbą powiadomień */}
+                            {/*Przykłąd*/}
+                            {/* <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-600 rounded-full border-2 border-neutral-800"></div> */}
+                        </button>
 
+                        {/* --- IKONA PROFILU + DROPDOWN --- */}
+                        <div className="relative" ref={dropdownRef}>
+                            <button
+                                className={iconContainerStyles}
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                aria-label="Menu użytkownika"
+                                aria-expanded={isDropdownOpen}
+                            >
+                                <UserIcon className="w-6 h-6" />
+                            </button>
+
+                            {/* --- Dropdown Menu --- */}
+                            {isDropdownOpen && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5 focus:outline-none">
+
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
+                                    >
+                                        <ArrowRightStartOnRectangleIcon className="w-4 h-4" />
+                                        Wyloguj się
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    )
+                }
             </div>
-
         </nav>
     )
-    };
+};
 
 export default NavbarRigid;
