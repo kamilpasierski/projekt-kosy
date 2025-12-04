@@ -14,5 +14,9 @@ git clone https://github.com/kamilpasierski/projekt-kosy
 
 cd projekt-kosy
 
-docker-compose up --build
+docker-compose up --build  
 
+
+## Credits / Użyte zasoby
+
+* **Ikony:** [Heroicons](https://heroicons.com) (MIT License) - wykorzystane w nawigacji oraz interfejsie użytkownika.
