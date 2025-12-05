@@ -11,7 +11,7 @@ import ResetPasswordConfirm from "./scenes/reset_password";
 
 function App() {
     return (
-        <div className="app bg-basic-dark">
+        <div className="app min-h-screen flex flex-col font-['Montserrat']">
             <BrowserRouter>
                 <GoogleOAuthProvider clientId="591435600928-jkcr94pim0taieevj0mlcv112j85verk.apps.googleusercontent.com">
                 <AuthProvider>

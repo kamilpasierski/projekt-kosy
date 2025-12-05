@@ -1,18 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import Baner from "@/assets/Baner.png";
+import MatchesTable from "../../components/MatchesTable.tsx";
 
 const Home = () => {
     const navigate = useNavigate();
 
     return (
         // WRAPPER GŁÓWNY: Centruje baner na stronie i daje marginesy na mniejszych ekranach
-        <div className="w-full flex justify-center p-4 lg:p-8">
+        <div className="w-full flex flex-col items-center pb-20">
 
             {/* KONTENER BANERU */}
             {/* max-w-[1341px]: zachowuje oryginalną maksymalną szerokość */}
             {/* aspect-video lub min-h: zapewnia wysokość na mobile */}
-            <div className="relative w-full max-w-[1341px] min-h-[500px] lg:h-[619px] rounded-[40px] overflow-hidden flex flex-col justify-center">
-
+            <div className="relative w-full max-w-[1920px] min-h-[500px] lg:h-[619px] rounded-[40px] overflow-hidden flex flex-col justify-center px-6 lg:px-24 shadow-2xl bg-zinc-800">
                 {/* --- 1. ZDJĘCIE W TLE --- */}
                 {/* object-cover: przycina zdjęcie, ale zachowuje proporcje (nie rozciąga) */}
                 <img
@@ -52,8 +52,8 @@ const Home = () => {
                     </button>
 
                 </div>
-
             </div>
+            <MatchesTable />
         </div>
     )
 };

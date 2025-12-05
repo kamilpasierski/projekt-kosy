@@ -23,9 +23,9 @@ const MainLayout = () => {
             <Navbar />
             {/* Outlet to "placeholder", w który React Router wstawi
                 komponent Home albo MapScene, w zależności od URL */}
-            <div className="content-container">
+            <main className="flex-1 w-full px-4 md:px-8 xl:px-[45px]">
                 <Outlet />
-            </div>
+            </main>
         </>
     );
 };
