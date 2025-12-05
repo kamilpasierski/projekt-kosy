@@ -113,7 +113,7 @@ const AuthScene = () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/google_register/', {
+            const response = await fetch('http://127.0.0.1:8000/google/register/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ const AuthScene = () => {
                 localStorage.setItem('accessToken', data.access);
                 localStorage.setItem('refreshToken', data.refresh);
 
-                window.location.href = '/dashboard';
+                window.location.href = '/';
             } else {
                 console.error('Błąd backendu:', data);
                 alert('Logowanie nieudane: ' + (data.error || 'Błąd serwera'));
