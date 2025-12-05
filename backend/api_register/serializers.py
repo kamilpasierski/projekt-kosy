@@ -26,7 +26,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         print("Validate TEST")
 
-        if data['password'] != data['re_password']:
+        if User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError("Email jest już zajęty.")
+
+        elif data['password'] != data['re_password']:
             raise serializers.ValidationError("Hasła nie są takie same.")
 
         elif len(data['password']) < 8:
