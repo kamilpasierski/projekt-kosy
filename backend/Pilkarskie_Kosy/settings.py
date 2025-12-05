@@ -127,6 +127,9 @@ SIMPLE_JWT = {
 
 GOOGLE_CLIENT_ID = "591435600928-jkcr94pim0taieevj0mlcv112j85verk.apps.googleusercontent.com"
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # LOGIN_REDIRECT_URL = "http://localhost:3000/"
 # LOGOUT_REDIRECT_URL = "http://localhost:3000/"
 
