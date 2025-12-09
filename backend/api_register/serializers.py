@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-
     password = serializers.CharField(write_only=True)
     re_password = serializers.CharField(write_only=True)
 
@@ -12,48 +11,51 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'password', 're_password', 'email']
 
     """
-    
     Password requirements:
-        
         - Length: 8 characters
         - Upper: 1 character
         - Digits: 1 character
         - Special signs: 1 character
-    
     """
 
     def validate(self, data):
+        errors = {}
 
-        print("Validate TEST")
+        # Sprawdzenie czy email już istnieje
+        if User.objects.filter(email=data.get('email')).exists():
+            errors['email'] = "Email jest już zajęty."
 
-        if User.objects.filter(email=data['email']).exists():
-            raise serializers.ValidationError("Email jest już zajęty.")
+        # Sprawdzenie dopasowania haseł
+        if data.get('password') != data.get('re_password'):
+            errors['re_password'] = "Hasła nie są takie same."
 
-        elif data['password'] != data['re_password']:
-            raise serializers.ValidationError("Hasła nie są takie same.")
+        password = data.get('password', '')
+        password_errors = []
 
-        elif len(data['password']) < 8:
-            raise serializers.ValidationError("Hasło musi składać się przynajmniej z 8 znaków")
+        if len(password) < 8:
+            password_errors.append("Hasło musi składać się przynajmniej z 8 znaków.")
+        if not any(char.isupper() for char in password):
+            password_errors.append("Hasło musi zawierać dużą literę.")
+        if not any(char.isdigit() for char in password):
+            password_errors.append("Hasło musi zawierać liczbę.")
+        if password.isalnum():
+            password_errors.append("Hasło musi zawierać znak specjalny.")
 
-        elif not any(char.isupper() for char in data['password']):
-            raise serializers.ValidationError("Hasło musi zawierać dużą literę")
+        if password_errors:
+            errors['password'] = " ".join(password_errors)
 
-        elif not any(char.isdigit() for char in data['password']):
-            raise serializers.ValidationError("Hasło musi zawierać liczbę")
+        if errors:
+            raise serializers.ValidationError(errors)
 
-        elif data['password'].isalnum():
-            raise serializers.ValidationError("Hasło musi zawierać znak specjalny")
-
-        data.pop('re_password')
-        return data
+        return data  # NIE usuwaj re_password ani email
 
     def create(self, validated_data):
+        validated_data.pop('re_password', None)  # usuń re_password tylko tutaj
+        email = validated_data.get('email')  # bezpieczne pobranie email
         user = User.objects.create_user(
-
             username=validated_data['username'],
             password=validated_data['password'],
-            email=validated_data['email'],
+            email=email,
             is_active=False
-
         )
         return user
