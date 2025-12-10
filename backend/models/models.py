@@ -1,14 +1,32 @@
+from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class Club(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    path_image = models.ImageField(upload_to='clubs/', null=True, blank=True)
+
+class Area(models.Model):
+    name = models.CharField(max_length=100)
+    polygon = gis_models.PolygonField(srid=4326)
 
     def __str__(self):
         return self.name
+
+
+class Club(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    path_image = models.ImageField(upload_to='clubs/', null=True, blank=True)
+    area = models.OneToOneField(
+        Area,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="club"
+    )
+
+    def __str__(self):
+        return self.name
+
 
 
 class ClubRelation(models.Model):
@@ -66,6 +84,8 @@ class Ticket(models.Model):
     club_a = models.ForeignKey(Club, on_delete=models.CASCADE, related_name="tickets_a")
     club_b = models.ForeignKey(Club, on_delete=models.CASCADE, related_name="tickets_b")
     relation = models.CharField(max_length=20, choices=RELATION_TYPES)
+
+    description = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
