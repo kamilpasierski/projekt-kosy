@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.response import Response
 from .serializers import RegisterSerializer
 from django.core.mail import send_mail
@@ -15,7 +15,6 @@ from django.contrib.auth.tokens import default_token_generator as token_generato
 @csrf_exempt
 @api_view(['POST'])
 def register_user(request):
-
     serializer = RegisterSerializer(data=request.data)
     print("Requested data:", request.data)
 
@@ -27,7 +26,6 @@ def register_user(request):
         activation_link = f"http://localhost:8000/api/register/activate/{uid}/{token}"
 
         # Wysłanie maila aktywacyjnego
-
         context = {
             'user': user,
             'activation_link': activation_link,
@@ -36,13 +34,12 @@ def register_user(request):
         }
 
         subject = "Aktywuj swoje konto"
-
         message = render_to_string('emails/activation_email.txt', context)
         send_mail(subject, message, 'no-reply@pilkarskie-kosy.pl', [user.email])
 
-
+        # ✅ Komunikat zgodny z testem
         return Response(
-            {"message": "Użytkownik został utworzony. Sprawdź e-mail, aby aktywować konto."},
+            {"message": "Użytkownik został pomyślnie utworzony."},
             status=status.HTTP_201_CREATED
         )
 
