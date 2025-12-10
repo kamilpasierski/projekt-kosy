@@ -34,8 +34,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'corsheaders',
-
-    # REST
+    'models',
     'rest_framework',
 ]
 
