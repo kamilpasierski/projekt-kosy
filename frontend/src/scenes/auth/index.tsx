@@ -4,7 +4,7 @@ import axios, {isAxiosError} from 'axios';
 import ActionButton from '../../shared/ActionButton';
 import Logo from "@/assets/Logo.png";
 import Start_1 from "@/assets/Start_1.png";
-import {useAuth} from "../../hooks/useAurh.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 import {GoogleLogin, type CredentialResponse} from "@react-oauth/google";
 
 interface DjangoErrorResponse {
