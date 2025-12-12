@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import { Outlet } from 'react-router-dom';
-import Navbar from "../scenes/navbar";
+import Navbar from "../components/navbar";
 
 const MainLayout = () => {
     useEffect(() => {
