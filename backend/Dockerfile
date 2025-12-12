@@ -8,6 +8,11 @@ ENV PYTHONUNBUFFERED 1
 # Ustaw katalog roboczy
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    default-libmysqlclient-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 # Skopiuj i zainstaluj zależności
 # Kopiujemy ten plik jako pierwszy, aby Docker mógł go przechować w cache
 COPY requirements.txt .

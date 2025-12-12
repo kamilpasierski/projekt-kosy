@@ -1,4 +1,3 @@
-from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -7,7 +6,7 @@ User = get_user_model()
 
 class Area(models.Model):
     name = models.CharField(max_length=100)
-    polygon = gis_models.PolygonField(srid=4326)
+    polygon = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return self.name
