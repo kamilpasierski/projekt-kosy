@@ -18,7 +18,6 @@ __pycache__/
 *.pyc
 backend/db_storage/db.sqlite3
 .env
-.env.*
 !backend/.env.example
 media/
 backend/media/
