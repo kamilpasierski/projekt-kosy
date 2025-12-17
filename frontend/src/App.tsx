@@ -7,6 +7,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import {AuthProvider} from "./context/AuthContext.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import ResetPasswordConfirm from "./scenes/reset_password";
+import AdminPanel from "./scenes/adminpanel";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                     <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/mapa" element={<MapScene />} />
+                        <Route path="/adminpanel" element={<AdminPanel />} />
                     </Route>
 
                     <Route path="/reset-password/:uid/:token" element={<ResetPasswordConfirm />} />
