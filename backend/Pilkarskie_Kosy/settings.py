@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+ENV_PATH = BASE_DIR.parent / ".env"
+load_dotenv(ENV_PATH)
 
 SECRET_KEY = 'django-insecure-^r!)8uwwex!f(@zombrl#b8eq4l8m2idjxd4tutkq_ggn+x6uw'
 
@@ -76,11 +77,20 @@ WSGI_APPLICATION = 'Pilkarskie_Kosy.wsgi.application'
 
 
 DATABASES = {
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db_storage' / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'"
+        }
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
