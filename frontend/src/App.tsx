@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from "./scenes/home";
 import AuthScene from "./scenes/auth";
 import MapScene from "./scenes/map";
+import ClubPage from "./scenes/club";
 import 'leaflet/dist/leaflet.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import {AuthProvider} from "./context/AuthContext.tsx";
@@ -21,6 +22,7 @@ function App() {
                     <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/mapa" element={<MapScene />} />
+                    <Route path="/club" element={<ClubPage />} />
                         <Route path="/adminpanel" element={<AdminPanel />} />
                     </Route>
 

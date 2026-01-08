@@ -1,18 +1,21 @@
 import Stats from '../../components/admin/Stats';
 import PendingSubmissionsTable from "../../components/admin/PendingSubmissionsTable.tsx";
 import RelationEditor from "../../components/admin/RelationEditor.tsx";
+import MaxBeefs from '../../components/admin/MaxBeefs.tsx';
+import Logs from '../../components/admin/Logs.tsx';
 const AdminPanel = () => {
     return (
         <div>
         <div className="flex-col justify-center items-center">
-            <h2>PANEL ADMINISTRATORA</h2>
-        <Stats />
+            <Stats />
         </div>
         <div>
-            <h2>OCZEKUJĄCE ZGŁOSZENIA UŻYTKOWNIKÓW</h2>
+            <MaxBeefs />
+        </div>
+        <div>
             <PendingSubmissionsTable />
-            <h2>EDYTOR RELACJI</h2>
             <RelationEditor />
+            <Logs />
         </div>
         </div>
     )

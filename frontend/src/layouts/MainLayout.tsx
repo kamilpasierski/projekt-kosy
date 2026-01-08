@@ -1,6 +1,7 @@
 import {useEffect} from "react";
 import { Outlet } from 'react-router-dom';
 import Navbar from "../components/navbar";
+import Footer from "../components/footer";
 
 const MainLayout = () => {
     useEffect(() => {
@@ -26,6 +27,7 @@ const MainLayout = () => {
             <main className="flex-1 w-full px-4 md:px-8 xl:px-[45px]">
                 <Outlet />
             </main>
+            <Footer />
         </>
     );
 };

@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import Baner from "@/assets/Baner.png";
-import MatchesTable from "../../components/MatchesTable.tsx";
+import MatchesTable from "../../shared/MatchesTable";
+import ActionButton from "../../shared/ActionButton";
+import PopularClubs from "../../components/PopularClubs";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -53,6 +55,45 @@ const Home = () => {
 
                 </div>
             </div>
+
+            {/* --- SPRAWDŹ RELACJE --- */}
+            <div className="w-full max-w-[1175px] mx-auto mt-20 mb-12 px-4 md:px-0">
+                <h2 className="mb-8 font-['Montserrat'] text-[20px] font-medium uppercase leading-[1.3] text-white">
+                    Sprawdź relacje, zgody i kosy.
+                </h2>
+
+                <div className="flex flex-col md:flex-row gap-6">
+                    {/* Nazwa klubu button */}
+                    <button className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#404040] transition-colors flex-1">
+                        <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <span>Nazwa klubu</span>
+                    </button>
+
+                    {/* Lokalizacja button */}
+                    <button className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#404040] transition-colors flex-1">
+                        <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Lokalizacja</span>
+                    </button>
+
+                    {/* Typ relacji button */}
+                    <button className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#404040] transition-colors flex-1">
+                        <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 8v8"></path>
+                        </svg>
+                        <span>Typ relacji</span>
+                    </button>
+                </div>
+            </div>
+
+            <PopularClubs />
+
             <MatchesTable />
         </div>
     )
