@@ -12,6 +12,8 @@ urlpatterns = [
     path('google/register/', include('google_register.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/ticketcreate/', include('api_ticket_create.urls')),
+    path("clubs/autocomplete/", include("api_autocomplete_clubs")),
     path('api_login/', include('api_login.urls')),
     path("password-reset/", include('reset_password.urls')),
 
