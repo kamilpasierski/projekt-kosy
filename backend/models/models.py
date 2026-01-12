@@ -14,7 +14,11 @@ class Area(models.Model):
 
 class Club(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    city = models.CharField(max_length=30)
+    points = models.IntegerField(default=0)
+    desc = models.TextField()
     path_image = models.ImageField(upload_to='clubs/', null=True, blank=True)
+
     area = models.OneToOneField(
         Area,
         on_delete=models.SET_NULL,
@@ -71,6 +75,10 @@ class FavoriteClub(models.Model):
     def __str__(self):
         return f"{self.user.username} ❤️ {self.club.name}"
 
+class Status(models.TextChoices):
+    APPROVED = 'APPROVED', 'Approved'
+    PENDING = 'PENDING', 'Pending'
+    REJECTED = 'REJECTED', 'Rejected'
 
 class Ticket(models.Model):
     RELATION_TYPES = [
@@ -84,9 +92,17 @@ class Ticket(models.Model):
     club_b = models.ForeignKey(Club, on_delete=models.CASCADE, related_name="tickets_b")
     relation = models.CharField(max_length=20, choices=RELATION_TYPES)
 
+    status = models.CharField(
+        max_length=8,
+        choices=Status.choices,
+        default=Status.PENDING
+    )
+
     description = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+
 
     class Meta:
         constraints = [
