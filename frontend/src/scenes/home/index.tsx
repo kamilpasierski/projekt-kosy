@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import Baner from "@/assets/Baner.png";
 import MatchesTable from "../../shared/MatchesTable";
-import ActionButton from "../../shared/ActionButton";
 import PopularClubs from "../../components/PopularClubs";
+import ClubSearch from "../../components/ClubSearch";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -63,15 +63,8 @@ const Home = () => {
                 </h2>
 
                 <div className="flex flex-col md:flex-row gap-6">
-                    {/* Nazwa klubu button */}
-                    <button className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#404040] transition-colors flex-1">
-                        <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        <span>Nazwa klubu</span>
-                    </button>
-
+                    {/* Nazwa klubu form */}
+                        <ClubSearch />
                     {/* Lokalizacja button */}
                     <button className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#404040] transition-colors flex-1">
                         <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
