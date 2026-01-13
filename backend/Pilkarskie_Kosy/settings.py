@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'models',
     'rest_framework',
     'api_clubs_popular',
+    'api_stats',
 ]
 
 MIDDLEWARE = [

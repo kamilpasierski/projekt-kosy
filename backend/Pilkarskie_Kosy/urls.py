@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/clubs/popular/', include('api_clubs_popular.urls')),
     path('api_login/', include('api_login.urls')),
     path("password-reset/", include('reset_password.urls')),
+    path('api/stats/', include('api_stats.urls')),
 
 ]
 
