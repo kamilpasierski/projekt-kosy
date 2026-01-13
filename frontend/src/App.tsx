@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from "./scenes/home";
 import AuthScene from "./scenes/auth";
 import MapScene from "./scenes/map";
@@ -28,6 +28,7 @@ function App() {
 
                     <Route path="/reset-password/:uid/:token" element={<ResetPasswordConfirm />} />
                     <Route path="/auth" element={<AuthScene />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
 
                 </AuthProvider>
