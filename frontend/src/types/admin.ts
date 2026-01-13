@@ -3,6 +3,13 @@ export interface Club {
     name: string;
 }
 
+export interface User {
+    id: number;
+    username: string;
+    email: string;
+    is_staff: boolean;
+}
+
 export type RelationType = 'KOSA' | 'ZGODA' | 'NEUTRALNIE';
 
 export interface RelationEditorState {

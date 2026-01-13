@@ -1,21 +1,44 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/useAuth.ts";
-import { BellIcon, UserIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import { BellIcon, UserIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import Logo from "@/assets/Logo.png";
 import ActionButton from "../../shared/ActionButton.tsx";
+import { type User } from '../../types/admin.ts';
+import axios from 'axios';
 
 const NavbarRigid = () => {
     const navigate = useNavigate();
     const { isLoggedIn, logout } = useAuth();
     const isLoggedOut = !isLoggedIn;
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    
     const handleLogout = () => {
         logout();
         setIsDropdownOpen(false);
+        setUser(null);
         navigate('/');
     }
+
+    // Fetch user data when logged in
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (isLoggedIn) {
+                try {
+                    const response = await axios.get<User>('http://127.0.0.1:8000/api/users/me/');
+                    setUser(response.data);
+                } catch (error) {
+                    console.error('Failed to fetch user data:', error);
+                }
+            } else {
+                setUser(null);
+            }
+        };
+        
+        fetchUserData();
+    }, [isLoggedIn]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -97,6 +120,17 @@ const NavbarRigid = () => {
                 ) : (
                     // WIDOK DLA ZALOGOWANEGO
                     <div className="flex items-center gap-4">
+
+                        {/* --- PANEL ADMINA (TYLKO DLA PRACOWNIKÓW) --- */}
+                        {user?.is_staff && (
+                            <Link
+                                to="/adminpanel"
+                                className={iconContainerStyles}
+                                aria-label="Panel Administratora"
+                            >
+                                <Cog6ToothIcon className="w-6 h-6" />
+                            </Link>
+                        )}
                         {/* --- IKONA POWIADOMIEŃ --- */}
                         <button className={iconContainerStyles} aria-label="Powiadomienia">
                             <BellIcon className="w-6 h-6" />

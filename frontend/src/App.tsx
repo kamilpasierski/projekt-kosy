@@ -9,6 +9,7 @@ import {AuthProvider} from "./context/AuthContext.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import ResetPasswordConfirm from "./scenes/reset_password";
 import AdminPanel from "./scenes/adminpanel";
+import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 
 
 function App() {
@@ -23,7 +24,11 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/mapa" element={<MapScene />} />
                     <Route path="/club/:id" element={<ClubPage />} />
-                        <Route path="/adminpanel" element={<AdminPanel />} />
+                        <Route path="/adminpanel" element={
+                            <ProtectedRoute requireAdmin={true}>
+                                <AdminPanel />
+                            </ProtectedRoute>
+                        } />
                     </Route>
 
                     <Route path="/reset-password/:uid/:token" element={<ResetPasswordConfirm />} />
