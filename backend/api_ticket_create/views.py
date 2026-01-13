@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from django.db import IntegrityError
 
-from ..models.models import Ticket
+from models.models import Ticket
 from .serializers import TicketCreateSerializer
 
 class TicketCreate(CreateAPIView):

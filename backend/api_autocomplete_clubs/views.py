@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from ..models.models import Club
+from models.models import Club
 
 class ClubAutocomplete(APIView):
     def get(self, request):

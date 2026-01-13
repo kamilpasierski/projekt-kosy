@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models.models import Ticket, Club
+from models.models import Ticket, Club
 
 class TicketCreateSerializer(serializers.ModelSerializer):
     club_a = serializers.SlugRelatedField(

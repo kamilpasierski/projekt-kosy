@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'models',
     'rest_framework',
+    'api_clubs_popular',
 ]
 
 MIDDLEWARE = [
@@ -123,6 +124,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
