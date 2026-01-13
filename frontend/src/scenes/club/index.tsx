@@ -4,6 +4,7 @@ import Baner from "../../components/club/Baner";
 import Description from "../../components/club/Description";
 import Relations, { type RelatedClub } from "../../components/club/Relations";
 import Incidents from "../../components/club/Incidents"; // Zakładam, że Incidents zostaje mockiem na razie
+import MatchesTable from '../../shared/MatchesTable';
 
 // Typ danych z API
 interface ClubDetailData {
@@ -64,10 +65,8 @@ export default function ClubPage() {
         neutralClubs={clubData.neutralne}
       />
       
-      {/* Incidents na razie zostawiamy jako mock, chyba że też chcesz podpiąć */}
       <Incidents /> 
-      
-      {/* MatchesTable również... */}
-    </div>
+      <MatchesTable />
+      </div>
   );
 }
