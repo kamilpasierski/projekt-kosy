@@ -1,18 +1,16 @@
 interface BanerProps {
   clubName?: string;
-  backgroundImage?: string;
-  logoImage?: string;
+  logoImage?: string; // To będzie URL z backendu
   onFollow?: () => void;
 }
 
-const imgRectangle5 = "https://www.figma.com/api/mcp/asset/4635981e-9204-4e01-a31a-275c4a553635";
-const imgImage5 = "https://www.figma.com/api/mcp/asset/c4c47f2e-2299-41bf-81fb-de00440554e3";
-const imgEllipse8 = "https://www.figma.com/api/mcp/asset/7f6cb56c-53e9-4212-a18f-2fbe92c1e4a6";
+// Placeholder tła - backend na razie nie zwraca bannera, więc zostawiamy statyczny
+const defaultBg = "https://www.figma.com/api/mcp/asset/4635981e-9204-4e01-a31a-275c4a553635";
+const defaultCircle = "https://www.figma.com/api/mcp/asset/7f6cb56c-53e9-4212-a18f-2fbe92c1e4a6";
 
 export default function Baner({ 
-  clubName = "LEGIA WARSZAWA",
-  backgroundImage = imgRectangle5,
-  logoImage = imgImage5,
+  clubName,
+  logoImage,
   onFollow 
 }: BanerProps) {
   return (
@@ -20,33 +18,31 @@ export default function Baner({
       {/* Background Image */}
       <div className="absolute left-0 top-0 h-[672px] w-full rounded-bl-[40px] rounded-br-[40px]">
         <img 
-          alt="" 
+          alt="background" 
           className="h-full w-full rounded-bl-[40px] rounded-br-[40px] object-cover pointer-events-none" 
-          src={backgroundImage} 
+          src={defaultBg} 
         />
       </div>
 
-      {/* Club Logo Background Circle */}
+      {/* Circle Background */}
       <div className="absolute left-1/2 top-[166px] h-[260px] w-[260px] -translate-x-1/2">
-        <img 
-          alt="" 
-          className="h-full w-full" 
-          src={imgEllipse8} 
-        />
+         <img src={defaultCircle} alt="" className="h-full w-full" />
       </div>
 
-      {/* Club Logo */}
+      {/* Club Logo - Dynamiczne */}
       <div className="absolute left-1/2 top-[209px] aspect-[609/768] w-[151px] -translate-x-1/2">
-        <img 
-          alt="" 
-          className="h-full w-full object-cover pointer-events-none" 
-          src={logoImage} 
-        />
+        {logoImage && (
+            <img 
+            alt={clubName} 
+            className="h-full w-full object-contain pointer-events-none" 
+            src={logoImage} 
+            />
+        )}
       </div>
 
       {/* Club Name */}
-      <p className="absolute left-1/2 top-[448px] w-[550px] -translate-x-1/2 text-center font-['Montserrat'] text-[48px] font-bold leading-[1.43] tracking-[4.8px] text-white whitespace-pre-wrap">
-        {clubName}
+      <p className="absolute left-1/2 top-[448px] w-[550px] -translate-x-1/2 text-center font-['Montserrat'] text-[48px] font-bold leading-[1.43] tracking-[4.8px] text-white uppercase whitespace-pre-wrap">
+        {clubName || "Ładowanie..."}
       </p>
 
       {/* Follow Button */}

@@ -22,7 +22,7 @@ function App() {
                     <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/mapa" element={<MapScene />} />
-                    <Route path="/club" element={<ClubPage />} />
+                    <Route path="/club/:id" element={<ClubPage />} />
                         <Route path="/adminpanel" element={<AdminPanel />} />
                     </Route>
 
