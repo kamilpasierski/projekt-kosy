@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from "../../hooks/useAuth.ts"; // Hook pozostaje bez zmian
-import { BellIcon, UserIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { useAuth } from "../../hooks/useAuth.ts";
+import { BellIcon, UserIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import Logo from "@/assets/Logo.png";
 import ActionButton from "../../shared/ActionButton.tsx";
+import { useRelationEditor } from '../../context/RelationEditorContext.tsx';
 
 const NavbarRigid = () => {
     const navigate = useNavigate();
     
-    // TERAZ BIERZEMY USERA Z CONTEXTU
     const { isLoggedIn, logout, user } = useAuth(); 
     
     const isLoggedOut = !isLoggedIn;
@@ -21,7 +21,8 @@ const NavbarRigid = () => {
         navigate('/');
     };
 
-    // USUNĄŁEM CAŁY BLOK useEffect Z AXIOS - JUŻ NIEPOTRZEBNY
+    const { openEditor } = useRelationEditor();
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -97,6 +98,14 @@ const NavbarRigid = () => {
                                     >
                                         <UserIcon className="w-4 h-4" />
                                         Mój profil
+                                    </button>
+                                    <button
+                                        onClick={() => openEditor()}    
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
+ 
+                                    >
+                                        <InformationCircleIcon className="w-4 h-4" />
+                                        Zgłoś zmianę
                                     </button>
                                     <button
                                         onClick={handleLogout}
