@@ -12,4 +12,4 @@ class ClubAutocomplete(APIView):
             .order_by("name")[:10]
         )
 
-        return Response([club.name for club in clubs])
+        return Response([{"id": club.id, "name": club.name} for club in clubs])

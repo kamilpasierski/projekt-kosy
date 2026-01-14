@@ -65,23 +65,6 @@ const Home = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                     {/* Nazwa klubu form */}
                         <ClubSearch />
-                    {/* Lokalizacja button */}
-                    <button className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#404040] transition-colors flex-1">
-                        <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <span>Lokalizacja</span>
-                    </button>
-
-                    {/* Typ relacji button */}
-                    <button className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#404040] transition-colors flex-1">
-                        <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 8v8"></path>
-                        </svg>
-                        <span>Typ relacji</span>
-                    </button>
                 </div>
             </div>
 

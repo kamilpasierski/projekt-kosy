@@ -1,11 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+interface Club {
+    id: number;
+    name: string;
+}
 
 export default function ClubSearch() {
     const [query, setQuery] = useState('');
-    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [suggestions, setSuggestions] = useState<Club[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
 
     const API_URL = 'http://127.0.0.1:8000';
 
@@ -13,7 +20,7 @@ export default function ClubSearch() {
         const delayDebounceFn = setTimeout(async () => {
             if (query.length >= 2) {
                 try {
-                    const response = await axios.get<string[]>(`${API_URL}/clubs/autocomplete/?q=${query}`);
+                    const response = await axios.get<Club[]>(`${API_URL}/clubs/autocomplete/?q=${query}`);
                     setSuggestions(response.data);
                     setIsOpen(true);
                 } catch (error) {
@@ -39,11 +46,11 @@ export default function ClubSearch() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleSelect = (clubName: string) => {
-        setQuery(clubName);
+    const handleSelect = (club: Club) => {
+        setQuery(club.name);
         setIsOpen(false);
-        console.log("Wybrano:", clubName);
-        // Tu później dodam: navigate(`/club/${id}`)
+        console.log("Wybrano:", club.name);
+        navigate(`/club/${club.id}`);
     };
 
     return (
@@ -72,13 +79,13 @@ export default function ClubSearch() {
             {isOpen && suggestions.length > 0 && (
                 <div className="absolute left-0 top-[65px] z-50 w-full overflow-hidden rounded-[20px] border border-[#444] bg-[#2a2a2a] shadow-xl">
                     <ul className="max-h-[200px] overflow-y-auto py-2">
-                        {suggestions.map((club, index) => (
+                        {suggestions.map((club) => (
                             <li 
-                                key={index}
+                                key={club.id}
                                 onClick={() => handleSelect(club)}
                                 className="cursor-pointer px-6 py-3 font-['Montserrat'] text-[14px] text-white hover:bg-[#343434] transition-colors"
                             >
-                                {club}
+                                {club.name}
                             </li>
                         ))}
                     </ul>
