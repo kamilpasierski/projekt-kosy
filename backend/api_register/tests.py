@@ -1,13 +1,13 @@
 from django.test import TestCase
-from rest_framework.exceptions import ValidationError
-from .serializers import RegisterSerializer
 from rest_framework.test import APITestCase
-from django.urls import reverse
 from rest_framework import status
 from django.contrib.auth.models import User
-
+from django.urls import reverse
+from rest_framework.exceptions import ValidationError
+from .serializers import RegisterSerializer
 
 class RegisterSerializerTest(TestCase):
+    """Szczegółowe testy walidacji hasła (Unit Tests)"""
 
     def test_passwords_not_matching(self):
         data = {
@@ -72,9 +72,14 @@ class RegisterSerializerTest(TestCase):
 
 
 class RegisterAPITest(APITestCase):
+    """Testy Integracyjne API"""
 
     def setUp(self):
-        self.url = reverse('register_post')
+        
+        try:
+            self.url = reverse('register_post')
+        except:
+            self.url = '/api/register/'
 
     def test_successful_registration(self):
         data = {
@@ -97,7 +102,7 @@ class RegisterAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Hasło musi składać się przynajmniej z 8 znaków", str(response.data))
 
-    def test_passwords_not_matching(self):
+    def test_passwords_not_matching_via_api(self):
         data = {
             "username": "testuser",
             "password": "Test123!",
@@ -106,3 +111,30 @@ class RegisterAPITest(APITestCase):
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Hasła nie są takie same.", str(response.data))
+
+
+class EmailRegistrationTests(APITestCase):
+    """Testy konfliktów email"""
+
+    def setUp(self):
+        self.google_email = "test@example.com"
+        User.objects.create(
+            username="google_user",
+            email=self.google_email,
+            password="dummyPassword123!"
+        )
+        try:
+            self.url = reverse("register_post")
+        except:
+            self.url = '/api/register/'
+
+    def test_email_registration_fails_if_user_exists_from_google(self):
+        payload = {
+            "username": "newuser2",
+            "email": self.google_email,
+            "password": "SomePassword123!",
+            "re_password": "SomePassword123!"
+        }
+        response = self.client.post(self.url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("email", str(response.data))
