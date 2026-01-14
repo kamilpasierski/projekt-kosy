@@ -99,10 +99,7 @@ class Ticket(models.Model):
     )
 
     description = models.TextField(blank=True, null=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
-
-
 
     class Meta:
         constraints = [
@@ -119,17 +116,8 @@ class Ticket(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        # Wymuszamy kolejność klubów
         if self.club_a.id > self.club_b.id:
-            self.club_a, self.club_b = self.club_b, self.club_a
-
-        # Pobieramy istniejącą relację klubów
-        try:
-            relation_obj = ClubRelation.objects.get(club_a=self.club_a, club_b=self.club_b)
-            self.relation = relation_obj.relation_type
-        except ClubRelation.DoesNotExist:
-            raise ValueError("Brak zdefiniowanej relacji pomiędzy tymi klubami!")
-
+            self.club_a, self.club_b = self.club_b, self.club_a       
         super().save(*args, **kwargs)
 
     def __str__(self):
