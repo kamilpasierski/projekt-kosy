@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/ticketcreate/', include('api_ticket_create.urls')),
     path("clubs/autocomplete/", include("api_autocomplete_clubs.urls")),
     path('api/clubs/popular/', include('api_clubs_popular.urls')),
+    path('api/clubs/all/', include('api_clubs_all.urls')),
     path('api_login/', include('api_login.urls')),
     path("password-reset/", include('reset_password.urls')),
     path('api/stats/', include('api_stats.urls')),
