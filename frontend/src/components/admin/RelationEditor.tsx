@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { Club, RelationEditorState, RelationType } from "../../types/admin";
+import axios from 'axios';
+import { relationsApi, type Club } from '../../api/relations';
 
-// MOCK DATA (tymczasowo w pliku, docelowo z API)
-const MOCK_CLUBS: Club[] = [
-    { id: 1, name: "Wisła Kraków" },
-    { id: 2, name: "Cracovia" },
-    { id: 3, name: "Lech Poznań" },
+type RelationType = 'kosa' | 'zgoda' | 'neutralnie';
+
+interface RelationOption {
+    type: RelationType;
+    label: string;
+    color: string;
+}
+
+const RELATION_OPTIONS: RelationOption[] = [
+    { type: 'kosa', label: 'KOSA', color: 'bg-red-700' },
+    { type: 'zgoda', label: 'ZGODA', color: 'bg-green-600' },
+    { type: 'neutralnie', label: 'NEUTRALNIE', color: 'bg-yellow-400' },
 ];
 
-const RELATION_OPTIONS: { type: RelationType, color: string }[] = [
-    { type: 'KOSA', color: 'bg-red-700' },
-    { type: 'ZGODA', color: 'bg-green-600' },
-    { type: 'NEUTRALNIE', color: 'bg-yellow-400' },
-];
-
-// 1. Definicja interfejsu dla trybu Hybrydowego
 interface RelationEditorProps {
-    relationId?: number | null; // Opcjonalne: jeśli podane, nadpisuje URL
-    onSuccess?: () => void;     // Callback dla Modala
-    onCancel?: () => void;      // Callback dla Modala
+    relationId?: number | null;
+    onSuccess?: () => void;
+    onCancel?: () => void;
 }
 
 const RelationEditor: React.FC<RelationEditorProps> = ({ 
@@ -27,94 +28,130 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     onSuccess, 
     onCancel 
 }) => {
-    // Hooki routera
     const { id: urlId } = useParams();
     const navigate = useNavigate();
 
-    // 2. Logika unifikacji ID (Priorytet: Props > URL)
-    // Jeśli propId jest undefined, sprawdzamy URL. Jeśli jest null, to znaczy "tryb tworzenia w modalu".
+    // Logika ID
     const effectiveId = propId !== undefined ? propId : (urlId ? Number(urlId) : null);
     const isEditMode = effectiveId !== null;
 
-    const [state, setState] = useState<RelationEditorState>({
-        clubA: null,
-        clubB: null,
-        relationType: null,
-        description: '',
-    });
+    // --- NOWY STAN (Logika API) ---
+    const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // 3. Symulacja pobierania danych (Fetch) w trybie edycji
+    // Stan formularza
+    const [selectedClubA, setSelectedClubA] = useState<string>('');
+    const [selectedClubB, setSelectedClubB] = useState<string>('');
+    const [relationType, setRelationType] = useState<RelationType | null>(null);
+    const [description, setDescription] = useState('');
+
+    // --- POBIERANIE DANYCH (API) ---
     useEffect(() => {
-        if (isEditMode && effectiveId) {
-            console.log(`[Mock Fetch] Pobieranie danych dla relacji ID: ${effectiveId}`);
-            // TUTAJ: call do API GET /api/relations/{id}/
-            
-            // Mockowe wypełnienie formularza dla testu
-            // setState({
-            //     clubA: MOCK_CLUBS[0],
-            //     clubB: MOCK_CLUBS[1],
-            //     relationType: 'KOSA',
-            //     description: 'Przykładowa edytowana relacja'
-            // });
-        }
-    }, [effectiveId, isEditMode]);
+        const fetchClubs = async () => {
+            try {
+                const data = await relationsApi.getAllClubs();
+                setAvailableClubs(data);
+            } catch (err) {
+                console.error(err);
+                setErrorMessage("Nie udało się pobrać listy klubów.");
+            }
+        };
+        fetchClubs();
+    }, []);
 
-    const handleClubChange = (field: 'clubA' | 'clubB', clubId: string) => {
-        const club = MOCK_CLUBS.find(c => c.id === parseInt(clubId));
-        setState(prev => ({ ...prev, [field]: club || null }));
-    };
-
+    // --- OBSŁUGA ZAPISU (INTEGRACJA Z DJANGO) ---
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        // Logika zapisu (API call)
-        console.log("Submitting relation payload:", { ...state, id: effectiveId });
-        
-        // 4. Warunkowa obsługa sukcesu
-        if (onSuccess) {
-            onSuccess(); // Zamknij modal
-        } else {
-            alert('Zapisano! Przekierowanie...');
-            navigate('/admin/relations'); // Wróć do listy (tryb strony)
+        setErrorMessage(null);
+        setIsLoading(true);
+
+        const clubAObj = availableClubs.find(c => c.id.toString() === selectedClubA);
+        const clubBObj = availableClubs.find(c => c.id.toString() === selectedClubB);
+
+        if (!clubAObj || !clubBObj || !relationType) {
+            setErrorMessage("Uzupełnij wszystkie wymagane pola.");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            await relationsApi.createTicket({
+                club_a: clubAObj.name, 
+                club_b: clubBObj.name,
+                relation: relationType,
+                description: description
+            });
+
+            // Sukces
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                alert('Ticket został utworzony pomyślnie!');
+                navigate('/admin/relations');
+            }
+        } catch (error) {
+            // Obsługa błędów Django
+            if (axios.isAxiosError(error) && error.response) {
+                const data = error.response.data;
+                if (data.non_field_errors) {
+                    setErrorMessage(data.non_field_errors.join(' '));
+                } else if (Array.isArray(data)) {
+                    setErrorMessage(data.join(' '));
+                } else {
+                    setErrorMessage("Wystąpił błąd walidacji danych.");
+                }
+            } else {
+                setErrorMessage("Błąd połączenia z serwerem.");
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleCancel = () => {
-        // 5. Warunkowa obsługa anulowania
-        if (onCancel) {
-            onCancel();
-        } else {
-            navigate(-1); // Wstecz w historii przeglądarki
-        }
+        if (onCancel) onCancel();
+        else navigate(-1);
     };
 
+    // --- RENDEROWANIE ---
     return (
         <form
             onSubmit={handleSubmit}
-            // Usunięto 'mt-8' i 'mx-auto' dla lepszej responsywności w modalu
-            className="w-full p-6 md:p-8 rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700"
+            className="w-full p-6 md:p-8 rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 relative"
         >
+             {/* Overlay Loading (jeśli trwa zapis) */}
+             {isLoading && (
+                <div className="absolute inset-0 bg-black/50 rounded-[30px] z-50 flex items-center justify-center">
+                    <div className="text-white font-bold animate-pulse">Przetwarzanie...</div>
+                </div>
+            )}
+
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-white text-xl font-semibold">
                     {isEditMode ? `EDYCJA RELACJI #${effectiveId}` : 'NOWA RELACJA'}
                 </h2>
-                {/* Opcjonalny przycisk zamknięcia "X" w prawym rogu, 
-                    jeśli nie jest obsługiwany przez wrapper Modala */}
             </div>
 
-            {/* 1. SELEKTORY KLUBÓW */}
+            {errorMessage && (
+                <div className="mb-6 p-4 bg-red-900/40 border border-red-500 rounded-[20px] text-red-100 text-sm">
+                    {errorMessage}
+                </div>
+            )}
+
+            {/* SELEKTORY KLUBÓW */}
             <div className="mb-8">
                 <label className="text-white text-base font-medium mb-3 block">Wybierz kluby</label>
                 <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
                     {/* Klub A */}
                     <div className="flex-1 w-full">
                         <select
-                            value={state.clubA?.id?.toString() || ''}
-                            onChange={(e) => handleClubChange('clubA', e.target.value)}
+                            value={selectedClubA}
+                            onChange={(e) => setSelectedClubA(e.target.value)}
                             className="w-full h-12 px-4 text-gray-200 text-base rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[16px] border-transparent"
                         >
                             <option value="" disabled>Klub A</option>
-                            {MOCK_CLUBS.map(club => (
+                            {availableClubs.map(club => (
                                 <option key={club.id} value={club.id}>{club.name}</option>
                             ))}
                         </select>
@@ -125,12 +162,12 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                     {/* Klub B */}
                     <div className="flex-1 w-full">
                         <select
-                            value={state.clubB?.id?.toString() || ''}
-                            onChange={(e) => handleClubChange('clubB', e.target.value)}
+                            value={selectedClubB}
+                            onChange={(e) => setSelectedClubB(e.target.value)}
                             className="w-full h-12 px-4 text-gray-200 text-base rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[16px] border-transparent"
                         >
                             <option value="" disabled>Klub B</option>
-                            {MOCK_CLUBS.map(club => (
+                            {availableClubs.map(club => (
                                 <option key={club.id} value={club.id}>{club.name}</option>
                             ))}
                         </select>
@@ -138,57 +175,59 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                 </div>
             </div>
 
-            {/* 2. TYP RELACJI */}
+            {/* TYP RELACJI */}
             <div className="mb-8">
                 <label className="text-white text-base font-medium mb-3 block">Typ relacji</label>
                 <div className="flex flex-wrap gap-3">
                     {RELATION_OPTIONS.map(option => (
-                        <button
-                            key={option.type}
-                            type="button"
-                            onClick={() => setState(prev => ({ ...prev, relationType: option.type }))}
-                            className={`
-                                flex items-center px-4 py-2 rounded-[20px] transition-all duration-200
-                                text-white text-sm font-bold uppercase tracking-wider
-                                ${option.color} 
-                                ${state.relationType === option.type 
-                                    ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-white scale-105' 
-                                    : 'opacity-70 hover:opacity-100'}
-                            `}
-                        >
-                            {option.type}
-                        </button>
-                    ))}
+                    <button
+                        key={option.type}
+                        type="button"
+                        onClick={() => setRelationType(option.type)} 
+                        className={`
+                            flex items-center px-4 py-2 rounded-[20px] transition-all duration-200
+                            text-white text-sm font-bold uppercase tracking-wider
+                            ${option.color} 
+                            ${relationType === option.type 
+                                ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-white scale-105' 
+                                : 'opacity-70 hover:opacity-100'}
+                        `}
+                    >
+                        {/* Wyświetlanie używa 'label' (duże litery: KOSA) */}
+                        {option.label}
+                    </button>
+                ))}
                 </div>
             </div>
 
-            {/* 3. OPIS */}
+            {/* OPIS */}
             <div className="mb-8">
                 <label className="text-white text-base font-medium mb-3 block">Opis</label>
                 <textarea
-                    value={state.description}
-                    onChange={(e) => setState(prev => ({ ...prev, description: e.target.value }))}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     placeholder="Opisz nową relację...."
                     rows={4}
                     className="w-full p-4 text-gray-200 text-base rounded-[20px] bg-gray-700 shadow-inner resize-none focus:ring-2 focus:ring-blue-600 focus:outline-none placeholder-gray-500"
                 ></textarea>
             </div>
 
-            {/* 4. ACTIONS (Zapisz / Anuluj) */}
+            {/* ACTIONS (Zapisz / Anuluj) */}
             <div className="flex gap-4 pt-4 border-t border-gray-700">
                 <button
                     type="button"
                     onClick={handleCancel}
-                    className="flex-1 h-12 bg-transparent border border-gray-600 hover:bg-gray-700 text-gray-300 font-semibold rounded-[25px] transition-colors"
+                    disabled={isLoading}
+                    className="flex-1 h-12 bg-transparent border border-gray-600 hover:bg-gray-700 text-gray-300 font-semibold rounded-[25px] transition-colors disabled:opacity-50"
                 >
                     Anuluj
                 </button>
                 <button
                     type="submit"
-                    disabled={!state.clubA || !state.clubB || !state.relationType}
+                    disabled={!selectedClubA || !selectedClubB || !relationType || isLoading}
                     className="flex-[2] h-12 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-[25px] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isEditMode ? 'Zapisz zmiany' : 'Utwórz relację'}
+                    {isLoading ? 'Zapisywanie...' : (isEditMode ? 'Zapisz zmiany' : 'Utwórz relację')}
                 </button>
             </div>
         </form>

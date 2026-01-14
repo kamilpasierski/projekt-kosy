@@ -10,7 +10,7 @@ export interface User {
     is_staff: boolean;
 }
 
-export type RelationType = 'KOSA' | 'ZGODA' | 'NEUTRALNIE';
+export type RelationType = 'kosa' | 'zgoda' | 'neutralnie';
 
 export interface RelationEditorState {
     clubA: Club | null;
