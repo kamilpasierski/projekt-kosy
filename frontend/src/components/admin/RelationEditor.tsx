@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { relationsApi, type Club } from '../../api/relations';
 
+// --- TYPY I STAŁE ---
 type RelationType = 'kosa' | 'zgoda' | 'neutralnie';
 
 interface RelationOption {
@@ -21,12 +22,16 @@ interface RelationEditorProps {
     relationId?: number | null;
     onSuccess?: () => void;
     onCancel?: () => void;
+    
+    // Czy to tryb administratora (bezpośredni zapis)?
+    isDirectMode?: boolean; 
 }
 
 const RelationEditor: React.FC<RelationEditorProps> = ({ 
     relationId: propId, 
     onSuccess, 
-    onCancel 
+    onCancel,
+    isDirectMode = false 
 }) => {
     const { id: urlId } = useParams();
     const navigate = useNavigate();
@@ -34,19 +39,22 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     const effectiveId = propId !== undefined ? propId : (urlId ? Number(urlId) : null);
     const isEditMode = effectiveId !== null;
 
+    // --- STATE ---
     const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    
     const [isSuccess, setIsSuccess] = useState(false);
+    
+    // NOWY STAN: Liczba automatycznie rozwiązanych zgłoszeń (zwracana przez Backend)
+    const [resolvedCount, setResolvedCount] = useState<number>(0);
 
-    // Stan formularza
+    // Form State
     const [selectedClubA, setSelectedClubA] = useState<string>('');
     const [selectedClubB, setSelectedClubB] = useState<string>('');
     const [relationType, setRelationType] = useState<RelationType | null>(null);
     const [description, setDescription] = useState('');
 
-    // --- POBIERANIE DANYCH ---
+    // --- 1. POBIERANIE DANYCH ---
     useEffect(() => {
         const fetchClubs = async () => {
             try {
@@ -60,7 +68,7 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         fetchClubs();
     }, []);
 
-    // --- OBSŁUGA ZAPISU ---
+    // --- 2. OBSŁUGA ZAPISU ---
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMessage(null);
@@ -75,13 +83,26 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
             return;
         }
 
+        const payload = {
+            club_a: clubAObj.name,
+            club_b: clubBObj.name,
+            relation: relationType,
+            description: description // W trybie Admina to jest "admin_response"
+        };
+
         try {
-            await relationsApi.createTicket({
-                club_a: clubAObj.name,
-                club_b: clubBObj.name,
-                relation: relationType,
-                description: description
-            });
+            if (isDirectMode) {
+                // Tryb Admina: Zapisuje relację i odbiera info o zamkniętych ticketach
+                const response = await relationsApi.updateRelationDirectly(payload);
+                
+                // Backend zwraca np: { status: "success", tickets_resolved: 5, ... }
+                if (response && typeof response.tickets_resolved === 'number') {
+                    setResolvedCount(response.tickets_resolved);
+                }
+            } else {
+                // Tryb Usera: Tworzy ticket
+                await relationsApi.createTicket(payload);
+            }
 
             setIsSuccess(true);
             
@@ -106,9 +127,16 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         }
     };
 
-    const handleCloseSuccess = () => {
-        if (onSuccess) onSuccess();
-        else navigate('/admin/relations');
+   const handleCloseSuccess = () => {
+        setIsSuccess(false);
+
+        setSelectedClubA('');
+        setSelectedClubB('');
+        setRelationType(null);
+        setDescription('');
+        
+        setResolvedCount(0);
+        
     };
 
     const handleCancel = () => {
@@ -116,23 +144,49 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         else navigate(-1);
     };
 
+    // --- TEKSTY DYNAMICZNE ---
+    const titleText = isDirectMode 
+        ? (isEditMode ? `EDYCJA RELACJI #${effectiveId}` : 'ZARZĄDZANIE RELACJĄ')
+        : (isEditMode ? `EDYCJA ZGŁOSZENIA` : 'NOWA RELACJA (ZGŁOSZENIE)');
+        
+    const buttonText = isLoading 
+        ? 'Zapisywanie...' 
+        : (isDirectMode ? 'Zapisz w bazie i zamknij zgłoszenia' : 'Wyślij zgłoszenie');
+
+    const successTitle = isDirectMode ? "Baza zaktualizowana!" : "Ticket utworzony!";
+    
+    // Dynamiczny opis sukcesu
+    let successDesc = "Twoje zgłoszenie relacji zostało wysłane do akceptacji.";
+    if (isDirectMode) {
+        successDesc = "Zmiany zostały wprowadzone bezpośrednio do bazy danych.";
+        if (resolvedCount > 0) {
+            successDesc += ` System automatycznie zamknął ${resolvedCount} oczekujących zgłoszeń dla tej pary klubów.`;
+        }
+    }
+
+    // Placeholder opisu
+    const descPlaceholder = isDirectMode 
+        ? "Wpisz powód zmiany / komentarz dla użytkowników (np. 'Potwierdzone info')..." 
+        : "Opisz nową relację...";
+
+    // --- WIDOK SUKCESU ---
     if (isSuccess) {
         return (
             <div className="w-full p-8 md:p-12 rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 flex flex-col items-center justify-center text-center min-h-[400px]">
-                <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-900/50 animate-bounce">
+                <div className={`w-20 h-20 ${isDirectMode ? 'bg-blue-600 shadow-blue-900/50' : 'bg-green-600 shadow-green-900/50'} rounded-full flex items-center justify-center mb-6 shadow-lg animate-bounce`}>
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Ticket utworzony!</h2>
-                <p className="text-gray-400 mb-8 max-w-sm">
-                    Twoje zgłoszenie relacji zostało wysłane do akceptacji.
+                <h2 className="text-2xl font-bold text-white mb-2">{successTitle}</h2>
+                <p className="text-gray-300 mb-8 max-w-sm leading-relaxed">
+                    {successDesc}
                 </p>
                 <button
                     onClick={handleCloseSuccess}
-                    className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-[25px] transition-all transform hover:scale-105 shadow-lg"
+                    className={`px-8 py-3 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-bold rounded-[25px] transition-all transform hover:scale-105 shadow-lg`}
                 >
-                    OK, rozumiem
+                    OK
                 </button>
             </div>
         );
@@ -142,7 +196,7 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     return (
         <form
             onSubmit={handleSubmit}
-            className="w-full p-6 md:p-8 rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 relative"
+            className={`w-full p-6 md:p-8 rounded-[30px] shadow-xl bg-color-basic-dark border ${isDirectMode ? 'border-blue-500/50' : 'border-gray-700'} relative`}
         >
              {isLoading && (
                 <div className="absolute inset-0 bg-black/50 rounded-[30px] z-50 flex items-center justify-center">
@@ -150,15 +204,21 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                 </div>
             )}
 
+            {/* Nagłówek */}
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-white text-xl font-semibold">
-                    {isEditMode ? `EDYCJA RELACJI #${effectiveId}` : 'NOWA RELACJA'}
+                <h2 className={`text-xl font-semibold ${isDirectMode ? 'text-blue-400' : 'text-white'}`}>
+                    {titleText}
                 </h2>
+                {isDirectMode && (
+                    <span className="px-3 py-1 bg-blue-900/50 text-blue-200 text-xs font-bold rounded-full border border-blue-500/30">
+                        TRYB ADMINA
+                    </span>
+                )}
             </div>
 
             {errorMessage && (
                 <div className="mb-6 p-4 bg-red-900/40 border border-red-500 rounded-[20px] text-red-100 text-sm">
-                    {errorMessage}
+                    ⚠️ {errorMessage}
                 </div>
             )}
 
@@ -222,11 +282,13 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
 
             {/* OPIS */}
             <div className="mb-8">
-                <label className="text-white text-base font-medium mb-3 block">Opis</label>
+                <label className="text-white text-base font-medium mb-3 block">
+                    {isDirectMode ? "Komentarz dla zgłaszających" : "Opis"}
+                </label>
                 <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Opisz nową relację...."
+                    placeholder={descPlaceholder}
                     rows={4}
                     className="w-full p-4 text-gray-200 text-base rounded-[20px] bg-gray-700 shadow-inner resize-none focus:ring-2 focus:ring-blue-600 focus:outline-none placeholder-gray-500"
                 ></textarea>
@@ -245,9 +307,9 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                 <button
                     type="submit"
                     disabled={!selectedClubA || !selectedClubB || !relationType || isLoading}
-                    className="flex-[2] h-12 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-[25px] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`flex-[2] h-12 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-semibold rounded-[25px] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                    {isLoading ? 'Zapisywanie...' : (isEditMode ? 'Zapisz zmiany' : 'Utwórz relację')}
+                    {buttonText}
                 </button>
             </div>
         </form>

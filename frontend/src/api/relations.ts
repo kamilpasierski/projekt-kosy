@@ -46,5 +46,10 @@ export const relationsApi = {
     createTicket: async (payload: TicketPayload) => {
         const response = await api.post('/ticketcreate/', payload);
         return response.data;
+    },
+
+    updateRelationDirectly: async (payload: TicketPayload) => {
+        const response = await api.post('/relations/update/', payload);
+        return response.data;
     }
 };

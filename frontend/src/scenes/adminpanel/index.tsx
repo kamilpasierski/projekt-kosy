@@ -14,7 +14,7 @@ const AdminPanel = () => {
         </div>
         <div>
             <PendingSubmissionsTable />
-            <RelationEditor />
+            <RelationEditor isDirectMode={true} />
             <Logs />
         </div>
         </div>
