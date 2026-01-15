@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/ticketcreate/', include('api_ticket_create.urls')),
+    path('api/tickets/', include('api_ticket_list.urls')),
     path("clubs/autocomplete/", include("api_autocomplete_clubs.urls")),
     path('api/clubs/popular/', include('api_clubs_popular.urls')),
     path('api/clubs/all/', include('api_clubs_all.urls')),
