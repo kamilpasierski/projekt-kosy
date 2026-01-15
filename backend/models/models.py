@@ -29,6 +29,15 @@ class Club(models.Model):
     def __str__(self):
         return self.name
 
+class Notification(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class UserProfile(models.Model):
     user = models.OneToOneField(
         User,
