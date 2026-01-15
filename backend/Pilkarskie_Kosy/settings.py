@@ -36,10 +36,11 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'corsheaders',
-    'models',
+    # 'models',
     'rest_framework',
     'api_clubs_popular',
     'api_stats',
+    'models.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
