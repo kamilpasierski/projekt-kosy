@@ -19,6 +19,7 @@ urlpatterns = [
     path('api_login/', include('api_login.urls')),
     path("password-reset/", include('reset_password.urls')),
     path('api/stats/', include('api_stats.urls')),
+    path('api/relations/', include('api_relations.urls')),
 
 ]
 
