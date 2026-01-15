@@ -31,14 +31,14 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     const { id: urlId } = useParams();
     const navigate = useNavigate();
 
-    // Logika ID
     const effectiveId = propId !== undefined ? propId : (urlId ? Number(urlId) : null);
     const isEditMode = effectiveId !== null;
 
-    // --- NOWY STAN (Logika API) ---
     const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    
+    const [isSuccess, setIsSuccess] = useState(false);
 
     // Stan formularza
     const [selectedClubA, setSelectedClubA] = useState<string>('');
@@ -46,7 +46,7 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     const [relationType, setRelationType] = useState<RelationType | null>(null);
     const [description, setDescription] = useState('');
 
-    // --- POBIERANIE DANYCH (API) ---
+    // --- POBIERANIE DANYCH ---
     useEffect(() => {
         const fetchClubs = async () => {
             try {
@@ -60,7 +60,7 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         fetchClubs();
     }, []);
 
-    // --- OBSŁUGA ZAPISU (INTEGRACJA Z DJANGO) ---
+    // --- OBSŁUGA ZAPISU ---
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMessage(null);
@@ -77,21 +77,15 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
 
         try {
             await relationsApi.createTicket({
-                club_a: clubAObj.name, 
+                club_a: clubAObj.name,
                 club_b: clubBObj.name,
                 relation: relationType,
                 description: description
             });
 
-            // Sukces
-            if (onSuccess) {
-                onSuccess();
-            } else {
-                alert('Ticket został utworzony pomyślnie!');
-                navigate('/admin/relations');
-            }
+            setIsSuccess(true);
+            
         } catch (error) {
-            // Obsługa błędów Django
             if (axios.isAxiosError(error) && error.response) {
                 const data = error.response.data;
                 if (data.non_field_errors) {
@@ -99,7 +93,10 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                 } else if (Array.isArray(data)) {
                     setErrorMessage(data.join(' '));
                 } else {
-                    setErrorMessage("Wystąpił błąd walidacji danych.");
+                    const details = Object.entries(data)
+                        .map(([key, msg]) => `${key}: ${msg}`)
+                        .join(', ');
+                    setErrorMessage(details || "Wystąpił błąd walidacji danych.");
                 }
             } else {
                 setErrorMessage("Błąd połączenia z serwerem.");
@@ -109,18 +106,44 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         }
     };
 
+    const handleCloseSuccess = () => {
+        if (onSuccess) onSuccess();
+        else navigate('/admin/relations');
+    };
+
     const handleCancel = () => {
         if (onCancel) onCancel();
         else navigate(-1);
     };
 
-    // --- RENDEROWANIE ---
+    if (isSuccess) {
+        return (
+            <div className="w-full p-8 md:p-12 rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 flex flex-col items-center justify-center text-center min-h-[400px]">
+                <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-900/50 animate-bounce">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">Ticket utworzony!</h2>
+                <p className="text-gray-400 mb-8 max-w-sm">
+                    Twoje zgłoszenie relacji zostało wysłane do akceptacji.
+                </p>
+                <button
+                    onClick={handleCloseSuccess}
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-[25px] transition-all transform hover:scale-105 shadow-lg"
+                >
+                    OK, rozumiem
+                </button>
+            </div>
+        );
+    }
+
+    // --- WIDOK FORMULARZA ---
     return (
         <form
             onSubmit={handleSubmit}
             className="w-full p-6 md:p-8 rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 relative"
         >
-             {/* Overlay Loading (jeśli trwa zapis) */}
              {isLoading && (
                 <div className="absolute inset-0 bg-black/50 rounded-[30px] z-50 flex items-center justify-center">
                     <div className="text-white font-bold animate-pulse">Przetwarzanie...</div>
@@ -143,7 +166,6 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
             <div className="mb-8">
                 <label className="text-white text-base font-medium mb-3 block">Wybierz kluby</label>
                 <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
-                    {/* Klub A */}
                     <div className="flex-1 w-full">
                         <select
                             value={selectedClubA}
@@ -159,7 +181,6 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
 
                     <span className="text-gray-400 font-bold text-sm">VS</span>
 
-                    {/* Klub B */}
                     <div className="flex-1 w-full">
                         <select
                             value={selectedClubB}
@@ -180,23 +201,22 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                 <label className="text-white text-base font-medium mb-3 block">Typ relacji</label>
                 <div className="flex flex-wrap gap-3">
                     {RELATION_OPTIONS.map(option => (
-                    <button
-                        key={option.type}
-                        type="button"
-                        onClick={() => setRelationType(option.type)} 
-                        className={`
-                            flex items-center px-4 py-2 rounded-[20px] transition-all duration-200
-                            text-white text-sm font-bold uppercase tracking-wider
-                            ${option.color} 
-                            ${relationType === option.type 
-                                ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-white scale-105' 
-                                : 'opacity-70 hover:opacity-100'}
-                        `}
-                    >
-                        {/* Wyświetlanie używa 'label' (duże litery: KOSA) */}
-                        {option.label}
-                    </button>
-                ))}
+                        <button
+                            key={option.type}
+                            type="button"
+                            onClick={() => setRelationType(option.type)}
+                            className={`
+                                flex items-center px-4 py-2 rounded-[20px] transition-all duration-200
+                                text-white text-sm font-bold uppercase tracking-wider
+                                ${option.color} 
+                                ${relationType === option.type 
+                                    ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-white scale-105' 
+                                    : 'opacity-70 hover:opacity-100'}
+                            `}
+                        >
+                            {option.label}
+                        </button>
+                    ))}
                 </div>
             </div>
 
@@ -212,7 +232,7 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                 ></textarea>
             </div>
 
-            {/* ACTIONS (Zapisz / Anuluj) */}
+            {/* ACTIONS */}
             <div className="flex gap-4 pt-4 border-t border-gray-700">
                 <button
                     type="button"
