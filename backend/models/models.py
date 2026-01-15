@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
 class Area(models.Model):
     name = models.CharField(max_length=100)
     polygon = models.JSONField(null=True, blank=True)
@@ -30,7 +29,18 @@ class Club(models.Model):
     def __str__(self):
         return self.name
 
-
+class UserProfile(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
 class ClubRelation(models.Model):
     RELATION_TYPES = [
