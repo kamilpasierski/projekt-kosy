@@ -37,10 +37,10 @@ class ClubDetailSerializer(serializers.ModelSerializer):
         return ClubBasicSerializer(related_clubs, many=True).data
 
     def get_kosy(self, obj):
-        return self._get_related_clubs(obj, 'Kosa')
+        return self._get_related_clubs(obj, 'kosa')
 
     def get_zgody(self, obj):
-        return self._get_related_clubs(obj, 'Zgoda') 
+        return self._get_related_clubs(obj, 'zgoda') 
 
     def get_neutralne(self, obj):
-        return self._get_related_clubs(obj, 'neutralna')
+        return self._get_related_clubs(obj, 'neutralnie')
