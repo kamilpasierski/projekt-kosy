@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from ..models.models import UserProfile
-from ..models.models import Club
+from models.models import UserProfile
+from models.models import Club
 
 class UserClubSerializer(serializers.ModelSerializer):
     club_id = serializers.PrimaryKeyRelatedField(
