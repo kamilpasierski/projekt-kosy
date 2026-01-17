@@ -1,6 +1,8 @@
 from django.urls import path
-from . import views
+from .views import AllClubsView, ClubSearchListView
 
 urlpatterns = [
-    path('', views.AllClubsView.as_view(), name='all-clubs'),
+    path('all/', AllClubsView.as_view(), name='clubs-all'),
+
+    path('search/', ClubSearchListView.as_view(), name='clubs-search'),
 ]

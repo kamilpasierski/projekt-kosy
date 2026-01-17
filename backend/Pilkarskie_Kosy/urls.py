@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from api_clubs_all.views import ClubSearchListView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -16,7 +17,8 @@ urlpatterns = [
     path('api/tickets/', include('api_ticket_list.urls')),
     path("clubs/autocomplete/", include("api_autocomplete_clubs.urls")),
     path('api/clubs/popular/', include('api_clubs_popular.urls')),
-    path('api/clubs/all/', include('api_clubs_all.urls')),
+    path('api/clubs/', include('api_clubs_all.urls')),
+    path('clubs/search/', ClubSearchListView.as_view(), name='clubs-search'),
     path('api_login/', include('api_login.urls')),
     path("password-reset/", include('reset_password.urls')),
     path('api/stats/', include('api_stats.urls')),
