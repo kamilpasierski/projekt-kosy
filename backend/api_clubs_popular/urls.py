@@ -1,7 +1,6 @@
 from django.urls import path
-from . import views
+from .views import PopularClubsView
 
 urlpatterns = [
-    path('', views.PopularClubsView.as_view(), name='popular-clubs'),
-    path('<int:id>/', views.ClubDetailView.as_view(), name='club-detail'),
+    path('', PopularClubsView.as_view(), name='popular-clubs'),
 ]

@@ -1,6 +1,10 @@
 from django.urls import path
-from . import views
+from .views import relation_update_view, get_all_relations
 
 urlpatterns = [
-    path('update/', views.relation_update_view, name='relation-update'),
+    # GET /api/relations/ -> Zwraca listę (dla mapy)
+    path('', get_all_relations, name='relations-list'),
+
+    # POST /api/relations/update/ -> Aktualizacja (dla admina)
+    path('update/', relation_update_view, name='relation-update'),
 ]

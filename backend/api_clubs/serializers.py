@@ -9,12 +9,8 @@ class ClubSerializer(serializers.ModelSerializer):
 
 # Serializer dla ulubionego klubu
 class UserClubSerializer(serializers.ModelSerializer):
-    club_id = serializers.PrimaryKeyRelatedField(
-        queryset=Club.objects.all(),
-        source='club',
-        allow_null=True
-    )
-
+    club_name = serializers.CharField(source='club.name', read_only=True, allow_null=True)
+    
     class Meta:
         model = UserProfile
-        fields = ['club_id']
+        fields = ['user', 'club', 'club_name']
