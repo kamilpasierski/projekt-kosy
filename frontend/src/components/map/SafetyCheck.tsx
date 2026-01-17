@@ -6,11 +6,11 @@ interface SafetyCheckProps {
 }
 
 const imgLocationIcon = "https://www.figma.com/api/mcp/asset/e57279db-f2fa-47c4-938a-b4e9c80462f5";
-
+//Do zmiany na ikone
 export default function SafetyCheck({
   title = "TWOJE POŁOŻENIE",
   statusTitle = "Jesteś bezpieczny!",
-  description = "Znajdujesz się na terenie Legii Warszawa. Brak aktywnych kos w tej okolicy.",
+  description = "Znajdujesz się na terenie Legii Warszawa. Brak aktywnych kos w tej okolicy.", //mockup
   isSafe = true
 }: SafetyCheckProps) {
   return (
@@ -28,7 +28,12 @@ export default function SafetyCheck({
             <img 
               src={imgLocationIcon} 
               alt="" 
-              className={`h-full w-full ${isSafe ? 'text-green-500' : 'text-red-500'}`}
+              className="h-full w-full transition-all duration-300"
+              style={{ 
+                  filter: isSafe 
+                    ? 'sepia(100%) hue-rotate(50deg) saturate(500%) brightness(1.2)' // Zielony
+                    : 'sepia(100%) hue-rotate(-50deg) saturate(500%) brightness(0.9)' // Czerwony DODAĆ ŻÓŁTY
+              }}
             />
           </div>
 
