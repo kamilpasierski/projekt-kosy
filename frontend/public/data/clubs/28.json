@@ -1,0 +1,21 @@
+{
+  "id": 28,
+  "name": "GKS Tychy",
+  "desc": "placeholder",
+  "path_image": "gks_tychy.png",
+  "city": "placeholder",
+  "area_id": "28",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    },
+    {
+      "id": 24,
+      "name": "GKS Bełchatów"
+    }
+  ],
+  "neutralne": []
+}

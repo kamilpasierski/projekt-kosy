@@ -1,0 +1,30 @@
+{
+  "id": 10,
+  "name": "Cracovia Kraków",
+  "desc": "Cracovia Kraków to najstarszy nieprzerwanie istniejący klub piłkarski w Polsce. Założony w 1906 roku. Nazywany \"Pasiakami\" z uwagi na charakterystyczne koszulki w paski. Słynie z najstarszego derbowego pojedynku w Polsce z Wisłą Kraków.",
+  "path_image": "cracovia_krakow.png",
+  "city": "Kraków",
+  "area_id": "10",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 11,
+      "name": "Wisła Kraków"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 16,
+      "name": "Lechia Gdańsk"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    },
+    {
+      "id": 2,
+      "name": "Lech Poznań"
+    }
+  ]
+}

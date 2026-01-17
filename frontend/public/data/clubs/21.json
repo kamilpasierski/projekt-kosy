@@ -1,0 +1,63 @@
+{
+  "id": 21,
+  "name": "Zagłębie Sosnowiec",
+  "desc": "Zagłębie Sosnowiec to klub ze Śląska. Założony w 1906 roku. Czterokrotny mistrz Polski. Jeden z najstarszych klubów w Polsce. Słynie z czerwono-białych barw. Obecnie występuje w niższych ligach.",
+  "path_image": "zaglebie_sosnowiec.png",
+  "city": "Sosnowiec",
+  "area_id": "21",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    },
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    },
+    {
+      "id": 5,
+      "name": "Górnik Zabrze"
+    },
+    {
+      "id": 14,
+      "name": "Piast Gliwice"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    }
+  ],
+  "zgody": [
+    {
+      "id": 24,
+      "name": "GKS Bełchatów"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 1,
+      "name": "Legia Warszawa"
+    },
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    },
+    {
+      "id": 10,
+      "name": "Cracovia Kraków"
+    },
+    {
+      "id": 18,
+      "name": "Widzew Łódź"
+    },
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    },
+    {
+      "id": 26,
+      "name": "Odra Opole"
+    }
+  ]
+}

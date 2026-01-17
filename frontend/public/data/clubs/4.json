@@ -1,0 +1,46 @@
+{
+  "id": 4,
+  "name": "Śląsk Wrocław",
+  "desc": "Śląsk Wrocław to klub z Dolnego Śląska. Założony w 1947 roku. Dwukrotny mistrz Polski. Słynie z charakterystycznych barw. Klub ma bogatą historię i silne wsparcie kibiców. Szczególnie podczas ważnych spotkań na stadionie miejskim we Wrocławiu.",
+  "path_image": "ślask_wroclaw.png",
+  "city": "Wrocław",
+  "area_id": "4",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 26,
+      "name": "Odra Opole"
+    },
+    {
+      "id": 1,
+      "name": "Legia Warszawa"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 8,
+      "name": "Zagłębie Lubin"
+    },
+    {
+      "id": 2,
+      "name": "Lech Poznań"
+    },
+    {
+      "id": 5,
+      "name": "Górnik Zabrze"
+    },
+    {
+      "id": 11,
+      "name": "Wisła Kraków"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": 35,
+  "name": "Resovia Rzeszów",
+  "desc": "placeholder",
+  "path_image": "resovia_rzeszow.png",
+  "city": "placeholder",
+  "area_id": "35",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 34,
+      "name": "Chrobry Głogów"
+    }
+  ],
+  "zgody": [
+    {
+      "id": 29,
+      "name": "Sandecja Nowy Sącz"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 30,
+      "name": "Motor Lublin"
+    }
+  ]
+}

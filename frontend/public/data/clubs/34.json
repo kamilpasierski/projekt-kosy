@@ -1,0 +1,22 @@
+{
+  "id": 34,
+  "name": "Chrobry Głogów",
+  "desc": "placeholder",
+  "path_image": "chrobry_glogow.png",
+  "city": "placeholder",
+  "area_id": "34",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 35,
+      "name": "Resovia Rzeszów"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 33,
+      "name": "Miedź Legnica"
+    }
+  ]
+}

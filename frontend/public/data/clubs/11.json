@@ -1,0 +1,38 @@
+{
+  "id": 11,
+  "name": "Wisła Kraków",
+  "desc": "Wisła Kraków to klub z serca Krakowa. Założony w 1906 roku. Czternastokrotny mistrz Polski nazywany \"Białą Gwiazdą\". Słynie z legendarnych derbów z Cracovią. Jeden z najbardziej utytułowanych klubów w historii polskiej piłki. Choć w ostatnich latach zmaga się z problemami sportowymi i finansowymi.",
+  "path_image": "wisla_krakow.png",
+  "city": "Kraków",
+  "area_id": "11",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 10,
+      "name": "Cracovia Kraków"
+    },
+    {
+      "id": 2,
+      "name": "Lech Poznań"
+    },
+    {
+      "id": 5,
+      "name": "Górnik Zabrze"
+    },
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    }
+  ]
+}

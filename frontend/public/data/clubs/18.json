@@ -1,0 +1,35 @@
+{
+  "id": 18,
+  "name": "Widzew Łódź",
+  "desc": "Widzew Łódź to klub z Łodzi. Założony w 1910 roku. Czterokrotny mistrz Polski. Słynie z czerwonych barw i ogromnej bazy kibicowskiej. Klub o bogatej historii która obejmuje europejskie sukcesy. Po latach trudności powoli odbudowuje swoją pozycję.",
+  "path_image": "widzew_łodz.png",
+  "city": "Łódź",
+  "area_id": "18",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 1,
+      "name": "Legia Warszawa"
+    },
+    {
+      "id": 23,
+      "name": "ŁKS Łódź"
+    }
+  ],
+  "zgody": [
+    {
+      "id": 3,
+      "name": "Pogoń Szczecin"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 17,
+      "name": "Wisła Płock"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    }
+  ]
+}

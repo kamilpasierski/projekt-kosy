@@ -1,0 +1,17 @@
+{
+  "id": 15,
+  "name": "Korona Kielce",
+  "desc": "Korona Kielce to klub ze stolicy Świętokrzyskiego. Założony w 1973 roku. Słynie z żółto-czerwonych barw i oddanych kibiców. Przez lata zmagał się z utrzymaniem w Ekstraklasie. Klub z charakterystyczną historią pełną wzlotów i upadków.",
+  "path_image": "korona_kielce.png",
+  "city": "Kielce",
+  "area_id": "15",
+  "points": "0",
+  "kosy": [],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 14,
+      "name": "Piast Gliwice"
+    }
+  ]
+}

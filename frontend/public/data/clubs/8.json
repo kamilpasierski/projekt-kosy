@@ -1,0 +1,34 @@
+{
+  "id": 8,
+  "name": "Zagłębie Lubin",
+  "desc": "Zagłębie Lubin to klub z Dolnego Śląska. Założony w 1946 roku. Dwukrotny mistrz Polski. Związany z przemysłem miedziowym regionu. Słynie z konsekwentnej pracy z młodzieżą i nowoczesnej infrastruktury. Kibice Lubina znani są z oddanego wsparcia niezależnie od wyników.",
+  "path_image": "zaglebie_lubin.png",
+  "city": "Lubin",
+  "area_id": "8",
+  "points": "4",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 17,
+      "name": "Wisła Płock"
+    },
+    {
+      "id": 25,
+      "name": "Arka Gdynia"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    },
+    {
+      "id": 9,
+      "name": "Stal Mielec"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    }
+  ]
+}

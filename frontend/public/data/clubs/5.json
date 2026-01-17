@@ -1,0 +1,42 @@
+{
+  "id": 5,
+  "name": "Górnik Zabrze",
+  "desc": "Górnik Zabrze to legenda polskiej piłki. Założony w 1948 roku. Najbardziej utytułowany klub w Polsce pod względem mistrzostw przez długie lata. Związany z górniczymi tradycjami Śląska. Słynie ogromnych sukcesów w latach 60. i 70. Dziś pozostaje ważnym symbolem piłki nożnej w Polsce.",
+  "path_image": "gornik_zabrze.png",
+  "city": "Zabrze",
+  "area_id": "5",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    },
+    {
+      "id": 14,
+      "name": "Piast Gliwice"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    },
+    {
+      "id": 11,
+      "name": "Wisła Kraków"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    },
+    {
+      "id": 23,
+      "name": "ŁKS Łódź"
+    }
+  ]
+}

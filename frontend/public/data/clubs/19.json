@@ -1,0 +1,51 @@
+{
+  "id": 19,
+  "name": "Ruch Chorzów",
+  "desc": "Ruch Chorzów to klub ze Śląska. Założony w 1920 roku. Czternastokrotny mistrz Polski. Jedna z legend polskiego futbolu. Słynie z niebieskich barw i bogatej historii. Klub który po latach spędzonych w niższych ligach powrócił do Ekstraklasy w 2023 roku.",
+  "path_image": "ruch_chorzow.png",
+  "city": "Chorzów",
+  "area_id": "19",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 5,
+      "name": "Górnik Zabrze"
+    },
+    {
+      "id": 14,
+      "name": "Piast Gliwice"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    },
+    {
+      "id": 11,
+      "name": "Wisła Kraków"
+    }
+  ],
+  "zgody": [
+    {
+      "id": 9,
+      "name": "Stal Mielec"
+    },
+    {
+      "id": 31,
+      "name": "Stal Rzeszów"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 16,
+      "name": "Lechia Gdańsk"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    }
+  ]
+}

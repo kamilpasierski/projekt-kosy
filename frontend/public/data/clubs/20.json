@@ -1,0 +1,17 @@
+{
+  "id": 20,
+  "name": "Polonia Warszawa",
+  "desc": "Polonia Warszawa to klub ze stolicy. Założony w 1911 roku. Dwukrotny mistrz Polski. Słynie z czarnych koszulek i biało-czerwonych getrów. Nazywana \"Czarnymi Koszulami\". Klub o bogatej historii ale i wielu trudnościach finansowych i organizacyjnych w ostatnich latach.",
+  "path_image": "polonia_warszawa.png",
+  "city": "Warszawa",
+  "area_id": "20",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 1,
+      "name": "Legia Warszawa"
+    }
+  ],
+  "zgody": [],
+  "neutralne": []
+}

@@ -1,0 +1,30 @@
+{
+  "id": 3,
+  "name": "Pogoń Szczecin",
+  "desc": "Pogoń Szczecin to klub z nadodrzańskiego miasta. Założony w 1948 roku. Przez lata utożsamiany z siłą i charakterem Pomorza Zachodniego. Kibice Pogoni słyną z hucznego wsparcia i silnych tradycji. Klub ma znaczące osiągnięcia w historii polskiej piłki. Choć w ostatnich latach zmagał się z utrzymaniem w najwyższej klasie rozgrywkowej.",
+  "path_image": "pogon_szczecin.png",
+  "city": "Szczecin",
+  "area_id": "3",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 18,
+      "name": "Widzew Łódź"
+    },
+    {
+      "id": 16,
+      "name": "Lechia Gdańsk"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 1,
+      "name": "Legia Warszawa"
+    },
+    {
+      "id": 2,
+      "name": "Lech Poznań"
+    }
+  ]
+}

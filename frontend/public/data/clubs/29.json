@@ -1,0 +1,22 @@
+{
+  "id": 29,
+  "name": "Sandecja Nowy Sącz",
+  "desc": "placeholder",
+  "path_image": "sandecja_nowy_sacz.png",
+  "city": "placeholder",
+  "area_id": "29",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 35,
+      "name": "Resovia Rzeszów"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 30,
+      "name": "Motor Lublin"
+    }
+  ]
+}

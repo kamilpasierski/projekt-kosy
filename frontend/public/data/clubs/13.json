@@ -1,0 +1,22 @@
+{
+  "id": 13,
+  "name": "Radomiak Radom",
+  "desc": "Radomiak Radom to klub z Mazowsza. Założony w 1945 roku. Po latach nieobecności powrócił do Ekstraklasy w 2021 roku. Słynie z czerwono-niebieskich barw i oddanych kibiców. Klub odbudowuje swoją pozycję po latach spędzonych w niższych ligach.",
+  "path_image": "radomiak_radom.png",
+  "city": "Radom",
+  "area_id": "13",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 7,
+      "name": "Jagiellonia Białystok"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 12,
+      "name": "Warta Poznań"
+    }
+  ]
+}

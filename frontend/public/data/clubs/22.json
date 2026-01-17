@@ -1,0 +1,63 @@
+{
+  "id": 22,
+  "name": "GKS Katowice",
+  "desc": "GKS Katowice to klub ze Śląska. Założony w 1964 roku. Zdobywca Pucharu Polski. Słynie z niebiesko-białych barw. Klub który przez lata był stałym uczestnikiem Ekstraklasy. Słynie z dobrej pracy z młodzieżą i oddanych kibiców.",
+  "path_image": "gks_katowice.png",
+  "city": "Katowice",
+  "area_id": "22",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    },
+    {
+      "id": 5,
+      "name": "Górnik Zabrze"
+    },
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    }
+  ],
+  "zgody": [
+    {
+      "id": 28,
+      "name": "GKS Tychy"
+    },
+    {
+      "id": 24,
+      "name": "GKS Bełchatów"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 2,
+      "name": "Lech Poznań"
+    },
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    },
+    {
+      "id": 11,
+      "name": "Wisła Kraków"
+    },
+    {
+      "id": 14,
+      "name": "Piast Gliwice"
+    },
+    {
+      "id": 26,
+      "name": "Odra Opole"
+    },
+    {
+      "id": 8,
+      "name": "Zagłębie Lubin"
+    }
+  ]
+}

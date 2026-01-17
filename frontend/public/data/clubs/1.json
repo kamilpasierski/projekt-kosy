@@ -1,0 +1,38 @@
+{
+  "id": 1,
+  "name": "Legia Warszawa",
+  "desc": "Legia Warszawa to jeden z najbardziej utytułowanych i rozpoznawalnych polskich klubów piłkarskich. Założony w 1916 roku. Znany z dominacji w rozgrywkach po II wojnie światowej. Nigdy nie spadając z Ekstraklasy. Z dynamiczną kulturą kibicowską (np. trybuna \"Żyleta\"). Silnymi zgodami (np. z Zagłębiem Sosnowiec) i bogatą historią. Choć mierzący się też z wyzwaniami finansowymi.",
+  "path_image": "legia_warszawa.png",
+  "city": "Warszawa",
+  "area_id": "1",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 20,
+      "name": "Polonia Warszawa"
+    },
+    {
+      "id": 18,
+      "name": "Widzew Łódź"
+    },
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 2,
+      "name": "Lech Poznań"
+    },
+    {
+      "id": 3,
+      "name": "Pogoń Szczecin"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    }
+  ]
+}

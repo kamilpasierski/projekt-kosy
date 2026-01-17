@@ -1,0 +1,22 @@
+{
+  "id": 9,
+  "name": "Stal Mielec",
+  "desc": "Stal Mielec to klub z Podkarpacia. Założony w 1939 roku jako Mielec i reaktywowany w 1997 jako Stal Mielec. Dwukrotny mistrz Polski w latach 70. Przez lata związany z przemysłem lotniczym. Słynie z bogatej historii i charakterystycznych biało-niebieskich barw. Po latach trudności powrócił do najwyższej klasy rozgrywkowej.",
+  "path_image": "stal_mielec.png",
+  "city": "Mielec",
+  "area_id": "9",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 8,
+      "name": "Zagłębie Lubin"
+    }
+  ]
+}

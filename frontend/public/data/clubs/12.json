@@ -1,0 +1,26 @@
+{
+  "id": 12,
+  "name": "Warta Poznań",
+  "desc": "Warta Poznań to drugi klub z Poznania. Założony w 1912 roku. Dwukrotny mistrz Polski przed II wojną światową. Słynie z zielonych barw i bogatej przedwojennej tradycji. Przez lata balansował między pierwszą a drugą ligą. W ostatnim czasie powrócił do najwyższej klasy rozgrywkowej.",
+  "path_image": "warta_poznan.png",
+  "city": "Poznań",
+  "area_id": "12",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 2,
+      "name": "Lech Poznań"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 13,
+      "name": "Radomiak Radom"
+    },
+    {
+      "id": 27,
+      "name": "Podbeskidzie Bielsko-Biała"
+    }
+  ]
+}

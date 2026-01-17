@@ -1,0 +1,22 @@
+{
+  "id": 7,
+  "name": "Jagiellonia Białystok",
+  "desc": "Jagiellonia Białystok to klub z Podlasia. Założony w 1920 roku. Przez długi czas jedyny przedstawiciel regionu w Ekstraklasie. Słynie z upartej walki i charakterystycznej żółto-czerwonej kolorystyki. Kibice tworzą jedną z najbardziej zintegrowanych społeczności w polskiej piłce.",
+  "path_image": "jagiellonia_bialystok.png",
+  "city": "Białystok",
+  "area_id": "7",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 13,
+      "name": "Radomiak Radom"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 6,
+      "name": "Raków Częstochowa"
+    }
+  ]
+}

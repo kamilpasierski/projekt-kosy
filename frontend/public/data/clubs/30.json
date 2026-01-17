@@ -1,0 +1,26 @@
+{
+  "id": 30,
+  "name": "Motor Lublin",
+  "desc": "placeholder",
+  "path_image": "motor_lublin.png",
+  "city": "placeholder",
+  "area_id": "30",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 27,
+      "name": "Podbeskidzie Bielsko-Biała"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 29,
+      "name": "Sandecja Nowy Sącz"
+    },
+    {
+      "id": 35,
+      "name": "Resovia Rzeszów"
+    }
+  ]
+}

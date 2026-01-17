@@ -1,0 +1,42 @@
+{
+  "id": 2,
+  "name": "Lech Poznań",
+  "desc": "Lech Poznań to klub z serca Wielkopolski. Założony w 1922 roku. Znany jako \"Kolejorz\" z uwagi na kolejowe korzenie. Wielokrotny mistrz Polski. Słynie z jednej z najlepszych atmosfer na stadionach w kraju. Szczególnie przy widowiskowej oprawie \"Kocioł\" na trybunach. Klub ma silne tradycje i wierną bazę kibicowską.",
+  "path_image": "lech_poznan.png",
+  "city": "Poznań",
+  "area_id": "2",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 12,
+      "name": "Warta Poznań"
+    },
+    {
+      "id": 11,
+      "name": "Wisła Kraków"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 1,
+      "name": "Legia Warszawa"
+    },
+    {
+      "id": 3,
+      "name": "Pogoń Szczecin"
+    },
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    },
+    {
+      "id": 10,
+      "name": "Cracovia Kraków"
+    }
+  ]
+}

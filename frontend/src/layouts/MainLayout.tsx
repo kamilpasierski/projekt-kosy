@@ -1,35 +1,22 @@
-import { useEffect } from "react";
+// src/layouts/MainLayout.tsx
 import { Outlet } from 'react-router-dom';
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 
-import { RelationEditorProvider } from "../context/RelationEditorContext";
-import { GlobalRelationEditor } from "../components/common/GlobalRelationEditor";
-
 const MainLayout = () => {
-    useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        if (queryParams.get('status') === 'activated') {
-            alert('Twoje konto zostało pomyślnie aktywowane! Możesz się zalogować.');
-            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.replaceState({}, document.title, newUrl);
-        }
-    }, []);
-
     return (
-        <RelationEditorProvider>
-            
+        <div className="min-h-screen flex flex-col">
+            {/* Navbar - now dark gray */}
             <Navbar />
             
-            <main className="flex-1 w-full px-4 md:px-8 xl:px-[45px]">
+            {/* Main content with bottom spacing */}
+            <main className="flex-1 w-full px-4 md:px-8 xl:px-[45px] pb-24">
                 <Outlet />
             </main>
             
+            {/* Footer will push to bottom naturally */}
             <Footer />
-
-            <GlobalRelationEditor />
-
-        </RelationEditorProvider>
+        </div>
     );
 };
 

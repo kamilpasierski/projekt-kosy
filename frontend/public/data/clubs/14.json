@@ -1,0 +1,34 @@
+{
+  "id": 14,
+  "name": "Piast Gliwice",
+  "desc": "Piast Gliwice to klub ze Śląska. Założony w 1945 roku. Mistrz Polski z 2019 roku. Słynie z racjonalnego zarządzania i konsekwentnej pracy. Klub który przez lata utrzymuje się w Ekstraklasie mimo mniejszych zasobów finansowych. Nazywany czasem \"liderem prowincji\".",
+  "path_image": "piast_gliwice.png",
+  "city": "Gliwice",
+  "area_id": "14",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 5,
+      "name": "Górnik Zabrze"
+    },
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    },
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 15,
+      "name": "Korona Kielce"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    }
+  ]
+}

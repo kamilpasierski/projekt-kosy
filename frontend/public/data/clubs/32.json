@@ -1,0 +1,17 @@
+{
+  "id": 32,
+  "name": "Bruk-Bet Termalica Nieciecza",
+  "desc": "placeholder",
+  "path_image": "bruk-bet_termalica_nieciecza.png",
+  "city": "placeholder",
+  "area_id": "32",
+  "points": "0",
+  "kosy": [],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 31,
+      "name": "Stal Rzeszów"
+    }
+  ]
+}

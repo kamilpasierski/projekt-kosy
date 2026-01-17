@@ -1,0 +1,34 @@
+{
+  "id": 16,
+  "name": "Lechia Gdańsk",
+  "desc": "Lechia Gdańsk to klub z Trójmiasta. Założony w 1945 roku. Dwukrotny zdobywca Pucharu Polski. Słynie z biało-zielonych barw. Klub związany z tradycjami Pomorza i wolnościowymi wartościami regionu.",
+  "path_image": "lechia_gdansk.png",
+  "city": "Gdańsk",
+  "area_id": "16",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 6,
+      "name": "Raków Częstochowa"
+    },
+    {
+      "id": 3,
+      "name": "Pogoń Szczecin"
+    },
+    {
+      "id": 25,
+      "name": "Arka Gdynia"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 10,
+      "name": "Cracovia Kraków"
+    },
+    {
+      "id": 19,
+      "name": "Ruch Chorzów"
+    }
+  ]
+}

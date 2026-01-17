@@ -1,0 +1,26 @@
+{
+  "id": 23,
+  "name": "ŁKS Łódź",
+  "desc": "ŁKS Łódź to klub z Łodzi. Założony w 1908 roku. Dwukrotny mistrz Polski. Słynie z białych i czerwonych barw. Klub o bogatej historii który po latach nieobecności powrócił do najwyższej klasy rozgrywkowej. Nazywany \"Rycerzami Wiosny\".",
+  "path_image": "łks_łodz.png",
+  "city": "Łódź",
+  "area_id": "23",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 18,
+      "name": "Widzew Łódź"
+    }
+  ],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 5,
+      "name": "Górnik Zabrze"
+    },
+    {
+      "id": 26,
+      "name": "Odra Opole"
+    }
+  ]
+}

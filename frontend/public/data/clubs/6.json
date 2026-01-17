@@ -1,0 +1,22 @@
+{
+  "id": 6,
+  "name": "Raków Częstochowa",
+  "desc": "Raków Częstochowa to fenomen współczesnej polskiej piłki. Założony w 1921 roku. Jako klub z mniejszego miasta dokonał imponującego awansu. Stając się w krótkim czasie mistrzem Polski i regularnym uczestnikiem europejskich pucharów. Słynie z nowoczesnego podejścia do zarządzania i szkolenia młodych talentów.",
+  "path_image": "rakow_czestochowa.png",
+  "city": "Częstochowa",
+  "area_id": "6",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 16,
+      "name": "Lechia Gdańsk"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 7,
+      "name": "Jagiellonia Białystok"
+    }
+  ]
+}

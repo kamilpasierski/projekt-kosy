@@ -1,0 +1,35 @@
+{
+  "id": 26,
+  "name": "Odra Opole",
+  "desc": "placeholder",
+  "path_image": "odra_opole.png",
+  "city": "placeholder",
+  "area_id": "26",
+  "points": "0",
+  "kosy": [
+    {
+      "id": 4,
+      "name": "Śląsk Wrocław"
+    }
+  ],
+  "zgody": [
+    {
+      "id": 25,
+      "name": "Arka Gdynia"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    },
+    {
+      "id": 23,
+      "name": "ŁKS Łódź"
+    }
+  ]
+}

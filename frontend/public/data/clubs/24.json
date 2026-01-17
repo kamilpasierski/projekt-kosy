@@ -1,0 +1,25 @@
+{
+  "id": 24,
+  "name": "GKS Bełchatów",
+  "desc": "GKS Bełchatów to klub z centralnej Polski. Założony w 1977 roku. Słynie z pomarańczowo-czarnych barw. Przez lata związany z przemysłem energetycznym i kopalniami węgla. Klub który przez pewien okres regularnie występował w Ekstraklasie. Obecnie w niższych ligach.",
+  "path_image": "gks_belchatow.png",
+  "city": "Bełchatów",
+  "area_id": "24",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 21,
+      "name": "Zagłębie Sosnowiec"
+    },
+    {
+      "id": 22,
+      "name": "GKS Katowice"
+    },
+    {
+      "id": 28,
+      "name": "GKS Tychy"
+    }
+  ],
+  "neutralne": []
+}

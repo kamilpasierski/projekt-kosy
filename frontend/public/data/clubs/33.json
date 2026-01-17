@@ -1,0 +1,17 @@
+{
+  "id": 33,
+  "name": "Miedź Legnica",
+  "desc": "placeholder",
+  "path_image": "miedz_legnica.png",
+  "city": "placeholder",
+  "area_id": "33",
+  "points": "0",
+  "kosy": [],
+  "zgody": [],
+  "neutralne": [
+    {
+      "id": 34,
+      "name": "Chrobry Głogów"
+    }
+  ]
+}

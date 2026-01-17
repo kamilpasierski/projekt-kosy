@@ -1,0 +1,30 @@
+{
+  "id": 25,
+  "name": "Arka Gdynia",
+  "desc": "Arka Gdynia to klub z wybrzeża. Założony w 1929 roku. Dwukrotny zdobywca Pucharu Polski. Słynie z żółto-niebieskich barw. Klub związany z tradycjami morskimi i stoczniowymi Gdyni. Przez lata balansujący między pierwszą a drugą ligą.",
+  "path_image": "arka_gdynia.png",
+  "city": "Gdynia",
+  "area_id": "25",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 16,
+      "name": "Lechia Gdańsk"
+    },
+    {
+      "id": 8,
+      "name": "Zagłębie Lubin"
+    },
+    {
+      "id": 26,
+      "name": "Odra Opole"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 27,
+      "name": "Podbeskidzie Bielsko-Biała"
+    }
+  ]
+}

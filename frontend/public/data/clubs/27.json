@@ -1,0 +1,26 @@
+{
+  "id": 27,
+  "name": "Podbeskidzie Bielsko-Biała",
+  "desc": "placeholder",
+  "path_image": "podbeskidzie_bielsko-biala.png",
+  "city": "placeholder",
+  "area_id": "27",
+  "points": "0",
+  "kosy": [],
+  "zgody": [
+    {
+      "id": 30,
+      "name": "Motor Lublin"
+    }
+  ],
+  "neutralne": [
+    {
+      "id": 25,
+      "name": "Arka Gdynia"
+    },
+    {
+      "id": 12,
+      "name": "Warta Poznań"
+    }
+  ]
+}
