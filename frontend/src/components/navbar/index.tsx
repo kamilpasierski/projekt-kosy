@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/useAuth.ts";
-import { BellIcon, UserIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { UserIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import Logo from "@/assets/Logo.png";
 import ActionButton from "../../shared/ActionButton.tsx";
 import { useRelationEditor } from '../../context/RelationEditorContext.tsx';
+import Notifications from './Notifications.tsx';
 
 const NavbarRigid = () => {
     const navigate = useNavigate();
@@ -78,9 +79,7 @@ const NavbarRigid = () => {
                             </Link>
                         )}
 
-                        <button className={iconContainerStyles} aria-label="Powiadomienia">
-                            <BellIcon className="w-6 h-6" />
-                        </button>
+                        <Notifications />
 
                         <div className="relative" ref={dropdownRef}>
                             <button
