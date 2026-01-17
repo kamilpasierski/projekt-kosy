@@ -28,7 +28,7 @@ export default function ClubPage() {
     const fetchDetails = async () => {
       if (!id) return;
       try {
-        const res = await fetch(`${API_BASE}/api/clubs/popular/${id}/`);
+        const res = await fetch(`${API_BASE}/api/clubs/${id}/`);
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         setClubData(data);
