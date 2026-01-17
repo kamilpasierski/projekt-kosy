@@ -2,7 +2,7 @@ import { useAuth } from "../../hooks/useAuth";
 
 import Baner from "../../components/user/Baner";
 import DataEditor from "../../components/user/DataEditor";
-import FollowedClubs from "../../components/user/FollowedClubs";
+import FollowedClubs from "../../components/user/FavClub";
 import History from "../../components/user/History";
 
 export default function ProfilePage() {
