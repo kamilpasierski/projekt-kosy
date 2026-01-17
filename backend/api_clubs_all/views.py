@@ -6,6 +6,6 @@ from .serializers import ClubSerializer
 
 class AllClubsView(APIView):
     def get(self, request):
-        clubs = Club.objects.all()
+        clubs = Club.objects.order_by('name')
         serializer = ClubSerializer(clubs, many=True)
         return Response(serializer.data)
