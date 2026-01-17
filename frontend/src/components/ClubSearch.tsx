@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 interface Club {
     id: number;
@@ -59,11 +60,8 @@ export default function ClubSearch() {
             {/* --- INPUT STYLIZOWANY NA BUTTON Z FIGMY --- */}
             <div className="flex h-[59px] items-center gap-4 rounded-[50px] bg-[#343434] px-6 transition-colors focus-within:bg-[#404040] hover:bg-[#404040]">
                 
-                {/* Ikona (z kodu) */}
-                <svg className="h-6 w-6 flex-shrink-0 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
+                {/* Ikona wyszukiwania */}
+                <MagnifyingGlassIcon className="h-6 w-6 flex-shrink-0 text-white" />
 
                 {/* Input zastępujący span "Nazwa klubu" */}
                 <input
