@@ -3,12 +3,11 @@ import api from '../../api/axiosConfig';
 import { useDebounce } from '../../hooks/useDebounce';
 import { MagnifyingGlassIcon, StarIcon as StarOutline, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
+import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
 
 // --- KONFIGURACJA ---
-const API_BASE_URL = 'http://127.0.0.1:8000';
-const MEDIA_URL = `${API_BASE_URL}/media/`;
+const MEDIA_URL = 'http://127.0.0.1:8000/media/';
 const DEFAULT_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTAgMTUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMzNDM0MzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zZW0iIGZpbGw9IiM4ODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkZMQUc8L3RleHQ+PC9zdmc+";
-
 
 // --- TYPES ---
 interface Club {
@@ -16,12 +15,12 @@ interface Club {
   name: string;
   city: string;
   path_image?: string | null;
-  relation?: 'safe' | 'dangerous' | 'neutral';
   isFavorite?: boolean;
 }
 
 type SortField = 'name' | 'city' | 'relation';
 type SortOrder = 'asc' | 'desc';
+type RelationStatus = 'favorite' | 'safe' | 'dangerous' | 'neutral' | 'unknown';
 
 export default function ClubList() {
   const [clubs, setClubs] = useState<Club[]>([]);
@@ -37,9 +36,39 @@ export default function ClubList() {
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
+  const [userClub, setUserClub] = useState<string | null>(null);
+  const [relationsMap, setRelationsMap] = useState<RelationsMap>({});
+
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // --- GŁÓWNA FUNKCJA POBIERAJĄCA ---
+  // --- POBIERANIE KONTEKSTU UŻYTKOWNIKA I RELACJI ---
+  useEffect(() => {
+    const fetchContextData = async () => {
+        try {
+            const [relRes, userRes] = await Promise.allSettled([
+                api.get('/relations/'),
+                api.get('/clubs/user/')
+            ]);
+
+            if (relRes.status === 'fulfilled') {
+                setRelationsMap(parseRelationsToMap(relRes.value.data));
+            }
+
+            if (userRes.status === 'fulfilled') {
+                const userData = userRes.value.data;
+                if (userData && userData.club_name) {
+                    setUserClub(userData.club_name);
+                }
+            }
+        } catch (error) {
+            console.error("Błąd pobierania danych kontekstowych:", error);
+        }
+    };
+
+    fetchContextData();
+  }, []);
+
+  // --- GŁÓWNA FUNKCJA POBIERAJĄCA KLUBY ---
   const fetchClubs = async (pageNumber: number, isLoadMore: boolean) => {
     if (isLoadMore) setIsLoadingMore(true);
     else setIsLoading(true);
@@ -58,18 +87,12 @@ export default function ClubList() {
       let newClubs: Club[] = [];
       let hasNextPage = false;
 
-      // --- LOGIKA ODPORNA NA BŁĘDY ---
       if (Array.isArray(data)) {
-          // SCENARIUSZ 1: Backend zwrócił płaską listę (brak paginacji)
           newClubs = data;
-          hasNextPage = false; 
       } else if (data && Array.isArray(data.results)) {
-          // SCENARIUSZ 2: Backend zwrócił paginację (DRF PageNumberPagination)
           newClubs = data.results;
           hasNextPage = !!data.next;
       } else {
-          // SCENARIUSZ 3: Dziwna odpowiedź, ustawiamy pusta tablicę, żeby nie było crasha
-          console.warn("Nierozpoznany format danych z API:", data);
           newClubs = [];
       }
 
@@ -78,7 +101,6 @@ export default function ClubList() {
       } else {
         setClubs(newClubs);
       }
-
       setHasMore(hasNextPage);
 
     } catch (error) {
@@ -89,15 +111,11 @@ export default function ClubList() {
     }
   };
 
-  // --- EFEKT 1: Zmiana filtrów ---
   useEffect(() => {
-    // Resetujemy stronę do 1 i pobieramy w trybie REPLACE
     setPage(1);
     fetchClubs(1, false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, sortField, sortOrder]); 
 
-  // --- HANDLER: Załaduj więcej ---
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
@@ -113,12 +131,38 @@ export default function ClubList() {
     }
   };
 
-  const getRelationStyle = (relation?: string) => {
-    switch (relation) {
-      case 'safe': return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'Zgoda' };
-      case 'dangerous': return { bg: 'bg-[#cb0000]', text: 'text-white', label: 'Kosa' };
-      case 'neutral': return { bg: 'bg-[#fbf201]', text: 'text-black', label: 'Neutralnie' };
-      default: return { bg: 'bg-gray-600', text: 'text-white', label: 'Brak danych' };
+  // --- LOGIKA OBLICZANIA RELACJI ---
+  const calculateRelation = (clubName: string): RelationStatus => {
+    if (!userClub) return 'unknown';
+    if (clubName === userClub) return 'favorite';
+
+    const relation = relationsMap[userClub]?.[clubName]?.toUpperCase();
+
+    if (relation === 'KOSA') return 'dangerous';
+    if (relation === 'ZGODA') return 'safe';
+    if (relation === 'NEUTRALNIE') return 'neutral';
+
+    return 'unknown'
+  };
+
+  // --- STYLOWANIE PILLSÓW ---
+  const getRelationStyle = (status: RelationStatus) => {
+    switch (status) {
+      case 'favorite':
+        return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ULUBIONY' };
+      
+      case 'safe': 
+        return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ZGODA' };
+      
+      case 'dangerous': 
+        return { bg: 'bg-[#cb0000]', text: 'text-white', label: 'KOSA' };
+      
+      case 'neutral': 
+        return { bg: 'bg-[#fbf201]', text: 'text-black', label: 'NEUTRALNIE' };
+      
+      case 'unknown':
+      default: 
+        return { bg: 'bg-gray-600', text: 'text-white', label: 'BRAK DANYCH' };
     }
   };
 
@@ -175,7 +219,9 @@ export default function ClubList() {
         {/* ROWS */}
         <div className="divide-y divide-gray-700">
           {(clubs || []).map((club) => {
-            const relationStyle = getRelationStyle(club.relation);
+            const relationStatus = calculateRelation(club.name);
+            const relationStyle = getRelationStyle(relationStatus);
+
             return (
               <div key={club.id} className="grid grid-cols-[auto_2fr_1.5fr_1.5fr] gap-4 items-center px-6 py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
                 <button className="flex h-12 w-12 items-center justify-center transition-transform active:scale-95">
@@ -203,7 +249,7 @@ export default function ClubList() {
                 </p>
 
                 <div className="flex justify-center">
-                  <span className={`${relationStyle.bg} ${relationStyle.text} rounded-[50px] px-6 py-2 font-['Montserrat'] text-[14px] font-semibold uppercase tracking-wide shadow-md`}>
+                  <span className={`${relationStyle.bg} ${relationStyle.text} rounded-[50px] px-6 py-2 font-['Montserrat'] text-[14px] font-semibold uppercase tracking-wide shadow-md whitespace-nowrap`}>
                     {relationStyle.label}
                   </span>
                 </div>
@@ -224,11 +270,7 @@ export default function ClubList() {
                     disabled={isLoadingMore}
                     className="bg-[#2a2a2a] hover:bg-[#274fde] border border-[#274fde] text-white px-8 py-3 rounded-[30px] font-['Montserrat'] font-medium transition-all disabled:opacity-50 flex items-center gap-2"
                 >
-                    {isLoadingMore ? (
-                        <>Ładowanie...</> 
-                    ) : (
-                        <>Załaduj więcej</>
-                    )}
+                    {isLoadingMore ? 'Ładowanie...' : 'Załaduj więcej'}
                 </button>
             </div>
         )}
