@@ -3,6 +3,7 @@ import Map from '../../components/map/Map';
 import SafetyCheck from '../../components/map/SafetyCheck';
 import Legend from '../../components/map/Legend';
 import ClubList from '../../components/map/ClubList';
+import { type LatLngBoundsExpression } from 'leaflet';
 
 // Importy logiki biznesowej
 import { 
@@ -17,13 +18,17 @@ interface SafetyState {
     title: string;
     statusTitle: string;
     description: string;
-    color: string; // Kluczowa zmiana: Hex Color zamiast boolean isSafe
+    color: string;
 }
 
 const MapScene = () => {
     // --- STANY DANYCH ---
     const [territories, setTerritories] = useState<TerritoryData[]>([]);
     const [relationsMap, setRelationsMap] = useState<RelationsMap>({});
+
+    // --- STAN FOKUSU TERYTORIUM ---
+    const [focusBounds, setFocusBounds] = useState<LatLngBoundsExpression | null>(null);
+
 
     // --- STAN UŻYTKOWNIKA ---
     const [userClub, setUserClub] = useState<string | null>(null);
@@ -139,6 +144,22 @@ const MapScene = () => {
         });
     };
 
+    const handleClubSelect = (clubName: string) => {
+        const targetTerritory = territories.find(t => t.owner_name === clubName);
+
+        if (targetTerritory && targetTerritory.polygon && targetTerritory.polygon.length > 0) {
+            
+            const bounds = targetTerritory.polygon.map(coord => [coord[0], coord[1]] as [number, number]);
+            
+            console.log(`Przelatuję do: ${clubName}`, bounds);
+            setFocusBounds(bounds);
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            alert(`Nie znaleziono strefy na mapie dla klubu: ${clubName}`);
+        }
+    };
+
     return (
         <section className="mx-auto w-5/6 pt-24 pb-20 md:h-5/6">
             <div className="md:mt-16 mx-auto flex flex-col gap-8">
@@ -154,13 +175,13 @@ const MapScene = () => {
                 <Map 
                     territories={territories}
                     userClub={userClub}
-                    relationsMap={relationsMap} // Przekazujemy relacje do kolorowania mapy
+                    relationsMap={relationsMap}
                     onLocationFound={handleLocationFound}
+                    focusedTerritoryBounds={focusBounds} // <--- Przekazujemy bounds
                 />
 
                 <Legend />
-                <ClubList />
-                
+                <ClubList onClubSelect={handleClubSelect} />
             </div>
         </section>
     );

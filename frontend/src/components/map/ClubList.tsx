@@ -5,6 +5,10 @@ import { MagnifyingGlassIcon, StarIcon as StarOutline, ArrowUpIcon, ArrowDownIco
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
 
+interface ClubListProps {
+  onClubSelect: (clubName: string) => void;
+}
+
 // --- KONFIGURACJA ---
 const MEDIA_URL = 'http://127.0.0.1:8000/media/';
 const DEFAULT_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTAgMTUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMzNDM0MzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zZW0iIGZpbGw9IiM4ODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkZMQUc8L3RleHQ+PC9zdmc+";
@@ -22,7 +26,7 @@ type SortField = 'name' | 'city' | 'relation';
 type SortOrder = 'asc' | 'desc';
 type RelationStatus = 'favorite' | 'safe' | 'dangerous' | 'neutral' | 'unknown';
 
-export default function ClubList() {
+export default function ClubList({ onClubSelect }: ClubListProps) {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -142,7 +146,7 @@ export default function ClubList() {
     if (relation === 'ZGODA') return 'safe';
     if (relation === 'NEUTRALNIE') return 'neutral';
 
-    return 'unknown'
+    return 'unknown';
   };
 
   // --- STYLOWANIE PILLSÓW ---
@@ -224,6 +228,8 @@ export default function ClubList() {
 
             return (
               <div key={club.id} className="grid grid-cols-[auto_2fr_1.5fr_1.5fr] gap-4 items-center px-6 py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
+                
+                {/* Ikona Gwiazdki */}
                 <button className="flex h-12 w-12 items-center justify-center transition-transform active:scale-95">
                   {club.isFavorite ? (
                     <StarSolid className="h-6 w-6 text-yellow-400" />
@@ -232,7 +238,11 @@ export default function ClubList() {
                   )}
                 </button>
 
-                <div className="flex items-center gap-4">
+                {/* NAZWA KLUBU - CLICKABLE */}
+                <div 
+                    className="flex items-center gap-4"
+                    onClick={() => onClubSelect(club.name)}
+                >
                   <img 
                     src={getClubImageUrl(club.path_image)} 
                     alt={club.name} 
@@ -244,10 +254,15 @@ export default function ClubList() {
                   </p>
                 </div>
 
-                <p className="text-center font-['Montserrat'] text-[16px] font-medium text-white">
+                {/* MIASTO - CLICKABLE */}
+                <p 
+                    className="text-center font-['Montserrat'] text-[16px] font-medium text-white hover:text-[#274fde] transition-colors"
+                    onClick={() => onClubSelect(club.name)}
+                >
                   {club.city}
                 </p>
 
+                {/* Relacja */}
                 <div className="flex justify-center">
                   <span className={`${relationStyle.bg} ${relationStyle.text} rounded-[50px] px-6 py-2 font-['Montserrat'] text-[14px] font-semibold uppercase tracking-wide shadow-md whitespace-nowrap`}>
                     {relationStyle.label}
