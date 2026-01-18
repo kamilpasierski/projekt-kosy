@@ -2,25 +2,22 @@ import * as turf from '@turf/turf';
 
 // --- KONFIGURACJA KOLORÓW ---
 export const RELATION_COLORS = {
-    HOSTILE:  '#ef4444',
-    FRIENDLY: '#10b981',
-    NEUTRAL:  '#d3d91e',
-    DEFAULT:  '#6b7280',
+    HOSTILE:  '#ef4444', // Red-500
+    FRIENDLY: '#10b981', // Emerald-500
+    NEUTRAL:  '#d3d91e', // Yellow-500 (Jawna neutralność)
+    DEFAULT:  '#6b7280', // Gray-500 (Brak danych / Nieznany)
 };
 
 // --- TYPY DANYCH ---
 
-// Struktura pojedynczego obszaru z API
 export interface TerritoryData {
     id: number;
     polygon: number[][]; // [Lat, Lng]
     owner_name: string | null;
 }
 
-// Mapa relacji dla szybkiego wyszukiwania O(1)
 export type RelationsMap = Record<string, Record<string, string>>;
 
-// Wynik analizy gotowy do wyświetlenia w komponencie SafetyCheck
 export interface SafetyAnalysisResult {
     statusTitle: string;
     description: string;
@@ -60,9 +57,13 @@ export const analyzeSafety = (
     const userPoint = turf.point([userLng, userLat]);
     const foundOwners: string[] = [];
     
-    // Priorytety: 3=KOSA, 0=ZGODA, 1=NEUTRAL
-    let maxRiskLevel = 1; 
-    let worstRelationType = 'NEUTRAL';
+    // Priorytety ryzyka:
+    // 3 = HOSTILE (Kosa)
+    // 2 = NEUTRAL (Jawna relacja neutralna)
+    // 1 = UNKNOWN (Brak danych w bazie - Szary)
+    // 0 = FRIENDLY (Mój klub lub Zgoda)
+    let maxRiskLevel = -1; 
+    let worstRelationType = 'UNKNOWN';
 
     for (const t of territories) {
         if (!t.polygon || !Array.isArray(t.polygon) || t.polygon.length === 0) continue;
@@ -92,8 +93,8 @@ export const analyzeSafety = (
                 const owner = t.owner_name || 'Nieznany';
                 foundOwners.push(owner);
 
-                let risk = 1; 
-                let relation = 'NEUTRAL';
+                let risk = 1; // Domyślnie UNKNOWN (Brak danych)
+                let relation = 'UNKNOWN';
 
                 if (owner === myClubName) {
                     risk = 0; 
@@ -104,12 +105,23 @@ export const analyzeSafety = (
                     if (dbRel === 'KOSA') { 
                         risk = 3; 
                         relation = 'HOSTILE'; 
-                    } else if (dbRel === 'ZGODA') { 
+                    } 
+                    else if (dbRel === 'NEUTRALNIE') { // Musi być jawnie w bazie jako NEUTRALNIE
+                        risk = 2;
+                        relation = 'NEUTRAL';
+                    }
+                    else if (dbRel === 'ZGODA' || dbRel === 'UKŁAD') { 
                         risk = 0; 
                         relation = 'FRIENDLY'; 
                     }
+                    else {
+                        // Brak wpisu w bazie relacji = Szary
+                        risk = 1;
+                        relation = 'UNKNOWN';
+                    }
                 }
 
+                // Aktualizacja globalnego statusu (bierzemy najgorszą opcję)
                 if (risk > maxRiskLevel) {
                     maxRiskLevel = risk;
                     worstRelationType = relation;
@@ -125,44 +137,57 @@ export const analyzeSafety = (
     const ownersStr = [...new Set(foundOwners)].join(' & ');
     const displayOwner = ownersStr || 'Teren nieznany';
 
+    // Przypadek 0: Nie jesteś na żadnym terenie
     if (foundOwners.length === 0) {
         return {
-            statusTitle: "TEREN NEUTRALNY",
+            statusTitle: "TEREN NIEZNANY",
             description: "Znajdujesz się poza znanymi strefami wpływów. Brak aktywnych grup w pobliżu.",
             isSafe: true,
             owner: '',
-            color: RELATION_COLORS.DEFAULT
+            color: RELATION_COLORS.DEFAULT // Szary
         };
     }
 
-    // Przypadek 1: KOSA
+    // Przypadek 1: KOSA (Priorytet 3)
     if (worstRelationType === 'HOSTILE') {
         return {
             statusTitle: "JESTEŚ ZAGROŻONY!",
             description: `Znajdujesz się na terenie: ${displayOwner}. To wrogie barwy. Zachowaj czujność!`,
             isSafe: false,
             owner: ownersStr,
-            color: RELATION_COLORS.HOSTILE
+            color: RELATION_COLORS.HOSTILE // Czerwony
         };
     }
 
-    // Przypadek 2: PRZYJACIEL
-    if (worstRelationType === 'FRIENDLY') {
+    // Przypadek 2: NEUTRALNY (Priorytet 2 - tylko jeśli w bazie jest relacja NEUTRALNIE)
+    if (worstRelationType === 'NEUTRAL') {
         return {
-            statusTitle: "JESTEŚ BEZPIECZNY!",
-            description: `Znajdujesz się na terenie: ${displayOwner}. Jesteś u siebie lub wśród przyjaciół.`,
+            statusTitle: "TEREN NEUTRALNY",
+            description: `Znajdujesz się na terenie: ${displayOwner}. Relacje są neutralne.`,
             isSafe: true,
             owner: ownersStr,
-            color: RELATION_COLORS.FRIENDLY
+            color: RELATION_COLORS.NEUTRAL // Żółty
         };
     }
 
-    // Przypadek 3: NEUTRALNY
+    // Przypadek 3: UNKNOWN / BRAK DANYCH (Priorytet 1)
+    // To łapie sytuację, gdy jesteś na terenie klubu X, ale nie masz z nim zdefiniowanej relacji
+    if (worstRelationType === 'UNKNOWN') {
+        return {
+            statusTitle: "STATUS NIEZNANY",
+            description: `Znajdujesz się na terenie: ${displayOwner}. Brak danych o relacjach z tym klubem.`,
+            isSafe: true, // Zakładamy true, ale kolor szary ostrzega
+            owner: ownersStr,
+            color: RELATION_COLORS.DEFAULT // Szary
+        };
+    }
+
+    // Przypadek 4: PRZYJACIEL (Priorytet 0)
     return {
-        statusTitle: "TEREN NEUTRALNY",
-        description: `Znajdujesz się na terenie: ${displayOwner}. Relacje są neutralne.`,
+        statusTitle: "JESTEŚ BEZPIECZNY!",
+        description: `Znajdujesz się na terenie: ${displayOwner}. Jesteś u siebie lub wśród przyjaciół.`,
         isSafe: true,
         owner: ownersStr,
-        color: RELATION_COLORS.NEUTRAL
+        color: RELATION_COLORS.FRIENDLY // Zielony
     };
 };

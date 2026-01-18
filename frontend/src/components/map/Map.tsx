@@ -27,23 +27,19 @@ export default function Map({ territories, userClub, relationsMap, onLocationFou
     const [mapZoom, setMapZoom] = useState<number>(6);
     const [userLocation, setUserLocation] = useState<LatLngTuple | null>(null);
 
-    // --- LOGIKA SORTOWANIA ---
+// --- LOGIKA SORTOWANIA ---
     const sortedTerritories = useMemo(() => {
         return [...territories].sort((a, b) => {
-            // Funkcja pomocnicza: Przypisuje wagę do relacji
-            // 1 = Dół (Bezpieczne)
-            // 2 = Środek (Neutralne)
-            // 3 = Wierzch (Niebezpieczne)
             const getWeight = (t: TerritoryData) => {
                 const owner = t.owner_name;
                 
                 if (!userClub || !owner) return 2;
-
                 if (owner === userClub) return 1;
 
                 const relation = relationsMap[userClub]?.[owner]?.toUpperCase();
 
-                if (relation === 'KOSA') return 3;
+                if (relation === 'KOSA') return 4;
+                if (relation === 'NEUTRALNIE') return 3;
                 if (relation === 'ZGODA' || relation === 'UKŁAD') return 1;
                 
                 return 2;
@@ -55,7 +51,6 @@ export default function Map({ territories, userClub, relationsMap, onLocationFou
             return weightA - weightB;
         });
     }, [territories, userClub, relationsMap]);
-
     // --- LOGIKA KOLOROWANIA ---
     const getTerritoryColor = (owner: string | null): string => {
         if (!userClub || !owner) return RELATION_COLORS.DEFAULT; 
@@ -65,9 +60,9 @@ export default function Map({ territories, userClub, relationsMap, onLocationFou
 
         switch (relation) {
             case 'KOSA': return RELATION_COLORS.HOSTILE;
-            case 'ZGODA':
-            case 'UKŁAD': return RELATION_COLORS.FRIENDLY;
-            default: return RELATION_COLORS.NEUTRAL;
+            case 'ZGODA': return RELATION_COLORS.FRIENDLY;
+            case 'NEUTRALNIE': return RELATION_COLORS.NEUTRAL;
+            default: return RELATION_COLORS.DEFAULT;
         }
     };
 
