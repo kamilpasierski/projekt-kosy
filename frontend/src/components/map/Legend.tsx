@@ -12,6 +12,7 @@ const defaultItems: LegendItem[] = [
   { label: "KOSA", color: "#cb0000" },
   { label: "ZGODA", color: "#20ca5f" },
   { label: "NEUTRALNIE", color: "#fbf201" },
+  { label: "BRAK DANYCH", color: "#6b7280" },
 ];
 
 export default function Legend({
