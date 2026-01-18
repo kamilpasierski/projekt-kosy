@@ -181,6 +181,18 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
     return <ArrowIcon className="ml-1 h-4 w-4 text-[#274fde]" />;
   };
 
+   // --- HANDLER ULUBIONYCH (MOCK FRONTEND) ---
+  const handleToggleFavorite = (e: React.MouseEvent, clubId: number) => {
+    e.stopPropagation();
+    setClubs(currentClubs => currentClubs.map(club => {
+      if (club.id === clubId) {
+        return { ...club, isFavorite: !club.isFavorite };
+      }
+      return club;
+    })
+  );
+};
+
   return (
     <div className="relative w-full max-w-[1440px] py-8">
       <h2 className="mb-6 px-[calc(6.25%+40px)] font-['Montserrat'] text-[20px] font-medium uppercase leading-[1.3] text-white">
@@ -230,11 +242,14 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
               <div key={club.id} className="grid grid-cols-[auto_2fr_1.5fr_1.5fr] gap-4 items-center px-6 py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
                 
                 {/* Ikona Gwiazdki */}
-                <button className="flex h-12 w-12 items-center justify-center transition-transform active:scale-95">
+                <button 
+                  onClick={(e) => handleToggleFavorite(e, club.id)}
+                  className="flex h-12 w-12 items-center justify-center transition-transform active:scale-95 group/star"
+                >
                   {club.isFavorite ? (
-                    <StarSolid className="h-6 w-6 text-yellow-400" />
+                    <StarSolid className="h-6 w-6 text-yellow-400 drop-shadow-sm" />
                   ) : (
-                    <StarOutline className="h-6 w-6 text-white" />
+                    <StarOutline className="h-6 w-6 text-white group-hover/star:text-yellow-400 transition-colors" />
                   )}
                 </button>
 
