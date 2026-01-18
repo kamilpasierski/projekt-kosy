@@ -12,6 +12,14 @@ import {
     type RelationsMap 
 } from '../../utils/geoUtils';
 
+// Definicja kształtu stanu dla SafetyCheck
+interface SafetyState {
+    title: string;
+    statusTitle: string;
+    description: string;
+    color: string; // Kluczowa zmiana: Hex Color zamiast boolean isSafe
+}
+
 const MapScene = () => {
     // --- STANY DANYCH ---
     const [territories, setTerritories] = useState<TerritoryData[]>([]);
@@ -21,19 +29,20 @@ const MapScene = () => {
     const [userClub, setUserClub] = useState<string | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // --- STAN UI (Dla SafetyCheck) ---
-    const [safetyProps, setSafetyProps] = useState({
+    // --- STAN UI (SafetyCheck) ---
+    // Ustawiamy domyślny kolor na neutralny szary (#6b7280)
+    const [safetyProps, setSafetyProps] = useState<SafetyState>({
         title: "WITAJ KIBICU",
         statusTitle: "ŁADOWANIE DANYCH...",
         description: "Pobieramy informacje o strefach i Twoim profilu.",
-        isSafe: true
+        color: "#6b7280" 
     });
 
-    // POBIERANIE WSZYSTKICH DANYCH (Init)
+    // 1. POBIERANIE DANYCH (Init)
     useEffect(() => {
         const initData = async () => {
             try {
-                // POBIERAMY DANE PUBLICZNE (Obszary i Relacje)
+                // Fetch równoległy dla wydajności
                 const [areasRes, relRes] = await Promise.all([
                     fetch('http://127.0.0.1:8000/api/area/'),
                     fetch('http://127.0.0.1:8000/api/relations/')
@@ -45,7 +54,7 @@ const MapScene = () => {
                 setTerritories(areas);
                 setRelationsMap(parseRelationsToMap(rels));
 
-                // POBIERAMY DANE UŻYTKOWNIKA
+                // Obsługa User Context
                 const token = localStorage.getItem('accessToken'); 
                 
                 if (token) {
@@ -59,14 +68,13 @@ const MapScene = () => {
 
                     if (userRes.ok) {
                         const userData = await userRes.json();
-                        console.log("Dane profilu:", userData);
+                        // console.log("Dane profilu:", userData);
 
-                        // Logika obsługi NULL-a
                         if (userData.club_name) {
                             setUserClub(userData.club_name);
                             setIsLoggedIn(true);
                         } else {
-                            console.warn("User zalogowany, ale nie wybrał klubu.");
+                            console.warn("User zalogowany, brak wybranego klubu.");
                             setIsLoggedIn(true); 
                             setUserClub(null);
                         }
@@ -74,38 +82,47 @@ const MapScene = () => {
                 }
 
             } catch (e) {
-                console.error("Błąd API w MapScene:", e);
+                console.error("Critical API Error in MapScene:", e);
+                setSafetyProps(prev => ({
+                    ...prev,
+                    statusTitle: "BŁĄD DANYCH",
+                    description: "Nie udało się pobrać danych z serwera.",
+                    color: "#ef4444" // Red error state
+                }));
             }
         };
         initData();
     }, []);
 
-    // AKTUALIZACJA UI PO ZAŁADOWANIU DANYCH
+    // 2. AKTUALIZACJA UI STATUSU (Based on Auth)
     useEffect(() => {
+        // Jeśli mamy dane, ale user jeszcze nie kliknął "Zlokalizuj",
+        // ustawiamy stan oczekiwania.
         if (isLoggedIn && userClub) {
             setSafetyProps({
                 title: "TWOJE POŁOŻENIE",
                 statusTitle: "OCZEKIWANIE NA LOKALIZACJĘ",
-                description: `Wybrany klub: ${userClub}. Kliknij przycisk 'Zlokalizuj mnie'.`,
-                isSafe: true
+                description: `Ulubiony klub: ${userClub}. Kliknij przycisk 'Zlokalizuj mnie' na mapie.`,
+                color: "#6b7280" // Neutralny szary
             });
-        } else {
+        } else if (!isLoggedIn) {
             setSafetyProps({
                 title: "WITAJ KIBICU",
                 statusTitle: "WYMAGANE LOGOWANIE",
                 description: "Zaloguj się i wybierz swój ulubiony klub w profilu, aby korzystać z mapy.",
-                isSafe: true
+                color: "#6b7280" // Neutralny szary
             });
         }
     }, [isLoggedIn, userClub]);
 
-    // LOGIKA: Co robimy, gdy Mapa zgłosi "Mam lokalizację!"
+    // 3. LOGIKA GEOLOKALIZACJI
     const handleLocationFound = (lat: number, lng: number) => {
         if (!userClub) {
             alert("Nie wykryto ulubionego klubu! Zaloguj się.");
             return;
         }
 
+        // Funkcja analyzeSafety zwraca teraz obiekt zawierający 'color'
         const result = analyzeSafety(
             lat, 
             lng, 
@@ -118,7 +135,7 @@ const MapScene = () => {
             title: "TWOJE POŁOŻENIE",
             statusTitle: result.statusTitle,
             description: result.description,
-            isSafe: result.isSafe
+            color: result.color // Mapujemy kolor zwrócony z logiki biznesowej
         });
     };
 
@@ -126,16 +143,18 @@ const MapScene = () => {
         <section className="mx-auto w-5/6 pt-24 pb-20 md:h-5/6">
             <div className="md:mt-16 mx-auto flex flex-col gap-8">
                 
+                {/* Komponent bezstanowy - przyjmuje propsy wprost */}
                 <SafetyCheck 
                     title={safetyProps.title}
                     statusTitle={safetyProps.statusTitle}
                     description={safetyProps.description}
-                    isSafe={safetyProps.isSafe}
+                    color={safetyProps.color}
                 />
                 
                 <Map 
                     territories={territories}
                     userClub={userClub}
+                    relationsMap={relationsMap} // Przekazujemy relacje do kolorowania mapy
                     onLocationFound={handleLocationFound}
                 />
 

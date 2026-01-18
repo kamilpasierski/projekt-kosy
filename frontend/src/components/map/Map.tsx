@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Polygon, Circle, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import {type  LatLngTuple } from 'leaflet';
-import { type TerritoryData } from '../../utils/geoUtils';
+import { type LatLngTuple } from 'leaflet';
+import { 
+    type RelationsMap, 
+    type TerritoryData, 
+    RELATION_COLORS 
+} from '../../utils/geoUtils';
 
 // Helper do przesuwania widoku mapy
 function ChangeView({ center, zoom }: { center: LatLngTuple; zoom: number }) {
@@ -14,28 +18,68 @@ function ChangeView({ center, zoom }: { center: LatLngTuple; zoom: number }) {
 interface MapProps {
     territories: TerritoryData[];
     userClub: string | null;
+    relationsMap: RelationsMap;
     onLocationFound: (lat: number, lng: number) => void;
 }
 
-export default function Map({ territories, userClub, onLocationFound }: MapProps) {
+export default function Map({ territories, userClub, relationsMap, onLocationFound }: MapProps) {
     const [mapCenter, setMapCenter] = useState<LatLngTuple>([52.23, 21.01]);
     const [mapZoom, setMapZoom] = useState<number>(6);
     const [userLocation, setUserLocation] = useState<LatLngTuple | null>(null);
 
+    // --- LOGIKA SORTOWANIA ---
+    const sortedTerritories = useMemo(() => {
+        return [...territories].sort((a, b) => {
+            // Funkcja pomocnicza: Przypisuje wagę do relacji
+            // 1 = Dół (Bezpieczne)
+            // 2 = Środek (Neutralne)
+            // 3 = Wierzch (Niebezpieczne)
+            const getWeight = (t: TerritoryData) => {
+                const owner = t.owner_name;
+                
+                if (!userClub || !owner) return 2;
+
+                if (owner === userClub) return 1;
+
+                const relation = relationsMap[userClub]?.[owner]?.toUpperCase();
+
+                if (relation === 'KOSA') return 3;
+                if (relation === 'ZGODA' || relation === 'UKŁAD') return 1;
+                
+                return 2;
+            };
+
+            const weightA = getWeight(a);
+            const weightB = getWeight(b);
+
+            return weightA - weightB;
+        });
+    }, [territories, userClub, relationsMap]);
+
+    // --- LOGIKA KOLOROWANIA ---
+    const getTerritoryColor = (owner: string | null): string => {
+        if (!userClub || !owner) return RELATION_COLORS.DEFAULT; 
+        if (owner === userClub) return RELATION_COLORS.FRIENDLY;
+
+        const relation = relationsMap[userClub]?.[owner]?.toUpperCase();
+
+        switch (relation) {
+            case 'KOSA': return RELATION_COLORS.HOSTILE;
+            case 'ZGODA':
+            case 'UKŁAD': return RELATION_COLORS.FRIENDLY;
+            default: return RELATION_COLORS.NEUTRAL;
+        }
+    };
+
     const handleLocateClick = () => {
         if (!navigator.geolocation) return;
-
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                
-                // Aktualizujemy widok mapy (lokalnie)
                 setUserLocation([lat, lng]);
                 setMapCenter([lat, lng]);
                 setMapZoom(13);
-
-                // Wysyłamy sygnał do MapScene (Rodzica)
                 onLocationFound(lat, lng);
             },
             (err) => console.error("Błąd GPS:", err)
@@ -45,7 +89,6 @@ export default function Map({ territories, userClub, onLocationFound }: MapProps
     return (
         <div className="relative w-full h-[450px] rounded-[30px] overflow-hidden shadow-xl border border-[#2a2a2a]">
             
-            {/* Przycisk wyświetlamy tylko jak jest userClub */}
             {userClub && (
                 <button 
                     onClick={handleLocateClick}
@@ -59,17 +102,30 @@ export default function Map({ territories, userClub, onLocationFound }: MapProps
                 <ChangeView center={mapCenter} zoom={mapZoom} />
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-                {territories.map(t => {
+                {/* Renderujemy posortowaną tablicę */}
+                {sortedTerritories.map(t => {
                     const isPoint = !t.polygon || t.polygon.length < 4;
-                    // Jeśli user nie zalogowany - wszystko na szaro, jeśli tak - kolorujemy strefy
-                    const color = userClub 
-                        ? (t.owner_name === userClub ? '#10b981' : '#ef4444') 
-                        : '#6b7280';
-                    //TO JESZCZE DO POPRAWY - kolory stref powinny być inne w zależności od relacji klubu użytkownika z właścicielem strefy
+                    const color = getTerritoryColor(t.owner_name);
+                    
+                    const pathOptions = { 
+                        color, 
+                        fillOpacity: 0.35,
+                        weight: 2 
+                    };
+
                     return isPoint ? (
-                        <Circle key={t.id} center={t.polygon[0] as LatLngTuple} radius={2000} pathOptions={{ color, fillOpacity: 0.2 }} />
+                        <Circle 
+                            key={`c-${t.id}`} 
+                            center={t.polygon[0] as LatLngTuple} 
+                            radius={2000} 
+                            pathOptions={pathOptions} 
+                        />
                     ) : (
-                        <Polygon key={t.id} positions={t.polygon as LatLngTuple[]} pathOptions={{ color, fillOpacity: 0.2 }} />
+                        <Polygon 
+                            key={`p-${t.id}`} 
+                            positions={t.polygon as LatLngTuple[]} 
+                            pathOptions={pathOptions} 
+                        />
                     );
                 })}
 
