@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from models.models import Ticket, ClubRelation, Status
+from ..models.models import Ticket, ClubRelation, Status, Notification
 from .serializers import AdminPendingTicketSerializer
 
 class PendingTicketsList(ListAPIView):
@@ -31,6 +31,15 @@ class TicketActionView(APIView):
         if action == 'reject':
             ticket.status = Status.REJECTED
             ticket.save()
+
+            # Utworzenie powiadomienia (odrzucone)
+
+            Notification.objects.create(
+                user=ticket.user,
+                content=f"Twoje zgłoszenie relacji między "
+                        f"{ticket.club_a} a {ticket.club_b} zostało odrzucone."
+            )
+
             return Response({"message": "Zgłoszenie odrzucone"}, status=status.HTTP_200_OK)
 
         elif action == 'approve':
@@ -51,6 +60,15 @@ class TicketActionView(APIView):
             # Zmiana statusu ticketa
             ticket.status = Status.APPROVED
             ticket.save()
+
+            # Utworzenie powiadomienia (zatwierdzone)
+
+            Notification.objects.create(
+                user=ticket.user,
+                content=f"Twoje zgłoszenie relacji między "
+                        f"{ticket.club_a} a {ticket.club_b} zostało zatwierdzone."
+            )
+
             return Response({"message": "Zgłoszenie zatwierdzone"}, status=status.HTTP_200_OK)
 
         return Response({"error": "Nieznana akcja"}, status=status.HTTP_400_BAD_REQUEST)
