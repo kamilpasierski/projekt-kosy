@@ -4,8 +4,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from ..models.models import Ticket, ClubRelation, Status, Notification
+from models.models import Ticket, ClubRelation, Status, Notification
 from .serializers import AdminPendingTicketSerializer
+from django.contrib.auth.models import User
+from django.db.models import Q
 
 class PendingTicketsList(ListAPIView):
     """
@@ -28,17 +30,31 @@ class TicketActionView(APIView):
         ticket = get_object_or_404(Ticket, pk=pk)
         action = request.data.get('action')
 
+        notifications = []
+
+        users = User.objects.filter(
+            Q(profile__club__in=[ticket.club_a, ticket.club_b]) |
+            Q(id=ticket.user.id)
+        ).distinct()
+
         if action == 'reject':
             ticket.status = Status.REJECTED
             ticket.save()
 
-            # Utworzenie powiadomienia (odrzucone)
+            # Utworzenie powiadomienia dla usera, któy stworzył ticketa (odrzucone)
 
-            Notification.objects.create(
-                user=ticket.user,
-                content=f"Twoje zgłoszenie relacji między "
-                        f"{ticket.club_a} a {ticket.club_b} zostało odrzucone."
-            )
+            for user in users:
+                notifications.append(
+                    Notification(
+                        user=user,
+                        content=(
+                            f"Relacja między {ticket.club_a} a {ticket.club_b} "
+                            f"została odrzucona przez administratora."
+                        )
+                    )
+                )
+
+            Notification.objects.bulk_create(notifications)
 
             return Response({"message": "Zgłoszenie odrzucone"}, status=status.HTTP_200_OK)
 
@@ -63,11 +79,18 @@ class TicketActionView(APIView):
 
             # Utworzenie powiadomienia (zatwierdzone)
 
-            Notification.objects.create(
-                user=ticket.user,
-                content=f"Twoje zgłoszenie relacji między "
-                        f"{ticket.club_a} a {ticket.club_b} zostało zatwierdzone."
-            )
+            for user in users:
+                notifications.append(
+                    Notification(
+                        user=user,
+                        content=(
+                            f"Relacja między {ticket.club_a} a {ticket.club_b} "
+                            f"została zaakceptowana przez administratora."
+                        )
+                    )
+                )
+
+            Notification.objects.bulk_create(notifications)
 
             return Response({"message": "Zgłoszenie zatwierdzone"}, status=status.HTTP_200_OK)
 
