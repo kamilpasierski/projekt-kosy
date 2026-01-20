@@ -3,6 +3,7 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
+from api_ticket_list.views import UserNotificationsList
 
 from api_clubs.views import ClubSearchListView
 
@@ -15,6 +16,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/ticketcreate/', include('api_ticket_create.urls')),
     path('api/tickets/', include('api_ticket_list.urls')),
+    path('api/notifications/', UserNotificationsList.as_view(), name='user-notifications'),
+
     path("clubs/autocomplete/", include("api_autocomplete_clubs.urls")),
     
     

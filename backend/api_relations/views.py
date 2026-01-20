@@ -3,8 +3,11 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from models.models import Club, ClubRelation, Ticket, Status
+from django.contrib.auth import get_user_model
+from models.models import Club, ClubRelation, Ticket, Status, FavoriteClub, Notification
 from .serializers import RelationUpdateSerializer, RelationListSerializer
+
+User = get_user_model()
 
 # --- GET: DLA MAPY (geoUtils) ---
 @api_view(['GET'])
@@ -40,6 +43,24 @@ def relation_update_view(request):
             (Q(club_a=club_a) & Q(club_b=club_b)) | (Q(club_a=club_b) & Q(club_b=club_a)),
             status=Status.PENDING
         ).update(status=Status.APPROVED)
+
+        # Powiadomienia dla użytkowników, którzy obserwują którykolwiek z klubów
+        watchers = User.objects.filter(
+            Q(favorite_clubs__club__in=[club_a, club_b]) | Q(profile__club__in=[club_a, club_b])
+        ).distinct()
+
+        notifications = [
+            Notification(
+                user=user,
+                content=(
+                    f"Relacja między {club_a.name} a {club_b.name} została zmieniona na {obj.relation_type}."
+                )
+            )
+            for user in watchers
+        ]
+
+        if notifications:
+            Notification.objects.bulk_create(notifications)
 
         action_msg = "utworzona" if created else "zaktualizowana"
         return Response({
