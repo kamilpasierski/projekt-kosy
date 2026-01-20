@@ -106,3 +106,14 @@ class UserNotificationsList(ListAPIView):
 
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+
+# change is_read status API
+
+class NotificationMarkReadView(APIView):
+    def patch(self, request, pk):
+        notification = get_object_or_404(Notification, pk=pk)
+        notification.is_read = True
+        notification.save()
+        serializer = NotificationSerializer(notification)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

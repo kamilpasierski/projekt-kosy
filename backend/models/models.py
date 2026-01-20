@@ -16,7 +16,7 @@ class Club(models.Model):
     city = models.CharField(max_length=30)
     points = models.IntegerField(default=0)
     desc = models.TextField()
-    path_image = models.ImageField(upload_to='clubs/', null=True, blank=True)
+    path_image = models.ImageField(null=True, blank=True)
 
     area = models.OneToOneField(
         Area,
@@ -36,6 +36,7 @@ class Notification(models.Model):
         related_name='notifications'
     )
     content = models.TextField()
+    is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class UserProfile(models.Model):
