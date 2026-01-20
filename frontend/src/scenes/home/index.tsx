@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import Baner from "@/assets/Baner.png";
 import MatchesTable from "../../shared/MatchesTable";
-import PopularClubs from "../../components/PopularClubs";
-import ClubSearch from "../../components/ClubSearch";
+import PopularClubs from "../../components/home/PopularClubs";
+import ClubSearch from "../../components/home/ClubSearch";
 
 const Home = () => {
     const navigate = useNavigate();
