@@ -3,4 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.SetUserClubView.as_view()),
+    path('watched_clubs', views.AddFavoriteClubAPIView.as_view()),
 ]
