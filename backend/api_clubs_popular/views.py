@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from models.models import Club
-from api_clubs.serializers import ClubSerializer
+from .serializers import ClubSerializer
 
 class PopularClubsView(APIView):
     """
