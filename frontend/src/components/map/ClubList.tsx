@@ -194,40 +194,41 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
 };
 
   return (
-    <div className="relative w-full max-w-[1440px] py-8">
-      <h2 className="mb-6 px-[calc(6.25%+40px)] font-['Montserrat'] text-[20px] font-medium uppercase leading-[1.3] text-white">
+    <div className="relative w-full py-6 md:py-8 px-4">
+      <h2 className="mb-4 md:mb-6 text-lg md:text-[20px] font-medium uppercase leading-[1.3] text-white">
         Lista klubów
       </h2>
 
       {/* SEARCH BAR */}
-      <div className="mx-[8.96%] mb-6 flex items-center gap-4 rounded-[30px] bg-[#2a2a2a] px-6 py-4 border border-transparent focus-within:border-[#274fde] transition-colors">
-        <MagnifyingGlassIcon className="h-6 w-6 text-white flex-shrink-0" />
+      <div className="mb-4 md:mb-6 flex items-center gap-3 md:gap-4 rounded-[20px] md:rounded-[30px] bg-[#2a2a2a] px-4 md:px-6 py-3 md:py-4 border border-transparent focus-within:border-[#274fde] transition-colors">
+        <MagnifyingGlassIcon className="h-5 w-5 md:h-6 md:w-6 text-white flex-shrink-0" />
         <input
           type="text"
           placeholder="Szukaj klubu..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 bg-transparent font-['Montserrat'] text-[16px] font-medium text-white placeholder:text-gray-500 outline-none"
+          className="flex-1 bg-transparent text-sm md:text-[16px] font-medium text-white placeholder:text-gray-500 outline-none"
         />
         {isLoading && !isLoadingMore && <span className="text-xs text-gray-400 animate-pulse">Ładowanie...</span>}
       </div>
 
       {/* TABLE */}
-      <div className="mx-[calc(6.25%+33px)] overflow-hidden rounded-[30px] bg-[#343434] min-h-[300px] pb-4">
+      <div className="overflow-x-auto rounded-[20px] md:rounded-[30px] bg-[#343434] min-h-[300px] pb-4">
+        <div className="min-w-full inline-block">
         
         {/* HEADER */}
-        <div className="grid grid-cols-[auto_2fr_1.5fr_1.5fr] gap-4 border-b-[0.5px] border-[#274fde] bg-[#2a2a2a] px-6 py-4 select-none">
-          <div className="w-12" />
+        <div className="grid grid-cols-[auto_1.5fr_1fr] md:grid-cols-[auto_2fr_1.5fr_1.5fr] gap-2 md:gap-4 border-b-[0.5px] border-[#274fde] bg-[#2a2a2a] px-3 md:px-6 py-3 md:py-4 select-none">
+          <div className="w-8 md:w-12" />
           <div className="flex items-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('name')}>
-            <p className="font-['Montserrat'] text-[16px] font-medium text-white">Klub</p>
+            <p className="text-xs md:text-[16px] font-medium text-white">Klub</p>
             {renderSortArrow('name')}
           </div>
-          <div className="flex items-center justify-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('city')}>
-            <p className="text-center font-['Montserrat'] text-[16px] font-medium text-white">Miasto</p>
+          <div className="hidden md:flex items-center justify-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('city')}>
+            <p className="text-center text-xs md:text-[16px] font-medium text-white">Miasto</p>
             {renderSortArrow('city')}
           </div>
           <div className="flex items-center justify-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('relation')}>
-            <p className="text-center font-['Montserrat'] text-[16px] font-medium text-white">Relacje</p>
+            <p className="text-center text-xs md:text-[16px] font-medium text-white">Relacje</p>
             {renderSortArrow('relation')}
           </div>
         </div>
@@ -239,39 +240,39 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
             const relationStyle = getRelationStyle(relationStatus);
 
             return (
-              <div key={club.id} className="grid grid-cols-[auto_2fr_1.5fr_1.5fr] gap-4 items-center px-6 py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
+              <div key={club.id} className="grid grid-cols-[auto_1.5fr_1fr] md:grid-cols-[auto_2fr_1.5fr_1.5fr] gap-2 md:gap-4 items-center px-3 md:px-6 py-3 md:py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
                 
                 {/* Ikona Gwiazdki */}
                 <button 
                   onClick={(e) => handleToggleFavorite(e, club.id)}
-                  className="flex h-12 w-12 items-center justify-center transition-transform active:scale-95 group/star"
+                  className="flex h-8 w-8 md:h-12 md:w-12 items-center justify-center transition-transform active:scale-95 group/star"
                 >
                   {club.isFavorite ? (
-                    <StarSolid className="h-6 w-6 text-yellow-400 drop-shadow-sm" />
+                    <StarSolid className="h-5 w-5 md:h-6 md:w-6 text-yellow-400 drop-shadow-sm" />
                   ) : (
-                    <StarOutline className="h-6 w-6 text-white group-hover/star:text-yellow-400 transition-colors" />
+                    <StarOutline className="h-5 w-5 md:h-6 md:w-6 text-white group-hover/star:text-yellow-400 transition-colors" />
                   )}
                 </button>
 
                 {/* NAZWA KLUBU - CLICKABLE */}
                 <div 
-                    className="flex items-center gap-4"
+                    className="flex items-center gap-2 md:gap-4 min-w-0"
                     onClick={() => onClubSelect(club.name)}
                 >
                   <img 
                     src={getClubImageUrl(club.path_image)} 
                     alt={club.name} 
-                    className="h-[54px] w-[54px] object-contain bg-white/5 rounded-full p-1"
+                    className="h-8 w-8 md:h-[54px] md:w-[54px] object-contain bg-white/5 rounded-full p-1 flex-shrink-0"
                     onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_LOGO; }}
                   />
-                  <p className="font-['Montserrat'] text-[16px] font-medium text-white group-hover:text-[#274fde] transition-colors">
+                  <p className="text-xs md:text-[16px] font-medium text-white group-hover:text-[#274fde] transition-colors truncate">
                     {club.name}
                   </p>
                 </div>
 
                 {/* MIASTO - CLICKABLE */}
                 <p 
-                    className="text-center font-['Montserrat'] text-[16px] font-medium text-white hover:text-[#274fde] transition-colors"
+                    className="hidden md:block text-center text-xs md:text-[16px] font-medium text-white hover:text-[#274fde] transition-colors truncate"
                     onClick={() => onClubSelect(club.name)}
                 >
                   {club.city}
@@ -279,31 +280,33 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
 
                 {/* Relacja */}
                 <div className="flex justify-center">
-                  <span className={`${relationStyle.bg} ${relationStyle.text} rounded-[50px] px-6 py-2 font-['Montserrat'] text-[14px] font-semibold uppercase tracking-wide shadow-md whitespace-nowrap`}>
-                    {relationStyle.label}
-                  </span>
+                  <div 
+                    className={`${relationStyle.bg} h-6 w-6 md:h-[45px] md:w-[45px] rounded-full shadow-md`}
+                    title={relationStyle.label}
+                  />
                 </div>
               </div>
             );
           })}
           
           {clubs.length === 0 && !isLoading && (
-            <div className="text-center py-10 text-gray-400">Brak wyników</div>
+            <div className="text-center py-6 md:py-10 text-gray-400 text-sm md:text-base">Brak wyników</div>
           )}
         </div>
 
         {/* LOAD MORE BUTTON */}
         {hasMore && (
-            <div className="flex justify-center pt-6 pb-2">
+            <div className="flex justify-center pt-4 md:pt-6 pb-2">
                 <button 
                     onClick={handleLoadMore}
                     disabled={isLoadingMore}
-                    className="bg-[#2a2a2a] hover:bg-[#274fde] border border-[#274fde] text-white px-8 py-3 rounded-[30px] font-['Montserrat'] font-medium transition-all disabled:opacity-50 flex items-center gap-2"
+                    className="bg-[#2a2a2a] hover:bg-[#274fde] border border-[#274fde] text-white px-6 md:px-8 py-2 md:py-3 rounded-[30px] font-medium transition-all disabled:opacity-50 flex items-center gap-2 text-sm md:text-base"
                 >
                     {isLoadingMore ? 'Ładowanie...' : 'Załaduj więcej'}
                 </button>
             </div>
         )}
+        </div>
       </div>
     </div>
   );
