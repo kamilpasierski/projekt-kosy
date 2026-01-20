@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from models.models import Ticket, Club
+from models.models import Notification
 
 class ClubInfoSerializer(serializers.ModelSerializer):
     logoUrl = serializers.SerializerMethodField()
@@ -30,3 +31,10 @@ class AdminPendingTicketSerializer(serializers.ModelSerializer):
             "clubB", 
             "relation"
         ]
+
+class NotificationSerializer(serializers.ModelSerializer):
+    timestamp = serializers.DateTimeField(source='created_at', format="%d.%m.%Y, %H:%M", read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = ['id', 'content', 'timestamp']

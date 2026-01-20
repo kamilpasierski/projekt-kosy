@@ -1,11 +1,11 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from models.models import Ticket, ClubRelation, Status, Notification
-from .serializers import AdminPendingTicketSerializer
+from .serializers import AdminPendingTicketSerializer, NotificationSerializer
 from django.contrib.auth.models import User
 from django.db.models import Q
 
@@ -95,3 +95,13 @@ class TicketActionView(APIView):
             return Response({"message": "Zgłoszenie zatwierdzone"}, status=status.HTTP_200_OK)
 
         return Response({"error": "Nieznana akcja"}, status=status.HTTP_400_BAD_REQUEST)
+    
+class UserNotificationsList(ListAPIView):
+    """
+    Zwraca listę powiadomień tylko dla zalogowanego użytkownika.
+    """
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
