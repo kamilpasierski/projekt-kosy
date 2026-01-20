@@ -47,10 +47,18 @@ export default function ClubSearch() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleSelect = (club: Club) => {
+    const handleSelect = async (club: Club) => {
         setQuery(club.name);
         setIsOpen(false);
         console.log("Wybrano:", club.name);
+        
+        // Inkrementuj punkty klubu
+        try {
+            await axios.post(`${API_URL}/api/clubs/popular/increment/${club.id}/`);
+        } catch (error) {
+            console.error("Błąd inkrementacji punktów:", error);
+        }
+        
         navigate(`/club/${club.id}`);
     };
 

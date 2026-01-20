@@ -51,7 +51,7 @@ export default function PopularClubs() {
           <div className="h-12 w-px bg-gray-700" />
           <p className="font-['Montserrat'] text-[16px] font-medium text-white">Lokalizacja</p>
           <div className="h-12 w-px bg-gray-700" />
-          <p className="font-['Montserrat'] text-[16px] font-medium text-white">Relacje</p>
+          <p className="font-['Montserrat'] text-[16px] font-medium text-white">Strona klubu</p>
         </div>
       </div>
 
