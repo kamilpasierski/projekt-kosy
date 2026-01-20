@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from models.models import Ticket, ClubRelation, Status, Notification
+from models.models import Ticket, ClubRelation, Status, Notification, FavoriteClub
 from .serializers import AdminPendingTicketSerializer, NotificationSerializer
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -33,6 +33,7 @@ class TicketActionView(APIView):
         notifications = []
 
         users = User.objects.filter(
+            Q(favorite_clubs__club__in=[ticket.club_a, ticket.club_b]) |
             Q(profile__club__in=[ticket.club_a, ticket.club_b]) |
             Q(id=ticket.user.id)
         ).distinct()
