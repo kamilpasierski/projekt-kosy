@@ -42,66 +42,92 @@ export default function PopularClubs() {
 
   return (
     <div className="relative w-full overflow-hidden rounded-[30px] border border-[#343434] bg-[#343434]">
-      {/* Table Header */}
-      <div className="border-b border-[#274fde] bg-[#2a2a2a]">
+      {/* Nagłówek tabeli */}
+      <div className="hidden md:block border-b border-[#274fde] bg-[#2a2a2a]">
         <div className="grid grid-cols-[1fr_auto_2fr_auto_2fr_auto_1.5fr] items-center gap-4 px-6 py-4">
-          <p className="font-['Montserrat'] text-[16px] font-medium text-white">Herb</p>
-          <div className="h-12 w-px bg-gray-700" />
-          <p className="font-['Montserrat'] text-[16px] font-medium text-white">Nazwa klubu</p>
-          <div className="h-12 w-px bg-gray-700" />
-          <p className="font-['Montserrat'] text-[16px] font-medium text-white">Lokalizacja</p>
-          <div className="h-12 w-px bg-gray-700" />
-          <p className="font-['Montserrat'] text-[16px] font-medium text-white">Strona klubu</p>
+          <p className="text-sm md:text-[16px] font-medium text-white">Herb</p>
+          <div className="h-8 md:h-12 w-px bg-gray-700" />
+          <p className="text-sm md:text-[16px] font-medium text-white">Nazwa klubu</p>
+          <div className="h-8 md:h-12 w-px bg-gray-700" />
+          <p className="text-sm md:text-[16px] font-medium text-white">Lokalizacja</p>
+          <div className="h-8 md:h-12 w-px bg-gray-700" />
+          <p className="text-sm md:text-[16px] font-medium text-white">Strona klubu</p>
         </div>
       </div>
 
-      {/* Table Rows */}
-      <div className="divide-y divide-gray-700">
+      {/* Wiersze */}
+      <div className="divide-y divide-gray-800 md:divide-gray-700">
         {clubs.map((club) => (
-          <div
-            key={club.id}
-            className="grid grid-cols-[1fr_auto_2fr_auto_2fr_auto_1.5fr] items-center gap-4 px-6 py-6 hover:bg-[#3a3a3a] transition-colors group"
-          >
-            {/* Logo - Teraz klikalne */}
-            <div className="flex justify-start">
-              <Link to={`/club/${club.id}`} className="block">
+          <div key={club.id} className="group">
+            {/* Karta mobilna (domyślnie) */}
+            <div className="flex md:hidden items-center gap-4 px-4 py-4 hover:bg-[#3a3a3a] transition-colors">
+              <Link to={`/club/${club.id}`} className="shrink-0">
                 <img
-                  src={club.path_image ? `${MEDIA_URL}${club.path_image}` : "https://via.placeholder.com/32"}
+                  src={club.path_image ? `${MEDIA_URL}${club.path_image}` : 'https://via.placeholder.com/40x32'}
                   alt={club.name}
                   className="h-[40px] w-[32px] object-contain transition-opacity hover:opacity-80"
                 />
               </Link>
-            </div>
-
-            <div className="h-12 w-px bg-gray-700" />
-
-            {/* Club Name - Teraz klikalne */}
-            <div className="flex justify-start">
-                 <Link 
-                    to={`/club/${club.id}`}
-                    className="font-['Montserrat'] text-[16px] font-medium text-white hover:text-[#274fde] transition-colors"
-                 >
+              <div className="flex-1 min-w-0">
+                <Link
+                  to={`/club/${club.id}`}
+                  className="block truncate text-base font-semibold text-white hover:text-[#274fde] transition-colors"
+                >
                   {club.name}
                 </Link>
+                <p className="text-sm text-white">{club.city}</p>
+              </div>
+              <div className="shrink-0">
+                <Link
+                  to={`/club/${club.id}`}
+                  className="rounded-[50px] bg-[#274fde] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e3fbd] transition-colors"
+                >
+                  Szczegóły
+                </Link>
+              </div>
             </div>
 
-            <div className="h-12 w-px bg-gray-700" />
+            {/* Wiersz desktop */}
+            <div className="hidden md:grid grid-cols-[1fr_auto_2fr_auto_2fr_auto_1.5fr] items-center gap-4 px-6 py-6 hover:bg-[#3a3a3a] transition-colors">
+              {/* Logo */}
+              <div className="flex justify-start">
+                <Link to={`/club/${club.id}`} className="block">
+                  <img
+                    src={club.path_image ? `${MEDIA_URL}${club.path_image}` : 'https://via.placeholder.com/40x32'}
+                    alt={club.name}
+                    className="h-[40px] w-[32px] object-contain transition-opacity hover:opacity-80"
+                  />
+                </Link>
+              </div>
 
-            {/* City */}
-            <p className="font-['Montserrat'] text-[16px] font-medium text-white">
-              {club.city}
-            </p>
+              <div className="h-12 w-px bg-gray-700" />
 
-            <div className="h-12 w-px bg-gray-700" />
+              {/* Nazwa klubu */}
+              <div className="flex justify-start">
+                <Link
+                  to={`/club/${club.id}`}
+                  className="text-[16px] font-medium text-white hover:text-[#274fde] transition-colors"
+                >
+                  {club.name}
+                </Link>
+              </div>
 
-            {/* Details Button */}
-            <div className="flex justify-start">
-              <Link
-                to={`/club/${club.id}`}
-                className="rounded-[50px] bg-[#274fde] px-6 py-2 font-['Montserrat'] text-[16px] font-medium text-white hover:bg-[#1e3fbd] transition-colors"
-              >
-                Szczegóły
-              </Link>
+              <div className="h-12 w-px bg-gray-700" />
+
+              {/* Miasto */}
+              <p className="text-[16px] font-medium text-white">{club.city}</p>
+
+              <div className="h-12 w-px bg-gray-700" />
+
+              {/* Przycisk szczegółów */}
+              <div className="flex justify-start">
+                <Link
+                  to={`/club/${club.id}`}
+                  className="rounded-[50px] bg-[#274fde] px-6 py-2 text-[16px] font-medium text-white hover:bg-[#1e3fbd] transition-colors"
+                >
+                  Szczegóły
+                </Link>
+              </div>
             </div>
           </div>
         ))}
