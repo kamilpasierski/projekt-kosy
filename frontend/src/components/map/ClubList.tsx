@@ -270,9 +270,9 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
                   </p>
                 </div>
 
-                {/* MIASTO - CLICKABLE */}
+                {/* MIASTO - ALWAYS IN GRID */}
                 <p 
-                    className="hidden md:block text-center text-xs md:text-[16px] font-medium text-white hover:text-[#274fde] transition-colors truncate"
+                    className="hidden md:block text-center text-[16px] font-medium text-white hover:text-[#274fde] transition-colors truncate"
                     onClick={() => onClubSelect(club.name)}
                 >
                   {club.city}
@@ -281,9 +281,12 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
                 {/* Relacja */}
                 <div className="flex justify-center">
                   <div 
-                    className={`${relationStyle.bg} h-6 w-6 md:h-[45px] md:w-[45px] rounded-full shadow-md`}
-                    title={relationStyle.label}
-                  />
+                    className={`${relationStyle.bg} ${relationStyle.text} rounded-full md:rounded-[20px] shadow-md flex items-center justify-center h-6 w-6 md:h-[45px] md:w-auto md:px-4`}
+                  >
+                    <span className="hidden md:block text-[12px] font-medium whitespace-nowrap">
+                      {relationStyle.label}
+                    </span>
+                  </div>
                 </div>
               </div>
             );

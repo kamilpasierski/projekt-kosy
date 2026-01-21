@@ -14,11 +14,3 @@ class UserClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['user', 'club', 'club_name']
-
-# Serializer do pobrania zdjęcia
-class ClubSerializer(serializers.ModelSerializer):
-    # image = serializers.ImageField()
-
-    class Meta:
-        model = Club
-        fields = ['id', 'name', 'path_image']
