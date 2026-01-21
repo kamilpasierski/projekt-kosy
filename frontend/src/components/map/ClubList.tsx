@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
 import { useDebounce } from '../../hooks/useDebounce';
-import { MagnifyingGlassIcon, StarIcon as StarOutline, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
-import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
+import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
+import { FollowButton } from '../shared/FollowButton';
 
 interface ClubListProps {
   onClubSelect: (clubName: string) => void;
@@ -181,25 +181,13 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
     return <ArrowIcon className="ml-1 h-4 w-4 text-[#274fde]" />;
   };
 
-   // --- HANDLER ULUBIONYCH (MOCK FRONTEND) ---
-  const handleToggleFavorite = (e: React.MouseEvent, clubId: number) => {
-    e.stopPropagation();
-    setClubs(currentClubs => currentClubs.map(club => {
-      if (club.id === clubId) {
-        return { ...club, isFavorite: !club.isFavorite };
-      }
-      return club;
-    })
-  );
-};
-
   return (
     <div className="relative w-full py-6 md:py-8 px-4">
       <h2 className="mb-4 md:mb-6 text-lg md:text-[20px] font-medium uppercase leading-[1.3] text-white">
         Lista klubów
       </h2>
 
-      {/* SEARCH BAR */}
+      {/* PASEK WYSZUKIWANIA */}
       <div className="mb-4 md:mb-6 flex items-center gap-3 md:gap-4 rounded-[20px] md:rounded-[30px] bg-[#2a2a2a] px-4 md:px-6 py-3 md:py-4 border border-transparent focus-within:border-[#274fde] transition-colors">
         <MagnifyingGlassIcon className="h-5 w-5 md:h-6 md:w-6 text-white flex-shrink-0" />
         <input
@@ -212,11 +200,11 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
         {isLoading && !isLoadingMore && <span className="text-xs text-gray-400 animate-pulse">Ładowanie...</span>}
       </div>
 
-      {/* TABLE */}
+      {/* Tabela */}
       <div className="overflow-x-auto rounded-[20px] md:rounded-[30px] bg-[#343434] min-h-[300px] pb-4">
         <div className="min-w-full inline-block">
         
-        {/* HEADER */}
+        {/* Nagłówek */}
         <div className="grid grid-cols-[auto_1.5fr_1fr] md:grid-cols-[auto_2fr_1.5fr_1.5fr] gap-2 md:gap-4 border-b-[0.5px] border-[#274fde] bg-[#2a2a2a] px-3 md:px-6 py-3 md:py-4 select-none">
           <div className="w-8 md:w-12" />
           <div className="flex items-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('name')}>
@@ -233,7 +221,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
           </div>
         </div>
 
-        {/* ROWS */}
+        {/* Wiersze */}
         <div className="divide-y divide-gray-700">
           {(clubs || []).map((club) => {
             const relationStatus = calculateRelation(club.name);
@@ -243,16 +231,9 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
               <div key={club.id} className="grid grid-cols-[auto_1.5fr_1fr] md:grid-cols-[auto_2fr_1.5fr_1.5fr] gap-2 md:gap-4 items-center px-3 md:px-6 py-3 md:py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
                 
                 {/* Ikona Gwiazdki */}
-                <button 
-                  onClick={(e) => handleToggleFavorite(e, club.id)}
-                  className="flex h-8 w-8 md:h-12 md:w-12 items-center justify-center transition-transform active:scale-95 group/star"
-                >
-                  {club.isFavorite ? (
-                    <StarSolid className="h-5 w-5 md:h-6 md:w-6 text-yellow-400 drop-shadow-sm" />
-                  ) : (
-                    <StarOutline className="h-5 w-5 md:h-6 md:w-6 text-white group-hover/star:text-yellow-400 transition-colors" />
-                  )}
-                </button>
+                <div className="flex h-8 w-8 md:h-12 md:w-12 items-center justify-center">
+                  <FollowButton clubId={club.id} />
+                </div>
 
                 {/* NAZWA KLUBU - CLICKABLE */}
                 <div 
@@ -297,7 +278,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
           )}
         </div>
 
-        {/* LOAD MORE BUTTON */}
+        {/* Załaduj więcej */}
         {hasMore && (
             <div className="flex justify-center pt-4 md:pt-6 pb-2">
                 <button 
