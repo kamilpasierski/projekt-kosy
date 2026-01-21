@@ -14,6 +14,7 @@ interface HydratedFavoriteClub { favoriteId: number; details: ClubDetails; }
 const FollowedClubsScene = () => {
     const navigate = useNavigate();
     const { user, isLoading: isAuthLoading } = useAuth();
+    
     const [clubsData, setClubsData] = useState<HydratedFavoriteClub[]>([]);
     const [isDataLoading, setIsDataLoading] = useState(true);
 
@@ -62,28 +63,75 @@ const FollowedClubsScene = () => {
         }
     }, [user, isAuthLoading]);
 
+    // 1. Loading
+    if (isAuthLoading || (user && isDataLoading)) {
+        return (
+            <div className="flex justify-center items-center min-h-[50vh]">
+                <div className="text-white animate-pulse">Ładowanie Twoich klubów...</div>
+            </div>
+        );
+    }
+
+    // 2. Niezalogowany (Teksty przywrócone)
+    if (!user) {
+        return (
+            <NoClubs 
+                title="Zaloguj się, aby obserwować"
+                description="Dołącz do społeczności kibiców. Zaloguj się, aby śledzić ulubione kluby i otrzymywać powiadomienia."
+                actionLabel="Zaloguj się"
+                onAction={() => navigate('/auth')}
+            />
+        );
+    }
+
+    // 3. Zalogowany, ale brak klubów (Teksty przywrócone)
+    if (clubsData.length === 0) {
+        return (
+            <NoClubs 
+                title="Nie obserwujesz jeszcze żadnych klubów"
+                description="Obserwuj kluby, aby otrzymywać powiadomienia o relacjach i poziomie bezpieczeństwa w Twojej okolicy."
+                actionLabel="Przeglądaj kluby"
+                onAction={() => navigate('/mapa')}
+            />
+        );
+    }
     
-    if (isAuthLoading || (user && isDataLoading)) return <div>Loading...</div>;
-    if (!user) return <NoClubs title="Zaloguj się..." description="..." actionLabel="Zaloguj" onAction={() => navigate('/login')} />;
-    if (clubsData.length === 0) return <NoClubs title="Brak klubów" description="..." actionLabel="Szukaj" onAction={() => navigate('/mapa')} />;
-    
+    // 4. Lista klubów
     return (
         <div className="w-full max-w-7xl mx-auto px-4 py-8">
             <Description />
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {clubsData.map(({ favoriteId, details }) => (
-                    <div key={favoriteId} className="relative group bg-gray-900/50 border border-gray-700 rounded-xl p-5 flex items-center gap-5">
-                         {/* Renderowanie klubów */}
-                         <div className="w-16 h-16 ...">
-                            {details.logo ? <img src={details.logo} className="w-full h-full object-contain" /> : <span>{details.name.substring(0,2)}</span>}
+                    <div key={favoriteId} className="relative group bg-gray-900/50 border border-gray-700 hover:border-blue-600 transition-all duration-300 rounded-xl p-5 flex items-center gap-5">
+                         {/* Logo Klubu */}
+                         <div className="w-16 h-16 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center p-2">
+                            {details.logo ? (
+                                <img src={details.logo} alt={details.name} className="w-full h-full object-contain" />
+                            ) : (
+                                <span className="text-xl font-bold text-gray-500">{details.name.substring(0,2).toUpperCase()}</span>
+                            )}
                          </div>
-                         <div className="flex-1">
-                            <h3 className="text-lg font-bold text-white">{details.name}</h3>
+                         
+                         {/* Nazwa Klubu */}
+                         <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-bold text-white truncate group-hover:text-blue-400 transition-colors">
+                                {details.name}
+                            </h3>
+                            <p className="text-sm text-gray-400 mt-1">
+                                Kliknij, aby zobaczyć szczegóły
+                            </p>
                          </div>
+
+                         {/* Gwiazdka */}
                          <div className="absolute top-4 right-4 z-10">
-                            {/* Gwiazdka z propsami */}
                             <FollowButton clubId={details.id} initialRelationId={favoriteId} />
                          </div>
+
+                         {/* Niewidoczny link na całą kartę */}
+                         <div 
+                            className="absolute inset-0 cursor-pointer" 
+                            onClick={() => navigate(`/clubs/${details.id}`)}
+                        />
                     </div>
                 ))}
             </div>
