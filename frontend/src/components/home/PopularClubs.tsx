@@ -10,7 +10,7 @@ interface Club {
 }
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
-const MEDIA_URL = `${API_BASE_URL}/media/`;
+const MEDIA_URL = `${API_BASE_URL}`;
 
 export default function PopularClubs() {
   const [clubs, setClubs] = useState<Club[]>([]);
@@ -59,7 +59,7 @@ export default function PopularClubs() {
       <div className="divide-y divide-gray-800 md:divide-gray-700">
         {clubs.map((club) => (
           <div key={club.id} className="group">
-            {/* Karta mobilna (domyślnie) */}
+            {/* Karta mobilna */}
             <div className="flex md:hidden items-center gap-4 px-4 py-4 hover:bg-[#3a3a3a] transition-colors">
               <Link to={`/club/${club.id}`} className="shrink-0">
                 <img
