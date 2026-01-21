@@ -9,7 +9,6 @@ interface RelationsProps {
   kosaClubs: RelatedClub[];
   neutralClubs: RelatedClub[];
   zgodaClubs: RelatedClub[];
-  onReportChange?: () => void;
 }
 
 // Stała dla base URL mediów
@@ -19,7 +18,6 @@ export default function Relations({
   kosaClubs,
   neutralClubs,
   zgodaClubs,
-  onReportChange
 }: RelationsProps) {
     
   // Helper do renderowania listy, żeby nie powielać kodu HTML
