@@ -4,6 +4,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
 import { FollowButton } from '../shared/FollowButton';
+import { useAuth } from '../../context/AuthContext';
 
 interface ClubListProps {
   onClubSelect: (clubName: string) => void;
@@ -19,7 +20,11 @@ interface Club {
   name: string;
   city: string;
   path_image?: string | null;
-  isFavorite?: boolean;
+}
+
+interface WatchedClubItem {
+    id: number;
+    club: number;
 }
 
 type SortField = 'name' | 'city' | 'relation';
@@ -27,6 +32,8 @@ type SortOrder = 'asc' | 'desc';
 type RelationStatus = 'favorite' | 'safe' | 'dangerous' | 'neutral' | 'unknown';
 
 export default function ClubList({ onClubSelect }: ClubListProps) {
+  const { user } = useAuth();
+  
   const [clubs, setClubs] = useState<Club[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,40 +46,56 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   // Sort State
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
-
   const [userClub, setUserClub] = useState<string | null>(null);
   const [relationsMap, setRelationsMap] = useState<RelationsMap>({});
-
+  const [followedMap, setFollowedMap] = useState<Map<number, number>>(new Map());
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // --- POBIERANIE KONTEKSTU UŻYTKOWNIKA I RELACJI ---
   useEffect(() => {
     const fetchContextData = async () => {
         try {
-            const [relRes, userRes] = await Promise.allSettled([
+            const promises: Promise<any>[] = [
                 api.get('/relations/'),
                 api.get('/clubs/user/')
-            ]);
+            ];
 
-            if (relRes.status === 'fulfilled') {
-                setRelationsMap(parseRelationsToMap(relRes.value.data));
+            if (user) {
+                promises.push(api.get<WatchedClubItem[]>('/add_fav/watched_clubs'));
             }
 
-            if (userRes.status === 'fulfilled') {
-                const userData = userRes.value.data;
+            const results = await Promise.allSettled(promises);
+
+            if (results[0].status === 'fulfilled') {
+                setRelationsMap(parseRelationsToMap(results[0].value.data));
+            }
+
+            if (results[1].status === 'fulfilled') {
+                const userData = results[1].value.data;
                 if (userData && userData.club_name) {
                     setUserClub(userData.club_name);
                 }
             }
+
+            if (user && results[2] && results[2].status === 'fulfilled') {
+                const watchedData = results[2].value.data as WatchedClubItem[];
+                const newMap = new Map<number, number>();
+                
+                watchedData.forEach(item => {
+                    newMap.set(item.club, item.id);
+                });
+                
+                setFollowedMap(newMap);
+            }
+
         } catch (error) {
             console.error("Błąd pobierania danych kontekstowych:", error);
         }
     };
 
     fetchContextData();
-  }, []);
+  }, [user]); // Dodano zależność od 'user'
 
-  // --- GŁÓWNA FUNKCJA POBIERAJĄCA KLUBY ---
+  // --- 2. GŁÓWNA FUNKCJA POBIERAJĄCA LISTĘ KLUBÓW ---
   const fetchClubs = async (pageNumber: number, isLoadMore: boolean) => {
     if (isLoadMore) setIsLoadingMore(true);
     else setIsLoading(true);
@@ -152,21 +175,12 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   // --- STYLOWANIE PILLSÓW ---
   const getRelationStyle = (status: RelationStatus) => {
     switch (status) {
-      case 'favorite':
-        return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ULUBIONY' };
-      
-      case 'safe': 
-        return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ZGODA' };
-      
-      case 'dangerous': 
-        return { bg: 'bg-[#cb0000]', text: 'text-white', label: 'KOSA' };
-      
-      case 'neutral': 
-        return { bg: 'bg-[#fbf201]', text: 'text-black', label: 'NEUTRALNIE' };
-      
+      case 'favorite': return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ULUBIONY' };
+      case 'safe': return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ZGODA' };
+      case 'dangerous': return { bg: 'bg-[#cb0000]', text: 'text-white', label: 'KOSA' };
+      case 'neutral': return { bg: 'bg-[#fbf201]', text: 'text-black', label: 'NEUTRALNIE' };
       case 'unknown':
-      default: 
-        return { bg: 'bg-gray-600', text: 'text-white', label: 'BRAK DANYCH' };
+      default: return { bg: 'bg-gray-600', text: 'text-white', label: 'BRAK DANYCH' };
     }
   };
 
@@ -230,12 +244,14 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
             return (
               <div key={club.id} className="grid grid-cols-[auto_1.5fr_1fr] md:grid-cols-[auto_2fr_1.5fr_1.5fr] gap-2 md:gap-4 items-center px-3 md:px-6 py-3 md:py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
                 
-                {/* Ikona Gwiazdki */}
                 <div className="flex h-8 w-8 md:h-12 md:w-12 items-center justify-center">
-                  <FollowButton clubId={club.id} />
+                  <FollowButton 
+                    clubId={club.id} 
+                    initialRelationId={followedMap.get(club.id)} 
+                  />
                 </div>
 
-                {/* NAZWA KLUBU - CLICKABLE */}
+                {/* NAZWA KLUBU */}
                 <div 
                     className="flex items-center gap-2 md:gap-4 min-w-0"
                     onClick={() => onClubSelect(club.name)}
@@ -251,7 +267,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
                   </p>
                 </div>
 
-                {/* MIASTO - ALWAYS IN GRID */}
+                {/* MIASTO */}
                 <p 
                     className="hidden md:block text-center text-[16px] font-medium text-white hover:text-[#274fde] transition-colors truncate"
                     onClick={() => onClubSelect(club.name)}
