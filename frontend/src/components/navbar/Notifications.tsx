@@ -8,6 +8,7 @@ export interface Notification {
   id: string;
   content: string;
   timestamp: string;
+  is_read: boolean;
 }
 
 // --- Sub-components ---
@@ -19,9 +20,31 @@ const Backdrop = ({ onClick }: { onClick: () => void }) => (
   />
 );
 
-const NotificationItem = ({ notification }: { notification: Notification }) => (
-  <div className="p-4 rounded-2xl bg-neutral-700/60 border border-neutral-600/50 shadow-sm mb-2">
-    <p className="text-white text-sm leading-snug mb-1.5">{notification.content}</p>
+const NotificationItem = ({ 
+  notification, 
+  onMarkAsRead 
+}: { 
+  notification: Notification; 
+  onMarkAsRead: (id: string) => void; 
+}) => (
+  <div 
+    className={`p-4 rounded-2xl border shadow-sm mb-2 relative transition-all cursor-default ${
+      notification.is_read 
+        ? 'bg-neutral-700/60 border-neutral-600/50' 
+        : 'bg-neutral-700/80 border-red-500/30 hover:bg-neutral-700/70'
+    }`}
+    onMouseEnter={() => {
+      if (!notification.is_read) {
+        onMarkAsRead(notification.id);
+      }
+    }}
+  >
+    {!notification.is_read && (
+      <div className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+    )}
+    <p className={`text-sm leading-snug mb-1.5 ${notification.is_read ? 'text-neutral-300' : 'text-white font-medium'}`}>
+      {notification.content}
+    </p>
     <span className="text-neutral-400 text-[10px] uppercase tracking-wider font-medium">
       {notification.timestamp}
     </span>
@@ -80,7 +103,45 @@ export const Notifications = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   const toggleDropdown = () => setIsOpen((prev) => !prev);
+
+  const markAsRead = async (notificationId: string) => {
+    try {
+      const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+      await axios.patch(
+        `http://localhost:8000/api/tickets/notifications/${notificationId}/read/`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      // Update local state optimistically
+      setNotifications(prev => 
+        prev.map(n => 
+          n.id === notificationId ? { ...n, is_read: true } : n
+        )
+      );
+    } catch (error) {
+      console.error("Błąd oznaczania powiadomienia jako przeczytane", error);
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
     <div className="relative inline-block">
@@ -91,6 +152,11 @@ export const Notifications = () => {
         className="w-11 h-11 relative bg-neutral-700 rounded-full shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] flex items-center justify-center text-white hover:bg-neutral-600 transition-all active:scale-95 cursor-pointer z-50"
       >
         <BellIcon className="w-6 h-6" />
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+            {unreadCount > 9 ? '9+' : unreadCount}
+          </span>
+        )}
       </button>
 
       {/* Overlay */}
@@ -122,7 +188,8 @@ export const Notifications = () => {
                       notifications.map((notification) => (
                         <NotificationItem 
                           key={notification.id} 
-                          notification={notification} 
+                          notification={notification}
+                          onMarkAsRead={markAsRead}
                         />
                       ))
                     )}
