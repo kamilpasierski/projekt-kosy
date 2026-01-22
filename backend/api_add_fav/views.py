@@ -62,7 +62,7 @@ class AddFavoriteClubAPIView(APIView):
                     user=request.user,
                     action="ADD_FAVORITE",
                     object=f"Club: {club.name}",
-                    details="SUCCES"
+                    details="SUCCESS"
                 )
 
                 return Response(
@@ -89,7 +89,7 @@ class AddFavoriteClubAPIView(APIView):
             user=request.user,
             action="DELETE_FAVORITE",
             object=f"Club: {id}",
-            details="SUCCES"
+            details="SUCCESS"
         )
         favorite = get_object_or_404(FavoriteClub, pk=pk, user=request.user)
         favorite.delete()
