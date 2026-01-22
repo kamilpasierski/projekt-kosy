@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import Baner from "../../components/club/Baner";
 import Description from "../../components/club/Description";
 import Relations, { type RelatedClub } from "../../components/club/Relations";
-import Incidents from "../../components/club/Incidents"; // Zakładam, że Incidents zostaje mockiem na razie
 import MatchesTable from '../../shared/MatchesTable';
 import { getClubImageUrl } from '../../utils/imageUtils';
 
@@ -66,8 +65,7 @@ export default function ClubPage() {
         neutralClubs={clubData.neutralne}
       />
       
-      <Incidents /> 
-      <MatchesTable />
+      {/*<MatchesTable /> CZEKAMY NA API */}
       </div>
   );
 }
