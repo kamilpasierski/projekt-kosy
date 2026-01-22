@@ -1,3 +1,5 @@
+import { getClubImageUrl } from '../../utils/imageUtils';
+
 // Zmieniamy interfejs propsów, aby pasował do danych z backendu
 export interface RelatedClub {
   id: number;
@@ -9,10 +11,7 @@ interface RelationsProps {
   kosaClubs: RelatedClub[];
   neutralClubs: RelatedClub[];
   zgodaClubs: RelatedClub[];
-}
-
-// Stała dla base URL mediów
-const API_BASE_URL = 'http://127.0.0.1:8000/media/'; 
+} 
 
 export default function Relations({
   kosaClubs,
@@ -27,7 +26,7 @@ export default function Relations({
         <div key={club.id}>
             <div className="flex items-center gap-3">
             <img 
-                src={club.path_image ? `${API_BASE_URL}${club.path_image}` : "https://via.placeholder.com/57"} 
+                src={getClubImageUrl(club.path_image)} 
                 alt={club.name} 
                 className="h-[57px] w-[56px] object-contain" 
             />

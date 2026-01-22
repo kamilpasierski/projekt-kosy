@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { getClubImageUrl } from '../../utils/imageUtils';
 
 interface ClubData {
   id: number;
@@ -65,7 +66,7 @@ const MaxBeefs: React.FC = () => {
             <div className="flex justify-center mt-[36px] mb-4">
               <Link to={`/club/${club.id}`}>
                 <img
-                    src={club.path_image ? `${API_BASE_URL}${club.path_image}` : "https://via.placeholder.com/90"}
+                    src={getClubImageUrl(club.path_image)}
                     alt={club.name}
                     className="w-[90px] h-[92px] object-contain hover:scale-110 transition-transform duration-300"
                 />

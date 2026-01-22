@@ -5,6 +5,7 @@ import Description from "../../components/club/Description";
 import Relations, { type RelatedClub } from "../../components/club/Relations";
 import Incidents from "../../components/club/Incidents"; // Zakładam, że Incidents zostaje mockiem na razie
 import MatchesTable from '../../shared/MatchesTable';
+import { getClubImageUrl } from '../../utils/imageUtils';
 
 // Typ danych z API
 interface ClubDetailData {
@@ -17,7 +18,7 @@ interface ClubDetailData {
   neutralne: RelatedClub[];
 }
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "http://127.0.0.1:8000"; // Still used for API calls
 
 export default function ClubPage() {
   const { id } = useParams<{ id: string }>(); // Pobieramy ID z URL
@@ -45,7 +46,7 @@ export default function ClubPage() {
   if (loading) return <div className="text-white text-center mt-10">Ładowanie danych klubu...</div>;
   if (!clubData) return <div className="text-red-500 text-center mt-10">Nie znaleziono klubu.</div>;
 
-  const fullLogoUrl = clubData.path_image ? `${API_BASE}/media/${clubData.path_image}` : undefined;
+  const fullLogoUrl = getClubImageUrl(clubData.path_image);
 
   return (
     <div className="w-full">

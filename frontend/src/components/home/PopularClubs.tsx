@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getClubImageUrl } from '../../utils/imageUtils';
 
 interface Club {
   id: number;
@@ -10,7 +11,6 @@ interface Club {
 }
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
-const MEDIA_URL = `${API_BASE_URL}`;
 
 export default function PopularClubs() {
   const [clubs, setClubs] = useState<Club[]>([]);
@@ -63,7 +63,7 @@ export default function PopularClubs() {
             <div className="flex md:hidden items-center gap-4 px-4 py-4 hover:bg-[#3a3a3a] transition-colors">
               <Link to={`/club/${club.id}`} className="shrink-0">
                 <img
-                  src={club.path_image ? `${MEDIA_URL}${club.path_image}` : 'https://via.placeholder.com/40x32'}
+                  src={getClubImageUrl(club.path_image)}
                   alt={club.name}
                   className="h-[40px] w-[32px] object-contain transition-opacity hover:opacity-80"
                 />
@@ -93,7 +93,7 @@ export default function PopularClubs() {
               <div className="flex justify-start">
                 <Link to={`/club/${club.id}`} className="block">
                   <img
-                    src={club.path_image ? `${MEDIA_URL}${club.path_image}` : 'https://via.placeholder.com/40x32'}
+                    src={getClubImageUrl(club.path_image)}
                     alt={club.name}
                     className="h-[40px] w-[32px] object-contain transition-opacity hover:opacity-80"
                   />

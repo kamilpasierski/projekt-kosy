@@ -5,14 +5,11 @@ import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/reac
 import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
 import { FollowButton } from '../common/FollowButton';
 import { useAuth } from '../../context/AuthContext';
+import { getClubImageUrl, DEFAULT_LOGO } from '../../utils/imageUtils';
 
 interface ClubListProps {
   onClubSelect: (clubName: string) => void;
 }
-
-// --- KONFIGURACJA ---
-const MEDIA_URL = 'http://127.0.0.1:8000/media/';
-const DEFAULT_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTAgMTUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMzNDM0MzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zZW0iIGZpbGw9IiM4ODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkZMQUc8L3RleHQ+PC9zdmc+";
 
 // --- TYPES ---
 interface Club {
@@ -182,11 +179,6 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
       case 'unknown':
       default: return { bg: 'bg-gray-600', text: 'text-white', label: 'BRAK DANYCH' };
     }
-  };
-
-  const getClubImageUrl = (path?: string | null) => {
-    if (!path) return DEFAULT_LOGO;
-    return path.startsWith('http') ? path : `${MEDIA_URL}${path}`;
   };
 
   const renderSortArrow = (field: SortField) => {

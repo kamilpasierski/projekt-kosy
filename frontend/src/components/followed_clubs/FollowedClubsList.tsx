@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-
-const MEDIA_URL = 'http://127.0.0.1:8000/media/';
-const DEFAULT_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTAgMTUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMzNDM0MzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zZW0iIGZpbGw9IiM4ODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkZMQUc8L3RleHQ+PC9zdmc+";
+import { getClubImageUrl } from '../../utils/imageUtils';
 
 interface FollowedClub {
   favoriteId: number;
@@ -66,11 +64,6 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
       default:
         return 'Sortuj według';
     }
-  };
-
-  const getClubImageUrl = (path?: string) => {
-    if (!path) return DEFAULT_LOGO;
-    return path.startsWith('http') ? path : `${MEDIA_URL}${path}`;
   };
 
   return (
