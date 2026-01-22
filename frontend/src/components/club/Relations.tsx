@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { getClubImageUrl } from '../../utils/imageUtils';
 
 // Zmieniamy interfejs propsów, aby pasował do danych z backendu
@@ -19,12 +20,22 @@ export default function Relations({
   zgodaClubs,
 }: RelationsProps) {
     
+  const navigate = useNavigate();
+
+  const handleClubClick = (clubId: number) => {
+    navigate(`/club/${clubId}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Helper do renderowania listy, żeby nie powielać kodu HTML
   const renderList = (clubs: RelatedClub[]) => (
       <div className="space-y-3 sm:space-y-4">
         {clubs.map((club, index) => (
         <div key={club.id}>
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div 
+              className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => handleClubClick(club.id)}
+            >
             <img 
                 src={getClubImageUrl(club.path_image)} 
                 alt={club.name} 
