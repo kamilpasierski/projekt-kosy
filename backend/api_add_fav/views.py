@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from models.models import UserProfile, FavoriteClub 
+from models.models import UserProfile, FavoriteClub, ActivityLog, Club
 from .serializers import UserClubSerializer, FavoriteClubSerializer
 from django.db import IntegrityError
 
@@ -20,7 +20,17 @@ class SetUserClubView(APIView):
         serializer = UserClubSerializer(profile, data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            favorite = serializer.save()
+            id = favorite.club_id
+            club = get_object_or_404(Club, id=id)
+
+            ActivityLog.objects.create(
+                user=request.user,
+                action="ADD_FAVORITE",
+                object=f"Club: {club.name}",
+                details="ERROR - Integrity"
+            )
+
             return Response(
                 {"message": "Club assigned successfully"},
                 status=status.HTTP_200_OK
@@ -45,11 +55,22 @@ class AddFavoriteClubAPIView(APIView):
         if serializer.is_valid():
             try:
                 favorite = serializer.save()
+                id = favorite.club_id
+                club = get_object_or_404(Club, id=id)
+
+                ActivityLog.objects.create(
+                    user=request.user,
+                    action="ADD_FAVORITE",
+                    object=f"Club: {club.name}",
+                    details="SUCCES"
+                )
+
                 return Response(
                     FavoriteClubSerializer(favorite).data,
                     status=status.HTTP_201_CREATED
                 )
             except IntegrityError:
+
                 return Response(
                     {"detail": "Club already in favorites"},
                     status=status.HTTP_400_BAD_REQUEST
@@ -59,7 +80,17 @@ class AddFavoriteClubAPIView(APIView):
     def delete(self, request, pk=None):
         if pk is None:
              return Response({"detail": "ID is required for deletion"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+        Favclub = get_object_or_404(FavoriteClub, id=pk)
+        id = Favclub.club
+        # club = get_object_or_404(Club, id=id)
+
+        ActivityLog.objects.create(
+            user=request.user,
+            action="DELETE_FAVORITE",
+            object=f"Club: {id}",
+            details="SUCCES"
+        )
         favorite = get_object_or_404(FavoriteClub, pk=pk, user=request.user)
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

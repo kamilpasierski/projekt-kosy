@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django.conf import settings
 
 User = get_user_model()
 
@@ -145,3 +145,41 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"Ticket: {self.user.username} – {self.club_a.name} vs {self.club_b.name} [{self.relation}]"
+
+
+class ActivityLog(models.Model):
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Created at"
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="User"
+    )
+
+    action = models.CharField(
+        max_length=100,
+        verbose_name="Action"
+    )
+
+    object = models.CharField(
+        max_length=255,
+        verbose_name="Object"
+    )
+
+    details = models.TextField(
+        blank=True,
+        verbose_name="Details"
+    )
+
+    class Meta:
+        verbose_name = "Activity log"
+        verbose_name_plural = "Activity logs"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.created_at} | {self.user} | {self.action}"
