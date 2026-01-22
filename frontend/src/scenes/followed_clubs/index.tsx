@@ -4,11 +4,11 @@ import api from '../../api/axiosConfig';
 
 import NoClubs from "../../components/followed_clubs/NoClubs";
 import Description from "../../components/followed_clubs/Description";
+import FollowedClubsList from "../../components/followed_clubs/FollowedClubsList";
 import { useAuth } from "../../context/AuthContext";
-import { FollowButton } from "../../components/shared/FollowButton";
 
 interface FavoriteClubRaw { id: number; club: number; }
-interface ClubDetails { id: number; name: string; logo?: string; }
+interface ClubDetails { id: number; name: string; path_image?: string; }
 interface HydratedFavoriteClub { favoriteId: number; details: ClubDetails; }
 
 const FollowedClubsScene = () => {
@@ -98,42 +98,10 @@ const FollowedClubsScene = () => {
     
     // 4. Lista klubów
     return (
-        <div className="w-full max-w-7xl mx-auto px-4 py-8">
+        <div className="w-full max-w-7xl mx-auto py-8">
             <Description />
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {clubsData.map(({ favoriteId, details }) => (
-                    <div key={favoriteId} className="relative group bg-gray-900/50 border border-gray-700 hover:border-blue-600 transition-all duration-300 rounded-xl p-5 flex items-center gap-5">
-                         {/* Logo Klubu */}
-                         <div className="w-16 h-16 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center p-2">
-                            {details.logo ? (
-                                <img src={details.logo} alt={details.name} className="w-full h-full object-contain" />
-                            ) : (
-                                <span className="text-xl font-bold text-gray-500">{details.name.substring(0,2).toUpperCase()}</span>
-                            )}
-                         </div>
-                         
-                         {/* Nazwa Klubu */}
-                         <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-bold text-white truncate group-hover:text-blue-400 transition-colors">
-                                {details.name}
-                            </h3>
-                            <p className="text-sm text-gray-400 mt-1">
-                                Kliknij, aby zobaczyć szczegóły
-                            </p>
-                         </div>
-
-                         {/* Gwiazdka */}
-                         <div className="absolute top-4 right-4 z-10">
-                            <FollowButton clubId={details.id} initialRelationId={favoriteId} />
-                         </div>
-
-                         {/* Niewidoczny link na całą kartę */}
-                         <div 
-                            className="absolute inset-0 cursor-pointer" 
-                            onClick={() => navigate(`/clubs/${details.id}`)}
-                        />
-                    </div>
-                ))}
+            <div className="mt-8">
+                <FollowedClubsList clubs={clubsData} />
             </div>
         </div>
     );
