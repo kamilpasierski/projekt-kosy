@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from models.models import Ticket, ClubRelation, Status, Notification, FavoriteClub
-from .serializers import AdminPendingTicketSerializer, NotificationSerializer
+from .serializers import AdminPendingTicketSerializer, NotificationSerializer, UserTicketSerializer
 from django.contrib.auth.models import User
 from django.db.models import Q
 
@@ -97,6 +97,16 @@ class TicketActionView(APIView):
 
         return Response({"error": "Nieznana akcja"}, status=status.HTTP_400_BAD_REQUEST)
     
+class UserTicketsList(ListAPIView):
+    """
+    Zwraca listę wszystkich zgłoszeń (tickets) zalogowanego użytkownika.
+    """
+    serializer_class = UserTicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Ticket.objects.filter(user=self.request.user).order_by('-created_at')
+
 class UserNotificationsList(ListAPIView):
     """
     Zwraca listę powiadomień tylko dla zalogowanego użytkownika.
@@ -110,8 +120,10 @@ class UserNotificationsList(ListAPIView):
 # change is_read status API
 
 class NotificationMarkReadView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def patch(self, request, pk):
-        notification = get_object_or_404(Notification, pk=pk)
+        notification = get_object_or_404(Notification, pk=pk, user=request.user)
         notification.is_read = True
         notification.save()
         serializer = NotificationSerializer(notification)

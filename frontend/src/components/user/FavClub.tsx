@@ -1,13 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig'; 
 import { relationsApi } from '../../api/relations';
-
-// --- KONFIGURACJA ---
-const API_BASE_URL = 'http://127.0.0.1:8000';
-const MEDIA_URL = `${API_BASE_URL}/media/`;
-
-// Fallback, gdy brak zdjęcia lub path_image jest null
-const DEFAULT_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTAgMTUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMzNDM0MzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zZW0iIGZpbGw9IiM4ODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkZMQUc8L3RleHQ+PC9zdmc+";
+import { getClubImageUrl, DEFAULT_LOGO } from '../../utils/imageUtils';
 
 // --- INTERFEJSY ---
 interface ClubData {
@@ -128,10 +122,7 @@ const FollowedClubs = () => {
                 
                 {/* LOGO CONTAINER */}
                 <div className="bg-[#343434] border-[0.5px] border-[#222629] rounded-[30px] p-6 shadow-xl w-full md:w-auto min-w-[200px] flex justify-center">
-                  <img src={currentClub.path_image 
-                          ? `${MEDIA_URL}${currentClub.path_image}` 
-                          : DEFAULT_LOGO
-                      } 
+                  <img src={getClubImageUrl(currentClub.path_image)} 
                       alt={currentClub.name}
                       className="h-[120px] w-auto object-contain drop-shadow-lg"
                       onError={(e) => {

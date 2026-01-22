@@ -1,4 +1,4 @@
-import { useMatches, type RelationStatus } from "../hooks/useMatches";
+import { useMatches, type RelationStatus } from "../../hooks/useMatches";
 
 // Helper do kolorów kropki statusu
 const getStatusColor = (status: RelationStatus) => {

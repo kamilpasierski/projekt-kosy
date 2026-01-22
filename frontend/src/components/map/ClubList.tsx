@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
 import { useDebounce } from '../../hooks/useDebounce';
-import { MagnifyingGlassIcon, StarIcon as StarOutline, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
-import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
+import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
+import { FollowButton } from '../common/FollowButton';
+import { useAuth } from '../../context/AuthContext';
+import { getClubImageUrl, DEFAULT_LOGO } from '../../utils/imageUtils';
 
 interface ClubListProps {
   onClubSelect: (clubName: string) => void;
 }
-
-// --- KONFIGURACJA ---
-const MEDIA_URL = 'http://127.0.0.1:8000/media/';
-const DEFAULT_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTAgMTUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMzNDM0MzQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZHk9Ii4zZW0iIGZpbGw9IiM4ODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkZMQUc8L3RleHQ+PC9zdmc+";
 
 // --- TYPES ---
 interface Club {
@@ -19,7 +17,11 @@ interface Club {
   name: string;
   city: string;
   path_image?: string | null;
-  isFavorite?: boolean;
+}
+
+interface WatchedClubItem {
+    id: number;
+    club: number;
 }
 
 type SortField = 'name' | 'city' | 'relation';
@@ -27,6 +29,8 @@ type SortOrder = 'asc' | 'desc';
 type RelationStatus = 'favorite' | 'safe' | 'dangerous' | 'neutral' | 'unknown';
 
 export default function ClubList({ onClubSelect }: ClubListProps) {
+  const { user } = useAuth();
+  
   const [clubs, setClubs] = useState<Club[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,40 +43,56 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   // Sort State
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
-
   const [userClub, setUserClub] = useState<string | null>(null);
   const [relationsMap, setRelationsMap] = useState<RelationsMap>({});
-
+  const [followedMap, setFollowedMap] = useState<Map<number, number>>(new Map());
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // --- POBIERANIE KONTEKSTU UŻYTKOWNIKA I RELACJI ---
   useEffect(() => {
     const fetchContextData = async () => {
         try {
-            const [relRes, userRes] = await Promise.allSettled([
+            const promises: Promise<any>[] = [
                 api.get('/relations/'),
                 api.get('/clubs/user/')
-            ]);
+            ];
 
-            if (relRes.status === 'fulfilled') {
-                setRelationsMap(parseRelationsToMap(relRes.value.data));
+            if (user) {
+                promises.push(api.get<WatchedClubItem[]>('/add_fav/watched_clubs'));
             }
 
-            if (userRes.status === 'fulfilled') {
-                const userData = userRes.value.data;
+            const results = await Promise.allSettled(promises);
+
+            if (results[0].status === 'fulfilled') {
+                setRelationsMap(parseRelationsToMap(results[0].value.data));
+            }
+
+            if (results[1].status === 'fulfilled') {
+                const userData = results[1].value.data;
                 if (userData && userData.club_name) {
                     setUserClub(userData.club_name);
                 }
             }
+
+            if (user && results[2] && results[2].status === 'fulfilled') {
+                const watchedData = results[2].value.data as WatchedClubItem[];
+                const newMap = new Map<number, number>();
+                
+                watchedData.forEach(item => {
+                    newMap.set(item.club, item.id);
+                });
+                
+                setFollowedMap(newMap);
+            }
+
         } catch (error) {
             console.error("Błąd pobierania danych kontekstowych:", error);
         }
     };
 
     fetchContextData();
-  }, []);
+  }, [user]); // Dodano zależność od 'user'
 
-  // --- GŁÓWNA FUNKCJA POBIERAJĄCA KLUBY ---
+  // --- 2. GŁÓWNA FUNKCJA POBIERAJĄCA LISTĘ KLUBÓW ---
   const fetchClubs = async (pageNumber: number, isLoadMore: boolean) => {
     if (isLoadMore) setIsLoadingMore(true);
     else setIsLoading(true);
@@ -152,27 +172,13 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   // --- STYLOWANIE PILLSÓW ---
   const getRelationStyle = (status: RelationStatus) => {
     switch (status) {
-      case 'favorite':
-        return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ULUBIONY' };
-      
-      case 'safe': 
-        return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ZGODA' };
-      
-      case 'dangerous': 
-        return { bg: 'bg-[#cb0000]', text: 'text-white', label: 'KOSA' };
-      
-      case 'neutral': 
-        return { bg: 'bg-[#fbf201]', text: 'text-black', label: 'NEUTRALNIE' };
-      
+      case 'favorite': return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ULUBIONY' };
+      case 'safe': return { bg: 'bg-[#20ca5f]', text: 'text-white', label: 'ZGODA' };
+      case 'dangerous': return { bg: 'bg-[#cb0000]', text: 'text-white', label: 'KOSA' };
+      case 'neutral': return { bg: 'bg-[#fbf201]', text: 'text-black', label: 'NEUTRALNIE' };
       case 'unknown':
-      default: 
-        return { bg: 'bg-gray-600', text: 'text-white', label: 'BRAK DANYCH' };
+      default: return { bg: 'bg-gray-600', text: 'text-white', label: 'BRAK DANYCH' };
     }
-  };
-
-  const getClubImageUrl = (path?: string | null) => {
-    if (!path) return DEFAULT_LOGO;
-    return path.startsWith('http') ? path : `${MEDIA_URL}${path}`;
   };
 
   const renderSortArrow = (field: SortField) => {
@@ -181,97 +187,81 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
     return <ArrowIcon className="ml-1 h-4 w-4 text-[#274fde]" />;
   };
 
-   // --- HANDLER ULUBIONYCH (MOCK FRONTEND) ---
-  const handleToggleFavorite = (e: React.MouseEvent, clubId: number) => {
-    e.stopPropagation();
-    setClubs(currentClubs => currentClubs.map(club => {
-      if (club.id === clubId) {
-        return { ...club, isFavorite: !club.isFavorite };
-      }
-      return club;
-    })
-  );
-};
-
   return (
-    <div className="relative w-full max-w-[1440px] py-8">
-      <h2 className="mb-6 px-[calc(6.25%+40px)] font-['Montserrat'] text-[20px] font-medium uppercase leading-[1.3] text-white">
+    <div className="relative w-full py-6 md:py-8 px-4">
+      <h2 className="mb-4 md:mb-6 text-lg md:text-[20px] font-medium uppercase leading-[1.3] text-white">
         Lista klubów
       </h2>
 
-      {/* SEARCH BAR */}
-      <div className="mx-[8.96%] mb-6 flex items-center gap-4 rounded-[30px] bg-[#2a2a2a] px-6 py-4 border border-transparent focus-within:border-[#274fde] transition-colors">
-        <MagnifyingGlassIcon className="h-6 w-6 text-white flex-shrink-0" />
+      {/* PASEK WYSZUKIWANIA */}
+      <div className="mb-4 md:mb-6 flex items-center gap-3 md:gap-4 rounded-[20px] md:rounded-[30px] bg-[#2a2a2a] px-4 md:px-6 py-3 md:py-4 border border-transparent focus-within:border-[#274fde] transition-colors">
+        <MagnifyingGlassIcon className="h-5 w-5 md:h-6 md:w-6 text-white flex-shrink-0" />
         <input
           type="text"
           placeholder="Szukaj klubu..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 bg-transparent font-['Montserrat'] text-[16px] font-medium text-white placeholder:text-gray-500 outline-none"
+          className="flex-1 bg-transparent text-sm md:text-[16px] font-medium text-white placeholder:text-gray-500 outline-none"
         />
         {isLoading && !isLoadingMore && <span className="text-xs text-gray-400 animate-pulse">Ładowanie...</span>}
       </div>
 
-      {/* TABLE */}
-      <div className="mx-[calc(6.25%+33px)] overflow-hidden rounded-[30px] bg-[#343434] min-h-[300px] pb-4">
+      {/* Tabela */}
+      <div className="overflow-x-auto rounded-[20px] md:rounded-[30px] bg-[#343434] min-h-[300px] pb-4">
+        <div className="min-w-full inline-block">
         
-        {/* HEADER */}
-        <div className="grid grid-cols-[auto_2fr_1.5fr_1.5fr] gap-4 border-b-[0.5px] border-[#274fde] bg-[#2a2a2a] px-6 py-4 select-none">
-          <div className="w-12" />
+        {/* Nagłówek */}
+        <div className="grid grid-cols-[auto_1.5fr_1fr] md:grid-cols-[auto_2fr_1.5fr_1.5fr] gap-2 md:gap-4 border-b-[0.5px] border-[#274fde] bg-[#2a2a2a] px-3 md:px-6 py-3 md:py-4 select-none">
+          <div className="w-8 md:w-12" />
           <div className="flex items-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('name')}>
-            <p className="font-['Montserrat'] text-[16px] font-medium text-white">Klub</p>
+            <p className="text-xs md:text-[16px] font-medium text-white">Klub</p>
             {renderSortArrow('name')}
           </div>
-          <div className="flex items-center justify-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('city')}>
-            <p className="text-center font-['Montserrat'] text-[16px] font-medium text-white">Miasto</p>
+          <div className="hidden md:flex items-center justify-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('city')}>
+            <p className="text-center text-xs md:text-[16px] font-medium text-white">Miasto</p>
             {renderSortArrow('city')}
           </div>
           <div className="flex items-center justify-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('relation')}>
-            <p className="text-center font-['Montserrat'] text-[16px] font-medium text-white">Relacje</p>
+            <p className="text-center text-xs md:text-[16px] font-medium text-white">Relacje</p>
             {renderSortArrow('relation')}
           </div>
         </div>
 
-        {/* ROWS */}
+        {/* Wiersze */}
         <div className="divide-y divide-gray-700">
           {(clubs || []).map((club) => {
             const relationStatus = calculateRelation(club.name);
             const relationStyle = getRelationStyle(relationStatus);
 
             return (
-              <div key={club.id} className="grid grid-cols-[auto_2fr_1.5fr_1.5fr] gap-4 items-center px-6 py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
+              <div key={club.id} className="grid grid-cols-[auto_1.5fr_1fr] md:grid-cols-[auto_2fr_1.5fr_1.5fr] gap-2 md:gap-4 items-center px-3 md:px-6 py-3 md:py-4 hover:bg-[#3a3a3a] transition-colors cursor-pointer group">
                 
-                {/* Ikona Gwiazdki */}
-                <button 
-                  onClick={(e) => handleToggleFavorite(e, club.id)}
-                  className="flex h-12 w-12 items-center justify-center transition-transform active:scale-95 group/star"
-                >
-                  {club.isFavorite ? (
-                    <StarSolid className="h-6 w-6 text-yellow-400 drop-shadow-sm" />
-                  ) : (
-                    <StarOutline className="h-6 w-6 text-white group-hover/star:text-yellow-400 transition-colors" />
-                  )}
-                </button>
+                <div className="flex h-8 w-8 md:h-12 md:w-12 items-center justify-center">
+                  <FollowButton 
+                    clubId={club.id} 
+                    initialRelationId={followedMap.get(club.id)} 
+                  />
+                </div>
 
-                {/* NAZWA KLUBU - CLICKABLE */}
+                {/* NAZWA KLUBU */}
                 <div 
-                    className="flex items-center gap-4"
+                    className="flex items-center gap-2 md:gap-4 min-w-0"
                     onClick={() => onClubSelect(club.name)}
                 >
                   <img 
                     src={getClubImageUrl(club.path_image)} 
                     alt={club.name} 
-                    className="h-[54px] w-[54px] object-contain bg-white/5 rounded-full p-1"
+                    className="h-8 w-8 md:h-[54px] md:w-[54px] object-contain bg-white/5 rounded-full p-1 flex-shrink-0"
                     onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_LOGO; }}
                   />
-                  <p className="font-['Montserrat'] text-[16px] font-medium text-white group-hover:text-[#274fde] transition-colors">
+                  <p className="text-xs md:text-[16px] font-medium text-white group-hover:text-[#274fde] transition-colors truncate">
                     {club.name}
                   </p>
                 </div>
 
-                {/* MIASTO - CLICKABLE */}
+                {/* MIASTO */}
                 <p 
-                    className="text-center font-['Montserrat'] text-[16px] font-medium text-white hover:text-[#274fde] transition-colors"
+                    className="hidden md:block text-center text-[16px] font-medium text-white hover:text-[#274fde] transition-colors truncate"
                     onClick={() => onClubSelect(club.name)}
                 >
                   {club.city}
@@ -279,31 +269,36 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
 
                 {/* Relacja */}
                 <div className="flex justify-center">
-                  <span className={`${relationStyle.bg} ${relationStyle.text} rounded-[50px] px-6 py-2 font-['Montserrat'] text-[14px] font-semibold uppercase tracking-wide shadow-md whitespace-nowrap`}>
-                    {relationStyle.label}
-                  </span>
+                  <div 
+                    className={`${relationStyle.bg} ${relationStyle.text} rounded-full md:rounded-[20px] shadow-md flex items-center justify-center h-6 w-6 md:h-[45px] md:w-auto md:px-4`}
+                  >
+                    <span className="hidden md:block text-[12px] font-medium whitespace-nowrap">
+                      {relationStyle.label}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
           })}
           
           {clubs.length === 0 && !isLoading && (
-            <div className="text-center py-10 text-gray-400">Brak wyników</div>
+            <div className="text-center py-6 md:py-10 text-gray-400 text-sm md:text-base">Brak wyników</div>
           )}
         </div>
 
-        {/* LOAD MORE BUTTON */}
+        {/* Załaduj więcej */}
         {hasMore && (
-            <div className="flex justify-center pt-6 pb-2">
+            <div className="flex justify-center pt-4 md:pt-6 pb-2">
                 <button 
                     onClick={handleLoadMore}
                     disabled={isLoadingMore}
-                    className="bg-[#2a2a2a] hover:bg-[#274fde] border border-[#274fde] text-white px-8 py-3 rounded-[30px] font-['Montserrat'] font-medium transition-all disabled:opacity-50 flex items-center gap-2"
+                    className="bg-[#2a2a2a] hover:bg-[#274fde] border border-[#274fde] text-white px-6 md:px-8 py-2 md:py-3 rounded-[30px] font-medium transition-all disabled:opacity-50 flex items-center gap-2 text-sm md:text-base"
                 >
                     {isLoadingMore ? 'Ładowanie...' : 'Załaduj więcej'}
                 </button>
             </div>
         )}
+        </div>
       </div>
     </div>
   );

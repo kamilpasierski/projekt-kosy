@@ -9,8 +9,9 @@ import {AuthProvider} from "./context/AuthContext.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import ResetPasswordConfirm from "./scenes/reset_password";
 import AdminPanel from "./scenes/adminpanel";
-import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
+import { ProtectedRoute } from "./components/common/ProtectedRoute.tsx";
 import ProfilePage from './scenes/profile/index.tsx';
+import FollowedClubsScene from './scenes/followed_clubs/index.tsx';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/mapa" element={<MapScene />} />
                     <Route path="/club/:id" element={<ClubPage />} />
+                    <Route path="/obserwowane" element={<FollowedClubsScene />} />
                     <Route path="/profile" element={
                         <ProtectedRoute>
                             <ProfilePage />

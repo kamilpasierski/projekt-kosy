@@ -137,6 +137,9 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         
         setResolvedCount(0);
         
+        if (onSuccess) {
+            onSuccess();
+        }
     };
 
     const handleCancel = () => {

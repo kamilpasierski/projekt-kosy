@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import axios, {isAxiosError} from 'axios';
-import ActionButton from '../../shared/ActionButton';
-import Logo from "@/assets/Logo.png";
-import Start_1 from "@/assets/Start_1.png";
 import {useAuth} from "../../hooks/useAuth.ts";
-import {GoogleLogin, type CredentialResponse} from "@react-oauth/google";
+import {type CredentialResponse} from "@react-oauth/google";
+import AuthBackground from '../../components/auth/AuthBackground';
+import AuthButtons from '../../components/auth/AuthButtons';
+import RegisterForm from '../../components/auth/RegisterForm';
+import LoginForm from '../../components/auth/LoginForm';
+import ResetPasswordForm from '../../components/auth/ResetPasswordForm';
 
 interface DjangoErrorResponse {
     [key: string]: string[];
@@ -33,7 +35,7 @@ const AuthScene = () => {
 
     const [error, setError] = useState<string | null>(null);
     const { login } = useAuth();
-    const [rememberMe, setRememberMe] = useState<boolean>(false);
+    const [rememberMe, setRememberMe] = useState<boolean>(true); // Changed default to true
     const navigate = useNavigate();
     const [resetEmail, setResetEmail] = useState<string>('');
 
@@ -215,33 +217,13 @@ const AuthScene = () => {
         return 'Zaloguj się lub Zarejestruj';
     };
 
-    const inputStyles = "w-full h-14 bg-neutral-700/50 text-white placeholder-gray-400 rounded-[50px] px-6 border border-transparent focus:border-green-500 focus:bg-neutral-700 focus:outline-none transition-all";
-
     return (
         <div className="w-full min-h-screen bg-stone-900 flex flex-col lg:flex-row relative overflow-hidden">
-
             {/* ================= LEWA STRONA (LOGO + TŁO) ================= */}
-            <div className="absolute top-4 left-4 z-20 scale-75 lg:scale-100 origin-top-left">
-                <Link to="/" className="block w-80 h-24 relative">
-                    <div className="w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]"></div>
-                    <div className="left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold leading-6 tracking-widest">PIŁKARSKIE KOSY</div>
-                    <img className="w-24 h-24 left-0 top-0 absolute" src={Logo} alt="Logo" />
-                </Link>
-            </div>
-
-            <div className="w-full h-48 lg:h-auto lg:w-1/2 relative shrink-0">
-                <img
-                    className="w-full h-full object-cover absolute inset-0"
-                    src={Start_1}
-                    alt="Background"
-                />
-                <div className="absolute inset-0 bg-black/40 lg:hidden"></div>
-            </div>
+            <AuthBackground />
 
             {/* ================= PRAWA STRONA (CONTENT) ================= */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 relative z-10">
-
-                {/* Nagłówek */}
+            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 relative z-10">{/* Nagłówek */}
                 <div className="text-center mb-8 space-y-2 max-w-md">
                     <h2 className="text-white text-2xl lg:text-3xl font-semibold tracking-wide transition-all duration-300">
                         {getHeaderTitle()}
@@ -265,253 +247,47 @@ const AuthScene = () => {
 
                     {/* 1. WIDOK BUTTONÓW (Google, FB, Email) */}
                     {view === 'buttons' && (
-                        <div className="flex flex-col gap-6 w-full items-center animate-in fade-in zoom-in-95 duration-300">
-
-                            {/* Google */}
-                                <div className="mt-4 flex flex-col items-center w-full">
-
-                                    <div className="mt-2">
-                                            <GoogleLogin
-                                                onSuccess={handleGoogleSuccess}
-                                                onError={() => console.log('Błąd logowania Google')}
-                                                theme="filled_black"
-                                                shape="pill"
-                                                locale="pl"
-                                                text="signin_with"
-                                                width="250"
-                                            />
-                                    </div>
-                                </div>
-
-                            {/* Facebook */}
-                            <button className="w-80 h-14 relative group cursor-pointer transition-transform active:scale-95">
-                                <div className="w-80 h-14 left-0 top-0 absolute">
-                                    <div className="w-80 h-14 left-0 top-0 absolute bg-neutral-700 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] group-hover:bg-neutral-600 transition-colors"></div>
-                                    <div className="w-10 h-10 left-[24.93px] top-[10px] absolute"></div>
-                                </div>
-                                <div className="w-9 h-9 left-[24px] top-[11px] absolute overflow-hidden">
-                                    <div className="w-9 h-9 left-0 top-0 absolute bg-blue-600 rounded-sm"></div>
-                                    <div className="w-3.5 h-7 left-[10.32px] top-[6.84px] absolute bg-white"></div>
-                                </div>
-                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium leading-5">Kontynuuj z Facebookiem</div>
-                            </button>
-
-                            {/* Email KLIKNIĘCIE OTWIERA REJESTRACJĘ */}
-                            <button
-                                onClick={() => setView('login')}
-                                className="w-80 h-14 relative group cursor-pointer transition-transform active:scale-95"
-                            >
-                                <div className="w-80 h-14 left-0 top-0 absolute">
-                                    <div className="w-80 h-14 left-0 top-0 absolute bg-neutral-700 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] group-hover:bg-neutral-600 transition-colors"></div>
-                                    <div className="w-10 h-10 left-[24.93px] top-[10px] absolute"></div>
-                                </div>
-                                {/* Prosta ikona koperty CSS/SVG */}
-                                <div className="w-10 h-10 left-[23px] top-[13px] absolute">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-6 h-6">
-                                        <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
-                                        <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
-                                    </svg>
-                                </div>
-                                <div className="left-[78px] top-[19px] absolute justify-start text-white text-base font-medium leading-5">Kontynuuj z adresem email</div>
-                            </button>
-                            {/*DO POPRAWY*/}
-                            <Link to="/">Powrót do strony głównej</Link>
-
-                            <div className="mt-8 text-center text-gray-400 text-xs font-semibold leading-4 max-w-xs">
-                                Klikając dowolny przycisk „kontynuuj z”, wyrażasz zgodę na "warunki użytkowania" i akceptujesz naszą "politykę prywatności" na naszej stronie internetowej.                            </div>
-                        </div>
+                        <AuthButtons 
+                            onEmailClick={() => setView('login')}
+                            onGoogleSuccess={handleGoogleSuccess}
+                        />
                     )}
 
-                    {/* 2. FORMULARZ REJESTRACJI (Domyślny po kliknięciu email) */}
+                    {/* 2. FORMULARZ REJESTRACJI */}
                     {view === 'register' && (
-                        <form onSubmit={handleRegister} className="flex flex-col gap-4 animate-in fade-in slide-in-from-right-8 duration-300">
-                            <input
-                                className={inputStyles}
-                                type="text"
-                                id="username"
-                                name="username"
-                                placeholder="Wpisz swój login"
-                                value={formData.username}
-                                onChange={handleChange}
-                                required
-                            />
-                            <input
-                                className={inputStyles}
-                                type="text"
-                                id="email"
-                                name="email"
-                                placeholder="Wpisz swój e-mail"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                            <input
-                                className={inputStyles}
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
-                            <input
-                                className={inputStyles}
-                                type="password"
-                                id="re_password"
-                                name="re_password"
-                                placeholder="••••••••"
-                                value={formData.re_password}
-                                onChange={handleChange}
-                                required
-                            />
-
-                            {/* Sekcja błędów */}
-                            {error && (
-                                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
-                                    {error}
-                                </div>
-                            )}
-
-                            {/* Przycisk Submit */}
-                            <div className="flex justify-center mt-4">
-                                <ActionButton type="submit">
-                                    Zarejestruj się
-                                </ActionButton>
-                            </div>
-
-                            {/* Switcher do Logowania */}
-                            <div className="mt-4 text-center">
-                        <span className="text-gray-400 text-sm font-medium">
-                            Posiadasz już konto?
-                        </span>
-                                <button
-                                    type="button"
-                                    onClick={() => setView('login')}
-                                    className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
-                                >
-                                    Zaloguj się tutaj.
-                                </button>
-                            </div>
-
-                            {/* Powrót do metod */}
-                            <button type="button" onClick={() => setView('buttons')} className="mt-2 text-xs text-gray-500 hover:text-gray-300 transition-colors">
-                                ← Wybierz inną metodę
-                            </button>
-                        </form>
+                        <RegisterForm
+                            formData={formData}
+                            error={error}
+                            onSubmit={handleRegister}
+                            onChange={handleChange}
+                            onSwitchToLogin={() => setView('login')}
+                            onBackToButtons={() => setView('buttons')}
+                        />
                     )}
 
-                    {/* 3. FORMULARZ LOGOWANIA (Tylko po przełączeniu z rejestracji) */}
+                    {/* 3. FORMULARZ LOGOWANIA */}
                     {view === 'login' && (
-                        <form onSubmit={handleLogin} className="flex flex-col gap-4 animate-in fade-in slide-in-from-left-8 duration-300">
-                            <input
-                                className={inputStyles}
-                                type="text"
-                                id="username"
-                                name="username"
-                                placeholder="Wpisz swój login"
-                                value={formData.username}
-                                onChange={handleChange}
-                                required
-                            />
-                            <input
-                                className={inputStyles}
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
-                            <div className="flex items-center justify-center mb-2">
-                                <input
-                                    id="remember-me"
-                                    type="checkbox"
-                                    name="rememberMe"
-                                    onChange={handleRememberMe}
-                                    className="h-4 w-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
-                                />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-primary-50">
-                                    Nie wylogowywuj mnie
-                                </label>
-                            </div>
-
-                            {/* Sekcja błędów */}
-                            {error && (
-                                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
-                                    {error}
-                                </div>
-                            )}
-
-                            {/* Przycisk Submit */}
-                            <div className="flex justify-center mt-4">
-                                <ActionButton type="submit">
-                                    Zaloguj się
-                                </ActionButton>
-                            </div>
-
-                            {/* Switcher do resetu hasła */}
-                            <div className="mt-4 text-center">
-                        <span className="text-gray-400 text-sm font-medium">
-                            Nie pamiętasz hasła?
-                        </span>
-                                <button
-                                    type="button"
-                                    onClick={() => setView('reset')}
-                                    className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
-                                >
-                                    Resetuj hasło.
-                                </button>
-                            </div>
-
-                            {/* Switcher do Rejestracji */}
-                            <div className="text-center">
-                        <span className="text-gray-400 text-sm font-medium">
-                            Nie masz jeszcze konta?
-                        </span>
-                                <button
-                                    type="button"
-                                    onClick={() => setView('register')}
-                                    className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
-                                >
-                                    Zarejestruj się tutaj.
-                                </button>
-                            </div>
-
-                            {/* Powrót do metod */}
-                            <button type="button" onClick={() => setView('buttons')} className="mt-2 text-xs text-gray-500 hover:text-gray-300 transition-colors">
-                                ← Wybierz inną metodę
-                            </button>
-                        </form>
+                        <LoginForm
+                            formData={formData}
+                            error={error}
+                            rememberMe={rememberMe}
+                            onSubmit={handleLogin}
+                            onChange={handleChange}
+                            onRememberMeChange={handleRememberMe}
+                            onSwitchToRegister={() => setView('register')}
+                            onSwitchToReset={() => setView('reset')}
+                            onBackToButtons={() => setView('buttons')}
+                        />
                     )}
-                    {/* 4. NOWY WIDOK: RESET HASŁA */}
+
+                    {/* 4. FORMULARZ RESET HASŁA */}
                     {view === 'reset' && (
-                        <form onSubmit={handleResetPassword} className="flex flex-col gap-4 animate-in fade-in slide-in-from-right-8 duration-300">
-
-                            <div className="text-gray-300 text-sm text-center mb-2">
-                                Wpisz swój login, a wyślemy Ci link do zmiany hasła.
-                            </div>
-
-                            <input type="email" placeholder="Wpisz swój E-mail" className={inputStyles} value={resetEmail}
-                                   onChange={(e) => setResetEmail(e.target.value)}
-                                   required
-                            />
-
-                            <ActionButton type="submit">
-                                Wyślij link resetujący
-                            </ActionButton>
-
-                            <div className="mt-4 text-center">
-                                <button
-                                    type="button"
-                                    onClick={() => setView('login')}
-                                    className="mt-2 text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                                >
-                                    ← Wróć do logowania
-                                </button>
-                            </div>
-                        </form>
+                        <ResetPasswordForm
+                            resetEmail={resetEmail}
+                            onSubmit={handleResetPassword}
+                            onEmailChange={(e) => setResetEmail(e.target.value)}
+                            onBackToLogin={() => setView('login')}
+                        />
                     )}
 
                 </div>

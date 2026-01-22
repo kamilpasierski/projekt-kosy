@@ -154,7 +154,10 @@ const MapScene = () => {
             console.log(`Przelatuję do: ${clubName}`, bounds);
             setFocusBounds(bounds);
             
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const mapElement = document.querySelector('.leaflet-container')?.closest('div');
+            if (mapElement) {
+                mapElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         } else {
             alert(`Nie znaleziono strefy na mapie dla klubu: ${clubName}`);
         }

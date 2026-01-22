@@ -1,4 +1,5 @@
-import { createContext } from 'react';
+// 1. Zmień import na górze, dodając 'useContext'
+import { createContext, useContext } from 'react'; 
 
 export interface User {
     id: number;
@@ -16,3 +17,13 @@ export interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    
+    return context;
+};

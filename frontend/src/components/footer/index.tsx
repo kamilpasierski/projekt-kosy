@@ -22,15 +22,15 @@ export default function Footer({
   copyrightText = "© Copyright 2025 - Piłkarskie Kosy"
 }: FooterProps) {
   return (
-    <footer className="relative w-full border-t border-white/5 bg-black/5 py-12">
-      <div className="flex flex-col items-center gap-12">
+    <footer className="relative w-full border-t border-white/5 bg-black/5 py-8 md:py-12">
+      <div className="flex flex-col items-center gap-6 md:gap-12 px-4">
         {/* Navigation Links */}
-        <nav className="flex items-center gap-14">
+        <nav className="flex flex-col md:flex-row items-center gap-4 md:gap-8 lg:gap-14">
           {links.map((link, index) => (
             <Link
               key={index}
               to={link.href}
-              className="font-['Montserrat'] text-[14px] font-normal leading-[16px] text-white hover:text-[#274fde] transition-colors"
+              className="text-sm md:text-[14px] font-normal leading-[16px] text-white hover:text-[#274fde] transition-colors"
             >
               {link.label}
             </Link>
@@ -38,7 +38,7 @@ export default function Footer({
         </nav>
 
         {/* Copyright */}
-        <p className="font-['DM_Sans'] text-[14px] font-normal text-[#274fde] opacity-65">
+        <p className="text-xs md:text-[14px] font-normal text-[#274fde] opacity-65 text-center">
           {copyrightText}
         </p>
       </div>

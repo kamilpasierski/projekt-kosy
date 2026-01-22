@@ -12,21 +12,21 @@ export default function SafetyCheck({
   title = "TWOJE POŁOŻENIE",
   statusTitle,
   description,
-  color = RELATION_COLORS.DEFAULT // Używamy stałej zamiast hardcodowania '#6b7280'
+  color = RELATION_COLORS.DEFAULT
 }: SafetyCheckProps) {
   
   return (
-    <div className="relative w-full max-w-[1440px] py-8">
+    <div className="relative w-full py-6 md:py-8 px-4">
       {/* Title */}
-      <h2 className="mb-6 px-[calc(6.25%+34px)] font-['Montserrat'] text-[20px] font-medium uppercase leading-[1.3] text-white">
+      <h2 className="mb-4 md:mb-6 text-lg md:text-[20px] font-medium uppercase leading-[1.3] text-white">
         {title}
       </h2>
 
       {/* Flex Container */}
-      <div className="flex items-start gap-4 px-[calc(6.25%+34px)]">
+      <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
         
         {/* Ikona */}
-        <div className="flex h-[68px] w-[68px] flex-shrink-0 items-center justify-center">
+        <div className="flex h-12 w-12 sm:h-16 md:h-[68px] sm:w-16 md:w-[68px] flex-shrink-0 items-center justify-center">
           <MapPinIcon 
             className="h-full w-full transition-all duration-300 drop-shadow-md"
             style={{ color: color }}
@@ -34,14 +34,14 @@ export default function SafetyCheck({
         </div>
 
         {/* Tekst */}
-        <div className="flex-1 pt-1">
+        <div className="flex-1 pt-0 sm:pt-1">
           <h3 
-            className="mb-2 font-['Montserrat'] text-[20px] font-semibold uppercase leading-[1.63] tracking-[0.6px]"
+            className="mb-1 md:mb-2 text-base md:text-[20px] font-semibold uppercase leading-[1.63] tracking-[0.6px]"
             style={{ color: color }}
           >
             {statusTitle}
           </h3>
-          <p className="font-['Montserrat'] text-[20px] font-medium leading-[1.63] tracking-[0.6px] text-white">
+          <p className="text-sm md:text-[20px] font-medium leading-[1.63] tracking-[0.6px] text-white">
             {description}
           </p>
         </div>

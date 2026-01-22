@@ -32,9 +32,26 @@ class AdminPendingTicketSerializer(serializers.ModelSerializer):
             "relation"
         ]
 
+class UserTicketSerializer(serializers.ModelSerializer):
+    """Serializer for user's own tickets (all statuses)"""
+    club_a = ClubInfoSerializer(read_only=True)
+    club_b = ClubInfoSerializer(read_only=True)
+    
+    class Meta:
+        model = Ticket
+        fields = [
+            "id",
+            "created_at",
+            "club_a",
+            "club_b",
+            "relation",
+            "status",
+            "description"
+        ]
+
 class NotificationSerializer(serializers.ModelSerializer):
     timestamp = serializers.DateTimeField(source='created_at', format="%d.%m.%Y, %H:%M", read_only=True)
 
     class Meta:
         model = Notification
-        fields = ['id', 'content', 'timestamp']
+        fields = ['id', 'content', 'timestamp', 'is_read']
