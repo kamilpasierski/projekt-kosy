@@ -38,9 +38,10 @@ export const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
+      const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
       const response = await axios.get('http://localhost:8000/api/notifications/', {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
+            'Authorization': `Bearer ${token}` 
         }
       });
       setNotifications(response.data);
