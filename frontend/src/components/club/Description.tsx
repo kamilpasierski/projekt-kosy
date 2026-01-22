@@ -1,10 +1,8 @@
 interface DescriptionProps {
-  clubName?: string;
   description?: string;
 }
 
 export default function Description({ 
-  clubName,
   description
 }: DescriptionProps) {
   if (!description) return null; // Nie renderuj jeśli brak opisu

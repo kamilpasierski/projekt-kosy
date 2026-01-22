@@ -55,7 +55,6 @@ export default function ClubPage() {
       />
       
       <Description 
-        clubName={clubData.name} 
         description={clubData.desc} 
       />
       
