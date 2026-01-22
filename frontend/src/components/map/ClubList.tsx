@@ -3,7 +3,7 @@ import api from '../../api/axiosConfig';
 import { useDebounce } from '../../hooks/useDebounce';
 import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
-import { FollowButton } from '../shared/FollowButton';
+import { FollowButton } from '../common/FollowButton';
 import { useAuth } from '../../context/AuthContext';
 
 interface ClubListProps {

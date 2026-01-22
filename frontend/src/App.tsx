@@ -9,9 +9,8 @@ import {AuthProvider} from "./context/AuthContext.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import ResetPasswordConfirm from "./scenes/reset_password";
 import AdminPanel from "./scenes/adminpanel";
-import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
+import { ProtectedRoute } from "./components/common/ProtectedRoute.tsx";
 import ProfilePage from './scenes/profile/index.tsx';
-import FollowedClubs from './components/user/FavClub.tsx';
 import FollowedClubsScene from './scenes/followed_clubs/index.tsx';
 
 
