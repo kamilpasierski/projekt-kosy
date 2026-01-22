@@ -1,0 +1,1102 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{listingsutf8}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    inputencoding=utf8,
+    literate={ą}{{\k{a}}}1
+             {ć}{{\'c}}1
+             {ę}{{\k{e}}}1
+             {ł}{{\l{}}}1
+             {ń}{{\'n}}1
+             {ó}{{\'o}}1
+             {ś}{{\'s}}1
+             {ż}{{\.z}}1
+             {ź}{{\'z}}1
+             {Ą}{{\k{A}}}1
+             {Ć}{{\'C}}1
+             {Ę}{{\k{E}}}1
+             {Ł}{{\L{}}}1
+             {Ń}{{\'N}}1
+             {Ó}{{\'O}}1
+             {Ś}{{\'S}}1
+             {Ż}{{\.Z}}1
+             {Ź}{{\'Z}}1
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Projekt Kosy - Dokumentacja API}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Projekt Kosy - Dokumentacja API},
+}
+
+\pagenumbering{gobble}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace{1.5cm}
+    {\Huge \textbf{Projekt Kosy}} \\
+    \vspace{0.5cm}
+    {\large Dokumentacja Open API} \\
+    \vspace{1cm}
+    
+    \includegraphics[width=10cm, height=10cm, keepaspectratio]{godlo.jpg}
+    
+    \vspace{1cm}
+    {\LARGE Rok III / Semestr V} \\
+    \vspace{1cm}
+    {\Large Daniel Kozak} \\
+    \vspace{0.2cm}
+    {\Large Emilia Małecka} \\
+    \vspace{0.2cm}
+    {\Large Kamil Pasierski} \\
+    \vspace{0.2cm}
+    {\Large Oskar Kuklewski} \\
+    \vspace{0.2cm}
+    {\Large Wiktor Semp} \\
+    \vspace{1cm}
+    
+    {\large
+        Collegium Witelona - Uczelnia Państwowa \\
+        Wydział Nauk Technicznych i Ekonomicznych
+    }
+    \vfill
+    {\small\today}
+\end{titlepage}
+
+\pagenumbering{arabic}
+\setcounter{page}{2}
+
+\newpage
+\renewcommand{\contentsname}{Spis treści}
+\tableofcontents
+
+\newpage
+
+\section{Uwierzytelnianie i bezpieczeństwo}
+
+\subsection{Metody uwierzytelniania}
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Token JWT}
+    \item \textbf{Google OAuth2}
+    \item \textbf{Token autoryzacyjny}
+\end{enumerate}
+
+\subsection{Przykłady token'ów}
+
+\begin{lstlisting}
+# JWT token:
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+
+# token autoryzacyjny:
+Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
+\end{lstlisting}
+
+\newpage
+
+\section{Endpointy API}
+
+\subsection{Reset hasła}
+
+\subsubsection{Zażądanie resetu hasła}
+
+Po wysłaniu request'a o reset hasła, wysłane zostanie link do zresetowania hasła na podany adres email. \\
+
+\textbf{POST - Zażądanie resetu:}
+\begin{lstlisting}
+POST /api/password-reset/
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+\end{lstlisting}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "message": "Jeśli email istnieje, wysłano link."
+}
+\end{lstlisting}
+
+\textbf{Proces:}
+\begin{enumerate}[label=\arabic*.]
+    \item System sprawdza czy użytkownik istnieje
+    \item Generuje token resetu
+    \item Wysyła link na adres email
+    \item Format link'a: \texttt{/reset-password/[uid]/[token]}
+\end{enumerate}
+
+\newpage
+
+\subsubsection{Ustalenie nowego hasła}
+
+Po potwierdzeniu reset'u hasła przez zweryfikowanie mail'owe, wprowadzamy nowe hasło, które wywołuje następną metodę.
+
+\vspace{0.5cm}
+
+\textbf{POST - Zmiana hasła:}
+\begin{lstlisting}
+POST /api/password-reset/confirm/
+Content-Type: application/json
+
+{
+  "uid": "MQ",
+  "token": "abc123def456",
+  "password": "NoweHaslo123!"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "message": "Hasło zmienione poprawnie"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Błędy (400 Bad Request):}
+\begin{lstlisting}
+{
+  "error": "Nieprawidłowy link"
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+{
+  "error": "Token wygasł lub jest nieprawidłowy"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Proces:}
+\begin{enumerate}[label=\arabic*.]
+    \item Użytkownik wprowadza nowe hasło
+    \item System sprawdza token oraz czy hasło spełnia minimalne wymogi
+    \item System przypisuje nowe hasło do użytkownika przez UID lub zwraca błąd w razie problemu
+\end{enumerate}
+
+\newpage
+
+\subsection{Logowanie przez Google OAuth2}
+
+Ten endpoint umożliwia logowanie przez konto Google.\\
+
+\textbf{POST - Logowanie Google:}
+\begin{lstlisting}
+POST /api/google-login/
+Content-Type: application/json
+
+{
+  "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFl...google_id_token"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Błędy (400 Bad Request):}
+\begin{lstlisting}
+{
+  "error": "Brak tokenu Google"
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+{
+  "error": "Nieprawidłowy token Google"
+}
+\end{lstlisting}
+
+\textbf{Proces:}
+\begin{enumerate}[label=\arabic*.]
+    \item System pobiera token ID z Google Sign-In
+    \item Token jest weryfikowany przez Google
+    \item Tworzy nowe konto lub loguje urzytkownika
+    \item Generowane są tokeny JWT
+\end{enumerate}
+
+\newpage
+
+\subsection{Użytkownicy}
+
+\subsubsection{Lista wszystkich użytkowników}
+
+Endpoint zwraca listę wszystkich użytkowników. \\
+
+\textbf{GET - Lista użytkowników:}
+\begin{lstlisting}
+GET /api/users/
+Authorization: Bearer <token>
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@example.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "username": "jan_kowalski",
+    "email": "jan@example.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-02-20T14:45:00Z"
+  }
+]
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Dane aktualnego użytkownika}
+
+Endpoint pokazuje lub aktualizację dane użytkownika. \\
+
+\textbf{GET - Pobranie danych:}
+\begin{lstlisting}
+GET /api/users/me/
+Authorization: Bearer <token>
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{PATCH - Aktualizacja danych:}
+\begin{lstlisting}
+PATCH /api/users/me/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "email": "nowy@example.com",
+  "username": "nowa_nazwa"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "id": 2,
+  "username": "nowa_nazwa",
+  "email": "nowy@example.com",
+  "is_staff": false,
+  "is_active": true,
+  "date_joined": "2024-02-20T14:45:00Z"
+}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Administracja}
+
+\subsubsection{Lista oczekujących ticket'ów}
+
+Endpoint zwraca listę ticket'ów czekających na decyzję administratora. \\
+
+\textbf{GET - Oczekujące zgłoszenia:}
+\begin{lstlisting}
+GET /api/admin/pending/
+Authorization: Bearer <admin_token>
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "id": 15,
+    "date": "21.01.2025, 14:30",
+    "reporter": "jan_kowalski",
+    "clubA": {
+      "name": "Legia Warszawa",
+      "logoUrl": "/media/legia.jpg"
+    },
+    "clubB": {
+      "name": "Lech Poznań",
+      "logoUrl": "/media/lech.jpg"
+    },
+    "relation": "kosa"
+  }
+]
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+Te zgłoszenia są weryfikowane przez admin'a aby aktualizować sprawdzone relacje klubów.
+
+\newpage
+
+\subsubsection{Akcja na zgłoszeniu}
+
+Endpoint akceptuje lub odrzuca ticket. \\
+
+\textbf{POST - Akceptacja zgłoszenia:}
+\begin{lstlisting}
+POST /api/admin/15/action/
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "action": "approve"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{POST - Odrzucenie zgłoszenia:}
+\begin{lstlisting}
+POST /api/admin/15/action/
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "action": "reject"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK) - akceptacja:}
+\begin{lstlisting}
+{
+  "message": "Zgłoszenie zatwierdzone"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK) - odrzucenie:}
+\begin{lstlisting}
+{
+  "message": "Zgłoszenie odrzucone"
+}
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Powiadomienia użytkownika}
+
+Endpoint zwraca listę powiadomień dla zalogowanego użytkownika. \\
+
+\textbf{GET - Lista powiadomień:}
+\begin{lstlisting}
+GET /api/admin/notifications/
+Authorization: Bearer <token>
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "id": 42,
+    "content": "Relacja między Legia Warszawa a Lech Poznań została zaakceptowana przez administratora.",
+    "timestamp": "21.01.2025, 15:45"
+  },
+  {
+    "id": 41,
+    "content": "Twój klub został dodany do ulubionych.",
+    "timestamp": "20.01.2025, 09:30"
+  }
+]
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+Te odpowiedzi są wykorzystywane przez frontend aby wyświetlać powiadomienia.
+
+\newpage
+
+\subsubsection{Oznaczenie powiadomienia jako przeczytane}
+
+Endpoint umożliwia oznaczenie powiadomienia jako przeczytane. \\
+
+\textbf{PATCH - Oznaczenie jako przeczytane:}
+\begin{lstlisting}
+PATCH /api/admin/change_is_read/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "id": 42
+}
+\end{lstlisting}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "id": 42,
+  "content": "Relacja między Legia Warszawa a Lech Poznań została zaakceptowana przez administratora.",
+  "timestamp": "21.01.2025, 15:45"
+}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Ticket'y (zgłoszenia)}
+
+\subsubsection{Utworzenie nowego zgłoszenia}
+
+Endpoint Tworzy nowy ticket prośby o aktualizacje relacji między klubami. \\
+
+\textbf{POST - Utworzenie zgłoszenia:}
+\begin{lstlisting}
+POST /api/tickets/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "club_a": "Legia Warszawa",
+  "club_b": "Lech Poznań",
+  "description": "Kluby mają długoletni konflikt...",
+  "relation": "kosa"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (201 Created):}
+\begin{lstlisting}
+{
+  "id": 15,
+  "club_a": "Legia Warszawa",
+  "club_b": "Lech Poznań",
+  "description": "Kluby mają długoletni konflikt...",
+  "relation": "kosa",
+  "status": "pending",
+  "created_at": "2025-01-21T14:30:00Z",
+  "user": 42
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Błędy (400 Bad Request):}
+\begin{lstlisting}
+{
+  "non_field_errors": [
+    "Nie można stworzyć ticketu dla tego samego klubu."
+  ]
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+{
+  "non_field_errors": ["Taki ticket już istnieje."]
+}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Statystyki systemowe}
+
+\subsubsection{Statystyki globalne}
+
+Endpoint zwraca globalne statystyki systemu. \\
+
+\textbf{GET - Statystyki globalne:}
+\begin{lstlisting}
+GET /api/stats/global/
+Authorization: Bearer <admin_token>
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "relations": 42,
+  "clubs": 18,
+  "users": 156,
+  "tickets": 7
+}
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Top kluby w konfliktach}
+
+Endpoint zwraca listę klubów z największą liczbą relacji typu "kosa" (konfliktów). Dostępny publicznie. \\
+
+\textbf{GET - Top konfliktów:}
+\begin{lstlisting}
+GET /api/stats/max-beefs/
+\end{lstlisting}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "id": 5,
+    "name": "Legia Warszawa",
+    "path_image": "/media/legia.jpg",
+    "kos_count": 8
+  },
+  {
+    "id": 3,
+    "name": "Lech Poznań",
+    "path_image": "/media/lech.jpg",
+    "kos_count": 6
+  }
+]
+\end{lstlisting}
+
+\newpage
+
+\subsection{Relacje między klubami}
+
+\subsubsection{Lista wszystkich relacji}
+
+Endpoint zwraca listę relacji między klubami. \\
+
+\textbf{GET - Lista relacji:}
+\begin{lstlisting}
+GET /api/relations/
+\end{lstlisting}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "club_a_name": "Legia Warszawa",
+    "club_b_name": "Lech Poznań",
+    "relation_type": "kosa"
+  },
+  {
+    "club_a_name": "Legia Warszawa",
+    "club_b_name": "Górnik Zabrze",
+    "relation_type": "zgoda"
+  }
+]
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Aktualizacja relacji}
+
+Endpoint umożliwia administratorowi utworzenie lub aktualizację relacji między klubami. \\
+
+\textbf{POST - Aktualizacja relacji:}
+\begin{lstlisting}
+POST /api/relations/update/
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "club_a": "Legia Warszawa",
+  "club_b": "Lech Poznań",
+  "relation": "kosa"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "status": "success",
+  "message": "Relacja utworzona jako kosa.",
+  "relation": "kosa"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Błąd (400 Bad Request):}
+\begin{lstlisting}
+{
+  "error": "Kluby muszą być różne."
+}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Rejestracja użytkownika}
+
+\subsubsection{Rejestracja nowego konta}
+
+Endpoint rejstruje nowego użytkownika. \\
+
+\textbf{POST - Rejestracja:}
+\begin{lstlisting}
+POST /api/register/
+Content-Type: application/json
+
+{
+  "username": "nowy_uzytkownik",
+  "email": "user@example.com",
+  "password": "Haslo123!",
+  "re_password": "Haslo123!"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (201 Created):}
+\begin{lstlisting}
+{
+  "message": "Użytkownik został pomyślnie utworzony."
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Błędy (400 Bad Request):}
+\begin{lstlisting}
+{
+  "email": "Email jest już zajęty."
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+{
+  "re_password": "Hasła nie są takie same."
+}
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Aktywacja konta}
+
+Endpoint aktywuje konto użytkownika poprzez link wysłany email'em. \\
+
+\textbf{GET - Aktywacja:}
+\begin{lstlisting}
+GET /api/register/activate/MQ/abc123def456/
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Przekierowanie:}
+\begin{itemize}[label=\textbullet]
+    \item Sukces: \texttt{http://localhost:3000/?status=activated}
+    \item Błąd: Strona błędu z komunikatem
+\end{itemize}
+
+\newpage
+
+\subsection{Uwierzytelnianie konta}
+
+\subsubsection{Uzyskanie tokena autoryzacyjnego}
+
+Endpoint zwraca token autoryzacji dla użytkowników zarejestrowanych przez email. \\
+
+\textbf{POST - Uzyskanie tokena:}
+\begin{lstlisting}
+POST /api/api-token-auth/
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "Test123!"
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "token": "9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b"
+}
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Profil użytkownika}
+
+Endpoint testowy zwracający odpowiedz do zalogowanego użytkownika. \\
+
+\textbf{GET - Informacje profilowe:}
+\begin{lstlisting}
+GET /api/profile/
+Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "message": "Hello, testuser!"
+}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Popularne kluby}
+
+\subsubsection{Top 6 klubów}
+
+Endpoint zwraca top 6 najpopularniejszych klubów na strone główną. \\
+
+\textbf{GET - Top klubów:}
+\begin{lstlisting}
+GET /api/popular/
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "id": 5,
+    "name": "Legia Warszawa",
+    "city": "Warszawa",
+    "path_image": "/media/legia.jpg",
+    "points": 1420
+  },
+  {
+    "id": 3,
+    "name": "Lech Poznań",
+    "city": "Poznań",
+    "path_image": "/media/lech.jpg",
+    "points": 1285
+  }
+]
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Inkrementacja punktów klubu}
+
+Endpoint zwiększa licznik punktów wyszukiwań klubu o 1. Używane w proponowaniu klubów podczas wyszukiwania. \\
+
+\textbf{POST - Inkrementacja punktów:}
+\begin{lstlisting}
+POST /api/popular/increment/5/
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "message": "Points incremented",
+  "points": 1421
+}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Kluby}
+
+\subsubsection{Lista wszystkich klubów}
+
+Endpoint zwraca listę klubów. Używane do dropdown'ów i inicjalizacji mapy. \\
+
+\textbf{GET - Lista klubów:}
+\begin{lstlisting}
+GET /api/clubs/all/
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "id": 1,
+    "name": "Legia Warszawa",
+    "city": "Warszawa",
+    "desc": "Klub piłkarski...",
+    "path_image": "/media/legia.jpg",
+    "points": 1420
+  }
+]
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Wyszukiwanie klubów z paginacją}
+
+Endpoint od wyszukiwania klubów. \\
+
+\textbf{GET - Wyszukiwanie:}
+\begin{lstlisting}
+GET /api/clubs/search/?search=war&ordering=-points&page=1
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "count": 45,
+  "next": "http://localhost:8000/api/clubs/search/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": "Legia Warszawa",
+      "city": "Warszawa",
+      "path_image": "/media/legia.jpg",
+      "points": 1420
+    }
+  ]
+}
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Szczegóły klubu}
+
+Endpoint zwraca szczegółowe informacje o klubie. \\
+
+\textbf{GET - Szczegóły:}
+\begin{lstlisting}
+GET /api/clubs/5/
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "id": 5,
+  "name": "Legia Warszawa",
+  "city": "Warszawa",
+  "desc": "Klub założony w 1916...",
+  "path_image": "/media/legia.jpg",
+  "points": 1420,
+  "kosy": [
+    {"id": 3, "name": "Lech Poznań", "path_image": "/media/lech.jpg"}
+  ],
+  "zgody": [
+    {"id": 4, "name": "Górnik Zabrze", "path_image": "/media/gornik.jpg"}
+  ],
+  "neutralne": [
+    {"id": 6, "name": "Śląsk Wrocław", "path_image": "/media/slask.jpg"}
+  ]
+}
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Ulubiony klub użytkownika}
+
+Endpoint do ustawienia ulubionego klubu użytkownika. \\
+
+\textbf{GET - Pobranie ulubionego klubu:}
+\begin{lstlisting}
+GET /api/clubs/user/
+Authorization: Bearer <token>
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{POST - Ustawienie ulubionego klubu:}
+\begin{lstlisting}
+POST /api/clubs/user/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "club": 5
+}
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+{
+  "message": "Klub zaktualizowany"
+}
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Autouzupełnianie nazw klubów}
+
+Endpoint proponuje kluby podczas wyszukiwania po fragmencie nazwy. \\
+
+\textbf{GET - Autocomplete:}
+\begin{lstlisting}
+GET /api/clubs/?q=leg
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {"id": 1, "name": "Legia Warszawa"},
+  {"id": 2, "name": "Legia Soccer Schools"}
+]
+\end{lstlisting}
+
+\newpage
+
+\subsection{Terytorium klubów}
+
+Endpoint zwraca koordynaty terytorium klubów. \\
+
+\textbf{GET - Lista obszarów:}
+\begin{lstlisting}
+GET /api/area/
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\textbf{Odpowiedź (200 OK):}
+\begin{lstlisting}
+[
+  {
+    "id": 1,
+    "polygon": [
+      {"lat": 51.1079, "lng": 17.0385},
+      {"lat": 51.1085, "lng": 17.0392}
+    ],
+    "owner_name": "Klub Sportowy Legia"
+  }
+]
+\end{lstlisting}
+
+\newpage
+
+\section{Przykłady użycia}
+
+\subsection{cURL}
+
+\begin{enumerate}[label=\textbf{\textbullet}]
+
+\item \textbf{Rejestracja użytkownika}
+\begin{lstlisting}
+curl -X POST http://localhost:8000/api/register/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"nowy","email":"user@example.com",
+       "password":"Haslo123!","re_password":"Haslo123!"}'
+\end{lstlisting}
+
+\item \textbf{Logowanie}
+\begin{lstlisting}
+curl -X POST http://localhost:8000/api/api-token-auth/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"Test123!"}'
+\end{lstlisting}
+
+\item \textbf{Pobranie klubów}
+\begin{lstlisting}
+curl -X GET "http://localhost:8000/api/clubs/all/"
+\end{lstlisting}
+
+\end{enumerate}
+
+\newpage
+
+\subsection{Python}
+
+\begin{enumerate}[label=\textbf{\textbullet}]
+
+\item \textbf{Rejestracja}
+\begin{lstlisting}[language=Python]
+import requests
+
+register_data = {
+    'username': 'nowy_uzytkownik',
+    'email': 'user@example.com',
+    'password': 'Haslo123!',
+    're_password': 'Haslo123!'
+}
+
+response = requests.post(
+    'http://localhost:8000/api/register/', 
+    json=register_data
+)
+print(response.json())
+\end{lstlisting}
+
+\item \textbf{Logowanie}
+\begin{lstlisting}[language=Python]
+import requests
+
+auth_response = requests.post(
+    'http://localhost:8000/api/api-token-auth/',
+    json={
+        'username': 'testuser', 
+        'password': 'Test123!'
+    }
+)
+token = auth_response.json()['token']
+print(f"Token: {token}")
+\end{lstlisting}
+
+\item \textbf{Pobranie danych z autoryzacją}
+\begin{lstlisting}[language=Python]
+import requests
+
+headers = {'Authorization': f'Token {token}'}
+profile = requests.get(
+    'http://localhost:8000/api/profile/', 
+    headers=headers
+).json()
+
+print(f"Wiadomość: {profile['message']}")
+\end{lstlisting}
+
+\end{enumerate}
+
+
+\end{document}

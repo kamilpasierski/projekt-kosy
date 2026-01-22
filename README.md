@@ -16,6 +16,9 @@ cd projekt-kosy
 
 docker-compose up --build  
 
+# Documentation
+
+[Full API Documentation](Documentation/api_documentation.pdf)
 
 ## Credits / Użyte zasoby
 
