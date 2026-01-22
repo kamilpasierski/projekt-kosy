@@ -1,9 +1,5 @@
 import React from 'react';
-
-// Assets
-const IMG_STADIUM = "https://www.figma.com/api/mcp/asset/a91f5929-8edd-4e83-b3ba-7701c1cb26e5";
-const IMG_AVATAR_BG = "https://www.figma.com/api/mcp/asset/54ac7048-6b72-4443-bf17-db747dfad9ac";
-const IMG_AVATAR_BORDER = "https://www.figma.com/api/mcp/asset/c4e3aa08-df43-489e-a262-b3199fed63d0";
+import BanerProfilImage from "@/assets/Baner_profil.png";
 
 interface BanerProps {
   /** Mapujemy tutaj pole 'username' z tabeli auth_user */
@@ -31,18 +27,17 @@ const Baner: React.FC<BanerProps> = ({ username, is_staff }) => {
           <img 
             alt="Stadium Background" 
             className="absolute h-[178.74%] left-[-1.28%] max-w-none top-[-70.69%] w-[101.34%] object-cover" 
-            src={IMG_STADIUM} 
+            src={BanerProfilImage} 
           />
         </div>
       </div>
 
       {/* Avatar Layer */}
-      <div className="absolute left-1/2 -translate-x-1/2 w-[239px] h-[239px] top-[190px]">
-        <img alt="" className="block max-w-none w-full h-full" src={IMG_AVATAR_BG} />
-      </div>
-      <div className="absolute left-1/2 -translate-x-1/2 w-[226px] h-[226px] top-[196px] z-20 pointer-events-none">
-        <img alt="" className="block max-w-none w-full h-full" src={IMG_AVATAR_BORDER} />
-      </div>
+      {/* Outer dark circle (border) */}
+      <div className="absolute left-1/2 -translate-x-1/2 w-[239px] h-[239px] top-[190px] rounded-full bg-white shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]" />
+      
+      {/* Inner white circle (background) */}
+      <div className="absolute left-1/2 -translate-x-1/2 w-[226px] h-[226px] top-[196px] rounded-full bg-neutral-900 z-20" />
 
       {/* Avatar Initial */}
       <div className="absolute left-1/2 -translate-x-1/2 top-[196px] w-[226px] h-[226px] flex items-center justify-center z-30">

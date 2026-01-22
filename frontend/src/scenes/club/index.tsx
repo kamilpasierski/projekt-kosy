@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Baner from "../../components/club/Baner";
 import Description from "../../components/club/Description";
 import Relations, { type RelatedClub } from "../../components/club/Relations";
-import MatchesTable from '../../shared/MatchesTable';
+//import MatchesTable from '../../shared/MatchesTable';
 import { getClubImageUrl } from '../../utils/imageUtils';
 
 // Typ danych z API

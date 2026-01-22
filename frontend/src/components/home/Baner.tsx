@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import Baner from '@/assets/Baner.png';
+import Baner from '@/assets/Baner_home.png';
 
 export default function BanerComponent() {
   const navigate = useNavigate();

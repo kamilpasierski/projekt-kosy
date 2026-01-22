@@ -1,12 +1,11 @@
+import BanerImage from "@/assets/Baner_klub.png";
+
 interface BanerProps {
   clubName?: string;
-  logoImage?: string; // To będzie URL z backendu
+  logoImage?: string;
   onFollow?: () => void;
 }
 
-// Placeholder tła - backend na razie nie zwraca bannera, więc zostawiamy statyczny
-const defaultBg = "https://www.figma.com/api/mcp/asset/4635981e-9204-4e01-a31a-275c4a553635";
-const defaultCircle = "https://www.figma.com/api/mcp/asset/7f6cb56c-53e9-4212-a18f-2fbe92c1e4a6";
 
 export default function Baner({ 
   clubName,
@@ -20,17 +19,19 @@ export default function Baner({
         <img 
           alt="background" 
           className="h-full w-full rounded-bl-[40px] rounded-br-[40px] object-cover pointer-events-none" 
-          src={defaultBg} 
+          src={BanerImage} 
         />
       </div>
 
-      {/* Circle Background */}
-      <div className="absolute left-1/2 top-[166px] h-[260px] w-[260px] -translate-x-1/2">
-         <img src={defaultCircle} alt="" className="h-full w-full" />
-      </div>
+      {/* Circle background for logo */}
+      {/* Outer white circle (border) */}
+      <div className="absolute left-1/2 -translate-x-1/2 w-[239px] h-[239px] top-[166px] rounded-full bg-white shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]" />
+      
+      {/* Inner white circle (background) */}
+      <div className="absolute left-1/2 -translate-x-1/2 w-[226px] h-[226px] top-[172px] rounded-full bg-white z-20" />
 
       {/* Club Logo - Dynamiczne */}
-      <div className="absolute left-1/2 top-[209px] aspect-[609/768] w-[151px] -translate-x-1/2">
+      <div className="absolute left-1/2 top-[209px] aspect-[609/768] w-[151px] -translate-x-1/2 z-30">
         {logoImage && (
             <img 
             alt={clubName} 
