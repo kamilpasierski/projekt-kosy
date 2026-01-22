@@ -33,7 +33,7 @@ const AuthScene = () => {
 
     const [error, setError] = useState<string | null>(null);
     const { login } = useAuth();
-    const [rememberMe, setRememberMe] = useState<boolean>(false);
+    const [rememberMe, setRememberMe] = useState<boolean>(true); // Changed default to true
     const navigate = useNavigate();
     const [resetEmail, setResetEmail] = useState<string>('');
 
@@ -430,6 +430,7 @@ const AuthScene = () => {
                                     type="checkbox"
                                     name="rememberMe"
                                     onChange={handleRememberMe}
+                                    defaultChecked={true}
                                     className="h-4 w-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
                                 />
                                 <label htmlFor="remember-me" className="ml-2 block text-sm text-primary-50">
