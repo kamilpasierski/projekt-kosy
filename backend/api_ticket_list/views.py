@@ -110,8 +110,10 @@ class UserNotificationsList(ListAPIView):
 # change is_read status API
 
 class NotificationMarkReadView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def patch(self, request, pk):
-        notification = get_object_or_404(Notification, pk=pk)
+        notification = get_object_or_404(Notification, pk=pk, user=request.user)
         notification.is_read = True
         notification.save()
         serializer = NotificationSerializer(notification)

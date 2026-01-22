@@ -37,4 +37,4 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = ['id', 'content', 'timestamp']
+        fields = ['id', 'content', 'timestamp', 'is_read']
