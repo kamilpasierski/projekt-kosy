@@ -66,7 +66,6 @@ const PendingSubmissionsTable: React.FC = () => {
   };
 
   if (isLoading) return <div className="text-white text-center py-10">Ładowanie...</div>;
-  if (submissions.length === 0) return <div className="text-gray-400 text-center py-10">Brak oczekujących zgłoszeń.</div>;
 
   const API_URL = "http://localhost:8000"; 
 
@@ -87,7 +86,14 @@ const PendingSubmissionsTable: React.FC = () => {
 
         {/* ROWS */}
         <div className="divide-y divide-[#2a2a2a]">
-          {submissions.map((submission) => (
+          {submissions.length === 0 ? (
+            <div className="px-6 py-10 text-center">
+              <p className="font-['Montserrat'] text-[16px] font-medium text-gray-400">
+                Brak oczekujących zgłoszeń.
+              </p>
+            </div>
+          ) : (
+            submissions.map((submission) => (
             <div
               key={submission.id}
               className={`px-6 py-6 grid grid-cols-4 gap-4 items-center transition-opacity duration-300 ${processingId === submission.id ? 'opacity-50 pointer-events-none' : ''}`}
@@ -162,7 +168,7 @@ const PendingSubmissionsTable: React.FC = () => {
                 </button>
               </div>
             </div>
-          ))}
+          )))}
         </div>
       </div>
     </div>
