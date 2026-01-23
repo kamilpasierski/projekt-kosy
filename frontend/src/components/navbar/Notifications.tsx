@@ -14,23 +14,23 @@ export interface Notification {
 // --- Sub-components ---
 
 const Backdrop = ({ onClick }: { onClick: () => void }) => (
-  <div 
+  <div
     className="fixed inset-0 z-40 bg-black/5 backdrop-blur-[2px] transition-opacity"
     onClick={onClick}
   />
 );
 
-const NotificationItem = ({ 
-  notification, 
-  onMarkAsRead 
-}: { 
-  notification: Notification; 
-  onMarkAsRead: (id: string) => void; 
+const NotificationItem = ({
+  notification,
+  onMarkAsRead
+}: {
+  notification: Notification;
+  onMarkAsRead: (id: string) => void;
 }) => (
-  <div 
+  <div
     className={`p-4 rounded-2xl border shadow-sm mb-2 relative transition-all cursor-default ${
-      notification.is_read 
-        ? 'bg-neutral-700/60 border-neutral-600/50' 
+      notification.is_read
+        ? 'bg-neutral-700/60 border-neutral-600/50'
         : 'bg-neutral-700/80 border-red-500/30 hover:bg-neutral-700/70'
     }`}
     onMouseEnter={() => {
@@ -65,7 +65,7 @@ export const Notifications = () => {
       const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
       const response = await axios.get('http://localhost:8000/api/notifications/', {
         headers: {
-            'Authorization': `Bearer ${token}` 
+            'Authorization': `Bearer ${token}`
         }
       });
       setNotifications(response.data);
@@ -129,10 +129,10 @@ export const Notifications = () => {
           }
         }
       );
-      
+
       // Update local state optimistically
-      setNotifications(prev => 
-        prev.map(n => 
+      setNotifications(prev =>
+        prev.map(n =>
           n.id === notificationId ? { ...n, is_read: true } : n
         )
       );
@@ -145,15 +145,15 @@ export const Notifications = () => {
 
   return (
     <div className="relative inline-block">
-      {/* Trigger: Bell Icon */}
+      {/* Trigger: Bell Icon - Rozmiar ustawiony na 45x45px, kolor #343434, brak cieni */}
       <button
         ref={triggerRef}
         onClick={toggleDropdown}
-        className="w-11 h-11 relative bg-neutral-700 rounded-full shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] flex items-center justify-center text-white hover:bg-neutral-600 transition-all active:scale-95 cursor-pointer z-50"
+        className="w-[45px] h-[45px] min-w-[45px] min-h-[45px] relative bg-[#343434] rounded-full flex items-center justify-center text-white hover:bg-[#444444] transition-all active:scale-95 cursor-pointer z-50"
       >
         <BellIcon className="w-6 h-6" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+          <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-lg border border-[#343434]">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -165,8 +165,8 @@ export const Notifications = () => {
           {createPortal(
             <>
               <Backdrop onClick={() => setIsOpen(false)} />
-              
-              <div 
+
+              <div
                 ref={dropdownRef}
                 className="fixed right-4 top-20 w-[380px] max-w-[95vw] bg-[#2a2a2a]/95 backdrop-blur-xl rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 overflow-hidden border border-neutral-700/50 animate-in fade-in slide-in-from-top-2 duration-200"
               >
@@ -186,17 +186,17 @@ export const Notifications = () => {
                       </div>
                     ) : (
                       notifications.map((notification) => (
-                        <NotificationItem 
-                          key={notification.id} 
+                        <NotificationItem
+                          key={notification.id}
                           notification={notification}
                           onMarkAsRead={markAsRead}
                         />
                       ))
                     )}
                   </div>
-                  
+
                   <footer className="mt-5 pt-4 border-t border-neutral-700/50 text-center">
-                    <button 
+                    <button
                       onClick={() => setIsOpen(false)}
                       className="text-neutral-400 hover:text-white text-sm font-medium transition-colors"
                     >

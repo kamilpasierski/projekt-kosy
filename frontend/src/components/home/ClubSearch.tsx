@@ -66,18 +66,18 @@ export default function ClubSearch() {
         <div ref={wrapperRef} className="relative w-full flex-1">
             
             {/* --- INPUT STYLIZOWANY NA BUTTON Z FIGMY --- */}
-            <div className="flex h-[50px] md:h-[59px] items-center gap-3 md:gap-4 rounded-[50px] bg-[#343434] px-4 md:px-6 transition-colors focus-within:bg-[#404040] hover:bg-[#404040]">
+            <div className="flex h-[55px] md:h-[60px] items-center gap-4 md:gap-4 rounded-[50px] bg-[#2A2A2A] px-4 md:px-6  shadow-[0px_6px_7px_rgba(0,0,0,0.25)]">
                 
                 {/* Ikona wyszukiwania */}
-                <MagnifyingGlassIcon className="h-5 w-5 md:h-6 md:w-6 flex-shrink-0 text-white" />
+                <MagnifyingGlassIcon className="h-5 w-5 md:h-8 md:w-18 flex-shrink-0 text-white" />
 
                 {/* Input zastępujący span "Nazwa klubu" */}
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Nazwa klubu"
-                    className="flex-1 bg-transparent text-sm md:text-[16px] font-medium text-white placeholder-gray-400 outline-none w-full"
+                    placeholder="Szukaj klubu"
+                    className="flex-1 bg-transparent text-sm md:text-[18px] font-medium text-white placeholder-gray-400 outline-none w-full"
                 />
             </div>
 

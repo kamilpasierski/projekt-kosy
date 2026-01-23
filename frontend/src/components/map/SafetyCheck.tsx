@@ -14,7 +14,7 @@ export default function SafetyCheck({
   description,
   color = RELATION_COLORS.DEFAULT
 }: SafetyCheckProps) {
-  
+
   return (
     <div className="relative w-full py-6 md:py-8 px-4">
       {/* Title */}
@@ -22,12 +22,19 @@ export default function SafetyCheck({
         {title}
       </h2>
 
-      {/* Flex Container */}
-      <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
-        
+      {/* Flex Container - Dodano style z Figmy (bg, shadow, rounded, height) */}
+      <div
+        className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 p-6 md:px-10 rounded-[30px] bg-[#2A2A2A]"
+        style={{
+          maxWidth: '1174px',
+          minHeight: '167px',
+          boxShadow: '-19px 13px 25.3px 0 rgba(0, 0, 0, 0.19)'
+        }}
+      >
+
         {/* Ikona */}
-        <div className="flex h-12 w-12 sm:h-16 md:h-[68px] sm:w-16 md:w-[68px] flex-shrink-0 items-center justify-center">
-          <MapPinIcon 
+        <div className="flex h-12 w-12 sm:h-16 md:h-[80px] sm:w-16 md:w-[80px] flex-shrink-0 items-center justify-center">
+          <MapPinIcon
             className="h-full w-full transition-all duration-300 drop-shadow-md"
             style={{ color: color }}
           />
@@ -35,13 +42,13 @@ export default function SafetyCheck({
 
         {/* Tekst */}
         <div className="flex-1 pt-0 sm:pt-1">
-          <h3 
-            className="mb-1 md:mb-2 text-base md:text-[20px] font-semibold uppercase leading-[1.63] tracking-[0.6px]"
+          <h3
+            className="mb-1 md:mb-2 text-base md:text-[22px] font-bold uppercase leading-[1.63] tracking-[0.6px]"
             style={{ color: color }}
           >
             {statusTitle}
           </h3>
-          <p className="text-sm md:text-[20px] font-medium leading-[1.63] tracking-[0.6px] text-white">
+          <p className="text-sm md:text-[20px] font-medium leading-[1.4] tracking-[0.6px] text-white">
             {description}
           </p>
         </div>

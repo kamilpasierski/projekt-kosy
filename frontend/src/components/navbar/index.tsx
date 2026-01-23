@@ -37,27 +37,29 @@ const NavbarRigid = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const iconContainerStyles = "w-9 h-9 md:w-11 md:h-11 relative bg-neutral-700 rounded-full shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)] flex items-center justify-center text-white hover:bg-neutral-600 transition-colors cursor-pointer";
+
+    const iconContainerStyles = "w-[45px] h-[45px] min-w-[35px] min-h-[35px] relative bg-[#343434] rounded-full flex items-center justify-center text-white hover:bg-[#444444] transition-colors cursor-pointer";
 
     return (
         <nav className="w-full h-20 md:h-24 flex items-center px-4 lg:px-8 relative bg-transparent z-50">
             {/* Logo i nazwa */}
             <div className="relative shrink-0 md:w-80 md:h-24">
-                <div className="hidden md:block w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px] shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]"></div>
-                <div className="hidden md:block left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold leading-6 tracking-widest whitespace-nowrap">
-                    PIŁKARSKIE KOSY
-                </div>
+                <div className="hidden md:block w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px] ]"></div>
+                <div className="hidden md:block left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold leading-[130%] tracking-[1.8px] whitespace-nowrap font-montserrat ">
+                   PIŁKARSKIE KOSY
+            </div>
+
                 <Link to="/">
                     <img className="w-16 h-16 md:w-24 md:h-24 md:absolute md:left-0 md:top-0 cursor-pointer hover:scale-105 transition-transform" src={Logo} alt="Logo" />
                 </Link>
             </div>
 
             {/* Linki desktop */}
-            <div className="hidden lg:flex items-center gap-6 ml-4">
-                <Link to="/mapa" className="text-white text-base font-semibold leading-5 hover:text-green-400 transition-colors whitespace-nowrap">
+            <div className="hidden lg:flex items-center gap-[50px] ml-15">
+                <Link to="/mapa" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px]  hover:text-[#274FDE] transition-colors whitespace-nowrap">
                     Mapa klubów
                 </Link>
-                <Link to="/obserwowane" className="text-white text-base font-semibold leading-5 hover:text-green-400 transition-colors whitespace-nowrap">
+                <Link to="/obserwowane" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px]  hover:text-[#274FDE] transition-colors whitespace-nowrap">
                     Obserwowane
                 </Link>
             </div>
@@ -73,12 +75,13 @@ const NavbarRigid = () => {
                         >
                             {isMobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
                         </button>
-                        
-                        <ActionButton onClick={() => navigate('auth')}>
-                            <span className="hidden sm:inline">Zaloguj się</span>
-                            <span className="sm:hidden">Zaloguj</span>
+
+                        <ActionButton onClick={() => navigate('auth')}
+                          className=" w-[150px] h-[64px] !bg-[#44444480] !hover:bg-[#444444cc] rounded-[50px] text-white font-montserrat font-semibold text-[16px] leading-[150%] tracking-[0.5px] flex items-center justify-center">
+                          <span className="hidden sm:inline">ZALOGUJ SIĘ</span>
+                          <span className="sm:hidden">Zaloguj</span>
                         </ActionButton>
-                    </>
+                        </>
                 ) : (
                     <div className="flex items-center gap-3 md:gap-4">
                         {/* Hamburger menu dla mobile (gdy zalogowany) */}
@@ -88,7 +91,7 @@ const NavbarRigid = () => {
                         >
                             {isMobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
                         </button>
-                        
+
                         {/* Ikona admina */}
                         {user?.is_staff && (
                             <Link
@@ -96,18 +99,20 @@ const NavbarRigid = () => {
                                 className={iconContainerStyles}
                                 aria-label="Panel Administratora"
                             >
-                                <Cog6ToothIcon className="w-5 h-5 md:w-6 md:h-6" />
+                                <Cog6ToothIcon className="w-5 h-5" />
                             </Link>
                         )}
 
+                        {/* Komponent powiadomień */}
                         <Notifications />
 
+                        {/* Ikona profilu -  */}
                         <div className="relative" ref={dropdownRef}>
                             <button
                                 className={iconContainerStyles}
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
-                                <UserIcon className="w-5 h-5 md:w-6 md:h-6" />
+                                <UserIcon className="w-5 h-5" />
                             </button>
 
                             {isDropdownOpen && (

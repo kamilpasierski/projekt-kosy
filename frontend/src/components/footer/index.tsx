@@ -14,7 +14,6 @@ const defaultLinks: FooterLink[] = [
   { label: "Strona główna", href: "/" },
   { label: "Kluby", href: "/mapa" },
   { label: "O nas", href: "/" },
-  { label: "Kontakt", href: "/" },
 ];
 
 export default function Footer({
