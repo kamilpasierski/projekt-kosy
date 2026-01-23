@@ -34,7 +34,7 @@ export default function RegisterForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [favoriteClub, setFavoriteClub] = useState('');
   const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Fetch clubs on mount
   useEffect(() => {
@@ -67,33 +67,32 @@ export default function RegisterForm({
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    setValidationError(null);
+    setValidationErrors([]);
     
-    // Validate passwords match on step 1
     if (currentStep === 1) {
+      const errors: string[] = [];
+      
       if (formData.password !== formData.re_password) {
-        setValidationError('Hasła nie są identyczne');
-        return;
+        errors.push('Hasła nie są identyczne');
       }
       
       const password = formData.password;
-      const passwordErrors: string[] = [];
       
       if (password.length < 8) {
-        passwordErrors.push("Hasło musi składać się przynajmniej z 8 znaków.");
+        errors.push("składać się przynajmniej z 8 znaków");
       }
       if (!/[A-Z]/.test(password)) {
-        passwordErrors.push("Hasło musi zawierać dużą literę.");
+        errors.push("zawierać dużą literę");
       }
       if (!/\d/.test(password)) {
-        passwordErrors.push("Hasło musi zawierać liczbę.");
+        errors.push("zawierać liczbę");
       }
       if (/^[a-zA-Z0-9]*$/.test(password)) {
-        passwordErrors.push("Hasło musi zawierać znak specjalny.");
+        errors.push("znak specjalny");
       }
       
-      if (passwordErrors.length > 0) {
-        setValidationError(passwordErrors.join(' '));
+      if (errors.length > 0) {
+        setValidationErrors(errors);
         return;
       }
     }
@@ -201,7 +200,7 @@ export default function RegisterForm({
                 value={formData.re_password}
                 onChange={(e) => {
                   onChange(e);
-                  setValidationError(null);
+                  setValidationErrors([]);
                 }}
                 required
               />
@@ -225,9 +224,24 @@ export default function RegisterForm({
             )}
 
             {/* Error Display */}
-            {(error || validationError) && (
-              <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm font-['Montserrat',sans-serif]">
-                {validationError || error}
+            {(error || validationErrors.length > 0) && (
+              <div className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg font-['Montserrat',sans-serif]">
+                {error && (
+                  <p className="text-red-400 text-sm">{error}</p>
+                )}
+                {validationErrors.length > 0 && (
+                  <div>
+                    <p className="text-red-400 text-sm font-semibold mb-2">Hasło musi:</p>
+                    <ul className="space-y-1.5">
+                      {validationErrors.map((err, index) => (
+                        <li key={index} className="text-red-400 text-sm flex items-start gap-2">
+                          <span className="text-red-500 mt-0.5">•</span>
+                          <span>{err}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
 
