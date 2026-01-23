@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axiosConfig';
 import { useDebounce } from '../../hooks/useDebounce';
 import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
@@ -88,7 +88,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   }, [user]); // Dodano zależność od 'user'
 
   // --- 2. GŁÓWNA FUNKCJA POBIERAJĄCA LISTĘ KLUBÓW ---
-  const fetchClubs = async (pageNumber: number, isLoadMore: boolean) => {
+  const fetchClubs = useCallback(async (pageNumber: number, isLoadMore: boolean) => {
     if (isLoadMore) setIsLoadingMore(true);
     else setIsLoading(true);
 
@@ -128,12 +128,12 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  };
+  }, [debouncedSearch, sortField, sortOrder]);
 
   useEffect(() => {
     setPage(1);
     fetchClubs(1, false);
-  }, [debouncedSearch, sortField, sortOrder]); 
+  }, [debouncedSearch, sortField, sortOrder, fetchClubs]); 
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
