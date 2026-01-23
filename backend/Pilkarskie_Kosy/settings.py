@@ -95,7 +95,9 @@ DATABASES = {
     }
 }
 
-if 'test' in sys.argv:
+running_tests = 'test' in sys.argv or 'pytest' in sys.modules
+
+if running_tests and not os.getenv('CI'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
