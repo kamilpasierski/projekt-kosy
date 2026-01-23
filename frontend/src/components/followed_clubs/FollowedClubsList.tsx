@@ -61,7 +61,7 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
 
   const getSortedClubs = () => {
     const sorted = [...clubs];
-    
+
     switch (sortBy) {
       case 'alphabetical':
         return sorted.sort((a, b) => a.details.name.localeCompare(b.details.name));
@@ -77,28 +77,26 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
 
   const getSortLabel = () => {
     switch (sortBy) {
-      case 'alphabetical':
-        return 'Alfabetycznie';
-      case 'date':
-        return 'Data dodania';
-      case 'default':
-      default:
-        return 'Sortuj według';
+      case 'alphabetical': return 'Alfabetycznie';
+      case 'date': return 'Data dodania';
+      default: return 'Sortuj według';
     }
   };
 
   return (
-    <div className="relative w-full px-4 sm:px-6 lg:px-8">
+    /* Klasa w-full sprawia, że komponent wypełnia 1180px page-containera ze sceny */
+    <div className="relative w-full antialiased">
       {/* Przycisk Sortowania */}
       <div className="relative mb-6 sm:mb-8">
         <button
           onClick={() => setSortMenuOpen(!sortMenuOpen)}
-          className="bg-[#343434] hover:bg-[#404040] rounded-[50px] px-6 py-3 flex items-center gap-3 transition-colors"
+          className="bg-[#343434] hover:bg-[#404040] rounded-[50px] px-6 py-3 w-[220px] flex items-center gap-3 transition-colors"
+          style={{ boxShadow: '0px 6px 7px 0px rgba(0, 0, 0, 0.25)' }}
         >
-          <span className="font-['Montserrat'] font-medium text-[16px] text-white uppercase">
+          <span className="font-medium text-[16px] text-white uppercase leading-[130%]">
             {getSortLabel()}
           </span>
-          <ChevronDownIcon 
+          <ChevronDownIcon
             className={`w-5 h-5 text-white transition-transform ${sortMenuOpen ? 'rotate-180' : ''}`}
           />
         </button>
@@ -108,13 +106,13 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
           <div className="absolute top-full mt-2 left-0 bg-[#2a2a2a] border border-[#274fde] rounded-[20px] shadow-lg overflow-hidden z-10 min-w-[200px]">
             <button
               onClick={() => handleSortChange('alphabetical')}
-              className="w-full px-6 py-3 text-left text-white hover:bg-[#343434] transition-colors font-['Montserrat'] font-medium text-[14px]"
+              className="w-full px-6 py-3 text-left text-white hover:bg-[#343434] transition-colors font-medium text-[14px]"
             >
               Alfabetycznie
             </button>
             <button
               onClick={() => handleSortChange('date')}
-              className="w-full px-6 py-3 text-left text-white hover:bg-[#343434] transition-colors font-['Montserrat'] font-medium text-[14px]"
+              className="w-full px-6 py-3 text-left text-white hover:bg-[#343434] transition-colors font-medium text-[14px]"
             >
               Data dodania
             </button>
@@ -141,38 +139,37 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
 
               {/* INFO KLUBU */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-['Montserrat'] font-medium text-[18px] sm:text-[20px] text-white mb-2">
+                <h3 className="font-medium text-[18px] sm:text-[20px] text-white mb-2 leading-[130%] tracking-[0.2px]">
                   {club.details.name}
                 </h3>
-                <p className="font-['Montserrat'] font-medium text-[14px] sm:text-[16px] text-white opacity-80">
+                <p className="font-medium text-[14px] sm:text-[16px] text-white opacity-80 leading-[130%]">
                   Data dodania do obserwowanych - {new Date(club.created_at).toLocaleDateString('pl-PL')}
                 </p>
               </div>
 
-              {/* PRZEŁĄCZNIK POWIADOMIEŃ */}
-              <div className="flex-shrink-0 hidden sm:flex flex-col items-center gap-2">
-                <p className="font-['Montserrat'] font-medium text-[15px] text-white">
-                  Powiadomienia
-                </p>
-                <button
-                  onClick={() => toggleNotifications(club.favoriteId)}
-                  className={`relative w-[38px] h-[19px] rounded-full shadow-md transition-colors ${
-                    notificationsEnabled[club.favoriteId] ? 'bg-[#274fde]' : 'bg-[#939292]'
-                  }`}
-                >
-                  <div
-                    className={`absolute top-[1.5px] w-[16.625px] h-[16.625px] bg-white rounded-full shadow-md transition-transform ${
-                      notificationsEnabled[club.favoriteId] ? 'right-[1.5px]' : 'left-[1.5px]'
+              {/* SEKCJA PRAWA: DESKTOP */}
+              <div className="hidden sm:flex flex-col items-end gap-5 min-w-[173px]">
+                <div className="flex items-center gap-6">
+                  <p className="font-medium text-[15px] text-white leading-[130%]">
+                    Powiadomienia
+                  </p>
+                  <button
+                    onClick={() => toggleNotifications(club.favoriteId)}
+                    className={`relative w-[38px] h-[19px] rounded-full shadow-md transition-colors ${
+                      notificationsEnabled[club.favoriteId] ? 'bg-[#274fde]' : 'bg-[#939292]'
                     }`}
-                  />
-                </button>
-              </div>
+                  >
+                    <div
+                      className={`absolute top-[1.2px] w-[16.6px] h-[16.6px] bg-white rounded-full transition-transform ${
+                        notificationsEnabled[club.favoriteId] ? 'translate-x-[19px]' : 'translate-x-[2px]'
+                      }`}
+                    />
+                  </button>
+                </div>
 
-              {/* PRZYCISK ZOBACZ KLUB */}
-              <div className="flex-shrink-0 hidden md:block">
                 <button
                   onClick={() => navigate(`/club/${club.details.id}`)}
-                  className="bg-[#274fde] hover:bg-[#1e3fbd] text-white font-['Montserrat'] font-medium text-[16px] px-6 py-3 rounded-[50px] shadow-md transition-all"
+                  className="bg-[#274fde] hover:bg-[#1e3fbd] text-white font-medium text-[16px] w-[173px] h-[40px] rounded-[50px] shadow-md transition-all flex items-center justify-center leading-[130%]"
                 >
                   Zobacz klub
                 </button>
@@ -181,9 +178,8 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
 
             {/* KONTROLKI MOBILNE */}
             <div className="mt-4 flex flex-col sm:hidden gap-3">
-              {/* PRZEŁĄCZNIK POWIADOMIEŃ MOBILNY */}
               <div className="flex items-center justify-between">
-                <p className="font-['Montserrat'] font-medium text-[15px] text-white">
+                <p className="font-medium text-[15px] text-white leading-[130%]">
                   Powiadomienia
                 </p>
                 <button
@@ -193,17 +189,16 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
                   }`}
                 >
                   <div
-                    className={`absolute top-[1.5px] w-[16.625px] h-[16.625px] bg-white rounded-full shadow-md transition-transform ${
-                      notificationsEnabled[club.favoriteId] ? 'right-[1.5px]' : 'left-[1.5px]'
+                    className={`absolute top-[1.2px] w-[16.6px] h-[16.6px] bg-white rounded-full transition-transform ${
+                      notificationsEnabled[club.favoriteId] ? 'translate-x-[19px]' : 'translate-x-[2px]'
                     }`}
                   />
                 </button>
               </div>
 
-              {/* PRZYCISK ZOBACZ KLUB MOBILNY */}
               <button
                 onClick={() => navigate(`/club/${club.details.id}`)}
-                className="md:hidden bg-[#274fde] hover:bg-[#1e3fbd] text-white font-['Montserrat'] font-medium text-[16px] px-6 py-3 rounded-[50px] shadow-md transition-all w-full"
+                className="bg-[#274fde] hover:bg-[#1e3fbd] text-white font-medium text-[16px] w-full h-[40px] rounded-[50px] shadow-md transition-all flex items-center justify-center leading-[130%]"
               >
                 Zobacz klub
               </button>

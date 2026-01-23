@@ -24,7 +24,7 @@ function MapController({ bounds }: { bounds: LatLngBoundsExpression | null }) {
         if (bounds) {
             map.flyToBounds(bounds, {
                 padding: [50, 50],
-                duration: 1.5, 
+                duration: 1.5,
                 maxZoom: 14
             });
         }
@@ -43,12 +43,12 @@ interface MapProps {
     focusedTerritoryBounds: LatLngBoundsExpression | null;
 }
 
-export default function Map({ 
-    territories, 
-    userClub, 
-    relationsMap, 
+export default function Map({
+    territories,
+    userClub,
+    relationsMap,
     onLocationFound,
-    focusedTerritoryBounds 
+    focusedTerritoryBounds
 }: MapProps) {
     const [mapCenter, setMapCenter] = useState<LatLngTuple>([52.23, 21.01]);
     const [mapZoom, setMapZoom] = useState<number>(6);
@@ -58,17 +58,17 @@ export default function Map({
         return [...territories].sort((a, b) => {
             const getWeight = (t: TerritoryData) => {
                 const owner = t.owner_name;
-                
+
                 if (!userClub || !owner) return 2;
 
                 if (owner === userClub) return 1;
 
                 const relation = relationsMap[userClub]?.[owner]?.toUpperCase();
 
-                if (relation === 'KOSA') return 4;         
-                if (relation === 'NEUTRALNIE') return 3;   
-                if (relation === 'ZGODA') return 1; 
-                
+                if (relation === 'KOSA') return 4;
+                if (relation === 'NEUTRALNIE') return 3;
+                if (relation === 'ZGODA') return 1;
+
                 return 2;
             };
 
@@ -81,20 +81,20 @@ export default function Map({
 
     // --- LOGIKA KOLOROWANIA ---
     const getTerritoryColor = (owner: string | null): string => {
-        if (!userClub || !owner) return RELATION_COLORS.DEFAULT; 
+        if (!userClub || !owner) return RELATION_COLORS.DEFAULT;
         if (owner === userClub) return RELATION_COLORS.FRIENDLY;
 
         const relation = relationsMap[userClub]?.[owner]?.toUpperCase();
 
         switch (relation) {
             case 'KOSA':
-                return RELATION_COLORS.HOSTILE; 
+                return RELATION_COLORS.HOSTILE;
             case 'ZGODA':
                 return RELATION_COLORS.FRIENDLY;
             case 'NEUTRALNIE':
-                return RELATION_COLORS.NEUTRAL; 
+                return RELATION_COLORS.NEUTRAL;
             default:
-                return RELATION_COLORS.DEFAULT; 
+                return RELATION_COLORS.DEFAULT;
         }
     };
 
@@ -106,7 +106,7 @@ export default function Map({
             (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                
+
                 setUserLocation([lat, lng]);
                 setMapCenter([lat, lng]);
                 setMapZoom(13);
@@ -117,10 +117,10 @@ export default function Map({
     };
 
     return (
-        <div className="relative w-full h-[450px] rounded-[30px] overflow-hidden shadow-xl border border-[#2a2a2a]">
-            
+        <div className="relative w-full h-[450px] rounded-[30px] overflow-hidden shadow-xl border border-[#2a2a2a] antialiased">
+
             {userClub && (
-                <button 
+                <button
                     onClick={handleLocateClick}
                     className="absolute top-4 right-4 z-[1000] bg-[#2a2a2a] text-white px-6 py-3 rounded-xl font-bold uppercase hover:bg-black transition border border-gray-600 shadow-lg"
                 >
@@ -131,32 +131,32 @@ export default function Map({
             <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full z-0">
                 <ChangeView center={mapCenter} zoom={mapZoom} />
                 <MapController bounds={focusedTerritoryBounds} />
-                
+
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
                 {/* Renderowanie posortowanych stref */}
                 {sortedTerritories.map(t => {
                     const isPoint = !t.polygon || t.polygon.length < 4;
                     const color = getTerritoryColor(t.owner_name);
-                    
-                    const pathOptions = { 
-                        color, 
+
+                    const pathOptions = {
+                        color,
                         fillOpacity: 0.35, // Lekka przezroczystość
-                        weight: 2 
+                        weight: 2
                     };
 
                     return isPoint ? (
-                        <Circle 
-                            key={`c-${t.id}`} 
-                            center={t.polygon[0] as LatLngTuple} 
-                            radius={2000} 
-                            pathOptions={pathOptions} 
+                        <Circle
+                            key={`c-${t.id}`}
+                            center={t.polygon[0] as LatLngTuple}
+                            radius={2000}
+                            pathOptions={pathOptions}
                         />
                     ) : (
-                        <Polygon 
-                            key={`p-${t.id}`} 
-                            positions={t.polygon as LatLngTuple[]} 
-                            pathOptions={pathOptions} 
+                        <Polygon
+                            key={`p-${t.id}`}
+                            positions={t.polygon as LatLngTuple[]}
+                            pathOptions={pathOptions}
                         />
                     );
                 })}

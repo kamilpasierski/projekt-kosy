@@ -50,7 +50,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   const debouncedSearch = useDebounce(searchQuery, 500);
   const API_URL = 'http://127.0.0.1:8000';
 
-  // Obsługa Autocomplete (podpowiedzi)
+  // Obsługa Autocomplete
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (searchQuery.length >= 2) {
@@ -69,7 +69,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
     fetchSuggestions();
   }, [searchQuery]);
 
-  // Zamykanie podpowiedzi po kliknięciu poza
+  // Zamykanie podpowiedzi
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -157,10 +157,11 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   };
 
   return (
-    <div className="relative w-full py-6 md:py-8 px-4">
-      <h2 className="mb-4 md:mb-[40px] text-lg md:text-[20px] font-medium uppercase text-white tracking-widest">Lista klubów</h2>
+    <div className="relative w-full py-6 md:py-8 antialiased">
+      <h2 className="mb-4 md:mb-[40px] text-lg md:text-[20px] font-medium uppercase text-white tracking-widest leading-[130%]">
+        Lista klubów
+      </h2>
 
-      {/* --- WYSZUKIWARKA IDENTYCZNA JAK NA STRONIE GŁÓWNEJ --- */}
       <div ref={wrapperRef} className="relative w-full mb-[40px]">
           <div className="flex h-[60px] items-center gap-4 rounded-[50px] bg-[#2A2A2A] px-6 shadow-[0px_6px_7px_rgba(0,0,0,0.25)] border border-transparent focus-within:border-[#274fde]/50 transition-all">
               <MagnifyingGlassIcon className="h-7 w-7 text-white" />
@@ -169,11 +170,10 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Szukaj klubu..."
-                  className="flex-1 bg-transparent text-[18px] font-medium text-white placeholder-gray-400 outline-none w-full"
+                  className="flex-1 bg-transparent text-[18px] font-medium text-white placeholder-gray-400 outline-none w-full leading-[130%]"
               />
           </div>
 
-          {/* DROPDOWN PODPOWIEDZI */}
           {isSuggestionsOpen && suggestions.length > 0 && (
               <div className="absolute left-0 top-[65px] z-[100] w-full overflow-hidden rounded-[20px] border border-[#444] bg-[#2a2a2a] shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
                   <ul className="max-h-[250px] overflow-y-auto py-2 custom-scrollbar">
@@ -185,7 +185,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
                                 setIsSuggestionsOpen(false);
                                 onClubSelect(club.name);
                               }}
-                              className="cursor-pointer px-6 py-3 text-[16px] text-white hover:bg-[#343434] transition-colors border-b border-white/5 last:border-0"
+                              className="cursor-pointer px-6 py-3 text-[16px] text-white hover:bg-[#343434] transition-colors border-b border-white/5 last:border-0 font-medium leading-[130%]"
                           >
                               {club.name}
                           </li>
@@ -201,32 +201,31 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
         </div>
       ) : (
       <div className="relative w-full overflow-hidden bg-transparent">
-        {/* NAGŁÓWEK TABELI */}
         <div className="hidden md:block border border-[#274FDE] rounded-t-[30px] bg-[#2A2A2A] overflow-hidden">
           <div className="grid grid-cols-[1fr_1.5fr_1fr_1fr] items-center h-[64px] select-none">
-            <p className="text-center text-[16px] font-medium text-white">Obserwuj</p>
-            <div className="flex justify-center items-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('name')}>
-                <p className="text-[16px] font-medium text-white">Klub</p>
+            <p className="text-center text-[16px] font-medium text-white leading-[130%]">Obserwuj</p>
+            <div className="flex justify-center items-center cursor-pointer hover:text-[#274fde] transition-colors" onClick={() => handleSort('name')}>
+                <p className="text-[16px] font-medium text-white leading-[130%]">Klub</p>
+                {renderSortArrow('name')}
             </div>
-            <div className="flex justify-center items-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('city')}>
-                <p className="text-[16px] font-medium text-white">Miasto</p>
+            <div className="flex justify-center items-center cursor-pointer hover:text-[#274fde] transition-colors" onClick={() => handleSort('city')}>
+                <p className="text-[16px] font-medium text-white leading-[130%]">Miasto</p>
                 {renderSortArrow('city')}
             </div>
-            <div className="flex justify-center items-center cursor-pointer hover:text-[#274fde]" onClick={() => handleSort('relation')}>
-                <p className="text-[16px] font-medium text-white">Relacje</p>
+            <div className="flex justify-center items-center cursor-pointer hover:text-[#274fde] transition-colors" onClick={() => handleSort('relation')}>
+                <p className="text-[16px] font-medium text-white leading-[130%]">Relacje</p>
                 {renderSortArrow('relation')}
             </div>
           </div>
         </div>
 
-        {/* WIERSZE */}
-        <div className="bg-[#343434] rounded-b-[30px] overflow-hidden border-x border-b border-transparent">
+        <div className="bg-[#343434] rounded-b-[30px] overflow-hidden border-x border-b border-[#274FDE]/40">
           <div className="divide-y divide-[#274FDE]/40">
             {clubs.map((club) => {
               const status = calculateRelation(club.name);
               const style = getRelationStyle(status);
               return (
-                <div key={club.id} className="group border-b border-[#274FDE]/40 last:border-0 hover:bg-[#3a3a3a] transition-colors">
+                <div key={club.id} className="group hover:bg-[#3a3a3a] transition-colors">
                   <div className="hidden md:grid grid-cols-[1fr_0.8px_1.5fr_0.8px_1fr_0.8px_1fr] items-center h-[80px]">
 
                     <div className="flex justify-center items-center">
@@ -241,29 +240,29 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
                           className="h-[54px] w-[54px] object-contain"
                           onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_LOGO; }}
                         />
-                        <p className="text-[16px] font-medium text-white truncate">{club.name}</p>
+                        <p className="text-[16px] font-medium text-white truncate leading-[130%]">{club.name}</p>
                     </div>
                     <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
 
                     <div className="flex justify-center items-center cursor-pointer" onClick={() => onClubSelect(club.name)}>
-                        <p className="text-[16px] font-medium text-white">{club.city}</p>
+                        <p className="text-[16px] font-medium text-white leading-[130%]">{club.city}</p>
                     </div>
                     <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
 
                     <div className="flex justify-center items-center">
-                        <div className={`${style.bg} ${style.border} border-2 w-[180px] h-[40px] rounded-[30px] flex items-center justify-center text-white text-[14px] font-medium tracking-wide`}>
+                        <div className={`${style.bg} ${style.border} border-2 w-[180px] h-[40px] rounded-[30px] flex items-center justify-center text-white text-[14px] font-medium tracking-wide leading-[130%]`}>
                             {style.label}
                         </div>
                     </div>
                   </div>
 
-                  <div className="flex md:hidden items-center gap-4 px-4 py-4 text-white" onClick={() => onClubSelect(club.name)}>
+                  <div className="flex md:hidden items-center gap-4 px-4 py-4 text-white cursor-pointer" onClick={() => onClubSelect(club.name)}>
                       <img src={getClubImageUrl(club.path_image)} className="h-10 w-10 object-contain" />
                       <div className="flex-1">
-                          <p className="font-semibold">{club.name}</p>
-                          <p className="text-xs text-gray-400">{club.city}</p>
+                          <p className="font-semibold leading-[130%]">{club.name}</p>
+                          <p className="text-xs text-gray-400 leading-[130%]">{club.city}</p>
                       </div>
-                      <div className={`${style.bg} ${style.border} border px-3 py-1 rounded-full text-[10px] text-white font-medium`}>{style.label}</div>
+                      <div className={`${style.bg} ${style.border} border px-3 py-1 rounded-full text-[10px] text-white font-medium leading-[130%]`}>{style.label}</div>
                   </div>
                 </div>
               );
@@ -271,8 +270,12 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
           </div>
 
           {hasMore && (
-            <div className="flex justify-center py-6">
-                <button onClick={handleLoadMore} disabled={isLoadingMore} className="rounded-[50px] bg-[#274fde] px-10 py-2.5 text-white font-medium hover:bg-[#1e3fbd] transition-all">
+            <div className="flex justify-center py-8">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                  className="rounded-[50px] bg-[#274fde] px-10 h-[45px] text-white font-medium hover:bg-[#1e3fbd] transition-all flex items-center justify-center shadow-md active:scale-95 leading-[130%]"
+                >
                     {isLoadingMore ? 'Ładowanie...' : 'Załaduj więcej'}
                 </button>
             </div>

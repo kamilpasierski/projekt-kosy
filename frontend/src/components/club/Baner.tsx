@@ -10,69 +10,73 @@ interface BanerProps {
   initialRelationId?: number | null;
 }
 
-
-export default function Baner({ 
+export default function Baner({
   clubName,
   logoImage,
   clubId,
   initialRelationId
 }: BanerProps) {
   const { isFollowed, handleToggleFollowed } = useClubFollow(
-    clubId || 0, 
+    clubId || 0,
     initialRelationId
   );
+
   return (
-    <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[672px] w-full max-w-[1440px]">
-      {/* Background Image */}
-      <div className="absolute left-0 top-0 h-full w-full rounded-bl-[20px] rounded-br-[20px] sm:rounded-bl-[30px] sm:rounded-br-[30px] md:rounded-bl-[40px] md:rounded-br-[40px]">
-        <img 
-          alt="background" 
-          className="h-full w-full rounded-bl-[20px] rounded-br-[20px] sm:rounded-bl-[30px] sm:rounded-br-[30px] md:rounded-bl-[40px] md:rounded-br-[40px] object-cover pointer-events-none" 
-          src={BanerImage} 
+    /* Wysokość zmniejszona do 480px (ok. 2/3 pierwotnej wysokości).
+       Zachowano -mt, aby baner zaczynał się pod Navbarem. */
+    <div className="relative w-full h-[580px] -mt-[85px] antialiased overflow-hidden">
+
+      {/* Background Image - Pełna szerokość ekranu */}
+      <div className="absolute inset-0 w-full h-full">
+        <img
+          alt="background"
+          className="h-full w-full object-cover pointer-events-none rounded-bl-[40px] rounded-br-[40px]"
+          src={BanerImage}
         />
+        {/* Overlay dla czytelności (nieco ciemniejszy, by skompensować mniejszą wysokość) */}
+        <div className="absolute inset-0 bg-black/40 rounded-bl-[40px] rounded-br-[40px]" />
       </div>
 
-      {/* Circle background for logo */}
-      {/* Outer white circle (border) */}
-      <div className="absolute left-1/2 -translate-x-1/2 w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[239px] md:h-[239px] top-[80px] sm:top-[120px] md:top-[166px] rounded-full bg-white shadow-[inset_0px_0px_9px_4px_rgba(0,0,0,0.35)]" />
-      
-      {/* Inner white circle (background) */}
-      <div className="absolute left-1/2 -translate-x-1/2 w-[150px] h-[150px] sm:w-[188px] sm:h-[188px] md:w-[226px] md:h-[226px] top-[85px] sm:top-[126px] md:top-[172px] rounded-full bg-white z-20" />
+      {/* Kontener treści - Skalowanie elementów w górę przy mniejszej wysokości baneru */}
+      <div className="relative h-full w-full flex flex-col items-center justify-center pt-[60px] z-10">
 
-      {/* Club Logo - Dynamiczne */}
-      <div className="absolute left-1/2 top-[105px] sm:top-[150px] md:top-[209px] aspect-[609/768] w-[100px] sm:w-[125px] md:w-[151px] -translate-x-1/2 z-30">
-        {logoImage && (
-            <img 
-            alt={clubName} 
-            className="h-full w-full object-contain pointer-events-none" 
-            src={logoImage} 
-            />
-        )}
-      </div>
+        {/* Herb - Zeskalowany minimalnie w górę (280px zamiast 260px), by wypełnić przestrzeń */}
+        <div className="relative flex items-center justify-center w-[240px] h-[240px] md:w-[260px] md:h-[260px] rounded-full bg-white shadow-2xl">
+          <div className="w-[230px] h-[230px] md:w-[260px] md:h-[260px] rounded-full bg-white flex items-center justify-center overflow-hidden">
+            {logoImage && (
+              <img
+                alt={clubName}
+                className="h-[180px] w-[180px] md:h-[200px] md:w-[200px] object-contain"
+                src={logoImage}
+              />
+            )}
+          </div>
+        </div>
 
-      {/* Club Name */}
-      <p className="absolute left-1/2 top-[260px] sm:top-[350px] md:top-[448px] w-[90%] sm:w-[450px] md:w-[550px] -translate-x-1/2 text-center font-['Montserrat'] text-[28px] sm:text-[36px] md:text-[48px] font-bold leading-[1.43] tracking-[2.8px] sm:tracking-[3.6px] md:tracking-[4.8px] text-white uppercase whitespace-pre-wrap px-4">
-        {clubName || "Ładowanie..."}
-      </p>
+        {/* Nazwa Klubu - Montserrat BOLD, nieco większa skala (52px) i mniejszy margines góra */}
+        <h1 className="mt-[25px] text-center text-[32px] md:text-[52px] font-bold leading-[110%] tracking-[4.8px] text-white uppercase drop-shadow-2xl px-4">
+          {clubName || "Ładowanie..."}
+        </h1>
 
-      {/* Follow Button */}
-      <div className="absolute left-1/2 top-[340px] sm:top-[460px] md:top-[572px] -translate-x-1/2">
-        <button
-          onClick={clubId ? handleToggleFollowed : undefined}
-          disabled={!clubId}
-          className="h-[56px] w-[180px] sm:h-[62px] sm:w-[200px] md:h-[69px] md:w-[227px] rounded-[40px] bg-[#274fde] hover:bg-[#1e3fbd] transition-colors flex items-center justify-center gap-2 px-4 cursor-pointer disabled:opacity-50"
-        >
-          <p className="font-['Montserrat'] text-[16px] sm:text-[18px] md:text-[20px] font-semibold leading-[1.3] text-center text-white">
-            {isFollowed ? 'OBSERWUJESZ' : 'OBSERWUJ'}
-          </p>
-          {clubId && (
-            isFollowed ? (
-              <StarSolid className="w-6 h-6 text-yellow-400 transition-colors duration-300" />
-            ) : (
-              <StarOutline className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors duration-300" />
-            )
-          )}
-        </button>
+        {/* Przycisk Obserwuj - Zmniejszony odstęp, by zmieścić się w 480px */}
+        <div className="mt-[30px]">
+          <button
+            onClick={clubId ? handleToggleFollowed : undefined}
+            disabled={!clubId}
+            className="group h-[60px] w-[210px] md:h-[65px] md:w-[230px] rounded-[40px] bg-[#274fde] hover:bg-[#1e3fbd] transition-all active:scale-95 flex items-center justify-center gap-3 px-6 cursor-pointer shadow-lg"
+          >
+            <span className="text-[18px] md:text-[20px] font-semibold text-white uppercase leading-none">
+              {isFollowed ? 'OBSERWUJESZ' : 'OBSERWUJ'}
+            </span>
+            {clubId && (
+              isFollowed ? (
+                <StarSolid className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
+              ) : (
+                <StarOutline className="w-5 h-5 md:w-6 md:h-6 text-white/70 group-hover:text-white transition-colors" />
+              )
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

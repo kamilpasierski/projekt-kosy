@@ -73,23 +73,23 @@ export default function ClubPage() {
   return (
     <div className="w-full min-h-screen">
       <div className="mx-auto max-w-[1440px]">
-        <Baner 
-          clubName={clubData.name} 
+        <Baner
+          clubName={clubData.name}
           logoImage={fullLogoUrl}
           clubId={clubData.id}
           initialRelationId={followedRelationId}
         />
-        
-        <Description 
-          description={clubData.desc} 
+
+        <Description
+          description={clubData.desc}
         />
-        
-        <Relations 
+
+        <Relations
           kosaClubs={clubData.kosy}
           zgodaClubs={clubData.zgody}
           neutralClubs={clubData.neutralne}
         />
-        
+
         {/*<MatchesTable /> CZEKAMY NA API */}
       </div>
     </div>

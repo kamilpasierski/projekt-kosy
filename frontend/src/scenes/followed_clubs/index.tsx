@@ -100,7 +100,7 @@ const FollowedClubsScene = () => {
     
     // 4. Lista klubów
     return (
-        <div className="w-full max-w-7xl mx-auto py-8">
+        <div className="w-full max-w-[1174px] mx-auto pt-[65px] pb-10">
             <Description />
             <div className="mt-8">
                 <FollowedClubsList clubs={clubsData} />

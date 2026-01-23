@@ -5,17 +5,32 @@ interface DescriptionProps {
 export default function Description({ 
   description
 }: DescriptionProps) {
-  if (!description) return null; // Nie renderuj jeśli brak opisu
+  if (!description) return null;
 
   return (
-    <div className="relative w-full max-w-[1440px] py-8 sm:py-12 md:py-16">
-      <h2 className="mb-4 sm:mb-5 md:mb-6 px-4 sm:px-8 md:px-[calc(6.25%+45px)] font-['Montserrat'] text-[16px] sm:text-[18px] md:text-[20px] font-medium uppercase leading-[1.3] text-white">
-        O klubie
-      </h2>
-      <div className="mx-4 sm:mx-8 md:mx-[9.24%] rounded-[20px] sm:rounded-[25px] md:rounded-[30px] bg-[#333232] px-4 sm:px-6 md:px-[3.07%] py-3 sm:py-3.5 md:py-4 shadow-[6px_2px_19.1px_0px_rgba(0,0,0,0.19)]">
-        <p className="font-['Montserrat'] text-[14px] sm:text-[16px] md:text-[20px] font-medium leading-[1.63] tracking-[0.4px] sm:tracking-[0.5px] md:tracking-[0.6px] text-white">
-         {description}
-        </p>
+    /* Ten kontener zajmuje całą dostępną szerokość (w-full),
+       ale jego zawartość jest ograniczona do 1180px i wyśrodkowana (mx-auto). */
+    <div className="w-full py-8 md:py-12 antialiased">
+      <div className="max-w-[1180px] mx-auto px-4 md:px-0">
+
+        {/* Nagłówek "O klubie" */}
+        <h2 className="mb-10 font-medium text-[18px] md:text-[20px] uppercase leading-[130%] text-white">
+          O klubie
+        </h2>
+
+        {/* Kontener Rectangle 20 - Szerokość 1174px zgodnie z Figmą */}
+        <div
+          className="w-full rounded-[30px] bg-[#333232] px-6 py-8 md:px-[60px] md:py-[40px]"
+          style={{
+            boxShadow: '6px 2px 19.1px 0px rgba(0, 0, 0, 0.19)'
+          }}
+        >
+          {/* Tekst opisu - Montserrat 20px, Line-height 163% */}
+          <p className="font-medium text-[16px] md:text-[20px] leading-[163%] tracking-[0.6px] text-white">
+           {description}
+          </p>
+        </div>
+
       </div>
     </div>
   );

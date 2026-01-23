@@ -2,18 +2,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @theme {
+    /* Breakpoints */
     --breakpoint-xs: 480px;
     --breakpoint-sm: 768px;
     --breakpoint-md: 1060px;
 
+    /* Font Configuration */
     --font-family-montserrat: "Montserrat", sans-serif;
-
 
     /* Basic Colors */
     --color-basic-dark: #1F1F1F;
     --color-basic-white: #FFFFFF;
 
-    /* Gray */
+    /* Gray Scale */
     --color-gray-50: #F9FAFB;
     --color-gray-100: #F3F4F6;
     --color-gray-200: #E5E7EB;
@@ -25,12 +26,12 @@
     --color-gray-800: #1F2937;
     --color-gray-900: #111827;
 
-    /* Primary Color */
+    /* Primary Color - Green */
     --color-primary-main: #199125;
-    --color-primary-50: #F1EBFE; /*POPRAW*/
-    --color-primary-100: #BB9DFB; /*POPRAW*/
+    --color-primary-50: #F1EBFE;
+    --color-primary-100: #BB9DFB;
 
-    /* Secondary Color */
+    /* Secondary Color - Blue */
     --color-secondary-main: #274FDE;
     --color-secondary-50: #8699DC;
     --color-secondary-100: #0F2162;
@@ -59,26 +60,58 @@
     /* Success Color */
     --color-success-100: #DCFCE7;
     --color-success-300: #BBF7D0;
-    --color-success-500: #065F46; /*POPRAW*/
+    --color-success-500: #065F46;
     --color-success-600: #247F46;
     --color-success-800: #064E3B;
 }
 
+/* Globalne style dla dokumentu */
 html,
 body {
+    /* Tło z Twoim gradientem */
     background: radial-gradient(50% 50% at 50% 50%, #262E35 0%, #1F1F1F 100%);
-    background-attachment: fixed; /* Dzięki temu gradient wypełnia całe okno i nie "pływa" */
+    background-attachment: fixed;
+
+    /* Globalne ustawienie czcionki Montserrat */
+    font-family: "Montserrat", sans-serif;
+
+    /* Profesjonalne wygładzanie czcionek (jak w Figmie) */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
     @apply text-white;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
+
+/* GŁÓWNY KONTENER STRONY - Szerokość 1180px */
+.page-container {
+    width: 100%;
+    max-width: 1180px;
+    margin-left: auto;
+    margin-right: auto;
+    /* Odstępy boczne dla responsywności (telefony) */
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 #root {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
-.app{
+
+.app {
     height: 100%;
     width: 100%;
-    font-family: "DM Sans", sans-serif;
+    /* Dziedziczenie czcionki Montserrat z body */
+    font-family: inherit;
     @apply text-gray-500;
+}
+
+/* Pomocnicza klasa dla pełnej szerokości wewnątrz kontenera */
+.full-width-block {
+    width: 100%;
 }

@@ -41,20 +41,21 @@ export default function PopularClubs() {
   if (error) return <div className="text-red-500 p-6">{error}</div>;
 
   return (
-    <div className="relative w-full overflow-hidden bg-transparent">
+    /* Zmieniono na w-full antialiased, aby komponent wypełnił page-container strony głównej */
+    <div className="relative w-full overflow-hidden bg-transparent antialiased">
 
       {/* NAGŁÓWEK TABELI */}
       <div className="hidden md:block border border-[#274FDE] rounded-t-[30px] bg-[#2A2A2A] overflow-hidden">
         <div className="grid grid-cols-[1fr_1.5fr_1fr_1fr] items-center h-[64px]">
-          <p className="text-center text-[16px] font-medium text-white">Herb</p>
-          <p className="text-center text-[16px] font-medium text-white">Nazwa klubu</p>
-          <p className="text-center text-[16px] font-medium text-white">Lokalizacja</p>
-          <p className="text-center text-[16px] font-medium text-white">Relacje</p>
+          <p className="text-center text-[16px] font-medium text-white leading-[130%]">Herb</p>
+          <p className="text-center text-[16px] font-medium text-white leading-[130%]">Nazwa klubu</p>
+          <p className="text-center text-[16px] font-medium text-white leading-[130%]">Lokalizacja</p>
+          <p className="text-center text-[16px] font-medium text-white leading-[130%]">Relacje</p>
         </div>
       </div>
 
-      {/* WIERSZE - kontener z tłem i liniami podziału */}
-      <div className="bg-[#343434] rounded-b-[30px] overflow-hidden">
+      {/* WIERSZE */}
+      <div className="bg-[#343434] rounded-b-[30px] overflow-hidden border-x border-b border-transparent">
         <div className="divide-y divide-[#274FDE]/40">
           {clubs.map((club) => (
             <div key={club.id} className="group border-b border-[#274FDE]/40 last:border-0">
@@ -69,10 +70,10 @@ export default function PopularClubs() {
                   />
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <Link to={`/club/${club.id}`} className="block truncate text-base font-semibold">
+                  <Link to={`/club/${club.id}`} className="block truncate text-base font-semibold leading-[130%]">
                     {club.name}
                   </Link>
-                  <p className="text-sm text-gray-400">{club.city}</p>
+                  <p className="text-sm text-gray-400 leading-[130%]">{club.city}</p>
                 </div>
                 <Link to={`/club/${club.id}`} className="rounded-[50px] bg-[#274fde] px-4 py-2 text-sm font-medium">
                   Szczegóły
@@ -99,7 +100,7 @@ export default function PopularClubs() {
                 <div className="flex justify-center items-center">
                   <Link
                     to={`/club/${club.id}`}
-                    className="text-[16px] font-medium text-white hover:text-[#274fde] transition-colors"
+                    className="text-[16px] font-medium text-white hover:text-[#274fde] transition-colors leading-[130%]"
                   >
                     {club.name}
                   </Link>
@@ -108,7 +109,7 @@ export default function PopularClubs() {
                 <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
 
                 {/* LOKALIZACJA */}
-                <div className="flex justify-center items-center text-center text-white font-medium">
+                <div className="flex justify-center items-center text-center text-white font-medium leading-[130%]">
                   {club.city}
                 </div>
 
@@ -118,7 +119,7 @@ export default function PopularClubs() {
                 <div className="flex justify-center items-center">
                   <Link
                     to={`/club/${club.id}`}
-                    className="rounded-[50px] bg-[#274fde] px-15 py-2.5 text-[14px] font-medium text-white hover:bg-[#1e3fbd] transition-all hover:scale-105"
+                    className="rounded-[50px] bg-[#274fde] px-15 py-2.5 text-[14px] font-medium text-white hover:bg-[#1e3fbd] transition-all hover:scale-105 leading-[130%]"
                   >
                     Szczegóły
                   </Link>

@@ -20,8 +20,8 @@ export default function Legend({
   items = defaultItems
 }: LegendProps) {
   return (
-    <div className="relative w-full py-6 md:py-8 px-4">
-      <div className="rounded-[20px] md:rounded-[30px] border-[0.5px] border-solid border-[#274fde] bg-[#2a2a2a] p-4 md:p-6">
+    <div className="relative w-full py-6 md:py-8 antialiased">
+      <div className="rounded-[20px] md:rounded-[30px] border-[0.5px] border-solid border-[#274fde] bg-[#2a2a2a] p-4 md:p-6 shadow-[0px_6px_7px_rgba(0,0,0,0.25)]">
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
           {/* Title */}
           <p className="text-sm md:text-[16px] font-medium text-white whitespace-nowrap">
@@ -35,7 +35,7 @@ export default function Legend({
                 <p className="text-xs md:text-[16px] font-medium uppercase text-white whitespace-nowrap">
                   {item.label}
                 </p>
-                <div 
+                <div
                   className="h-8 w-8 md:h-[45px] md:w-[45px] rounded-full"
                   style={{ backgroundColor: item.color }}
                 />

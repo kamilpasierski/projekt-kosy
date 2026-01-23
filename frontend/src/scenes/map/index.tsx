@@ -6,11 +6,11 @@ import ClubList from '../../components/map/ClubList';
 import { type LatLngBoundsExpression } from 'leaflet';
 
 // Importy logiki biznesowej
-import { 
-    analyzeSafety, 
-    parseRelationsToMap, 
-    type TerritoryData, 
-    type RelationsMap 
+import {
+    analyzeSafety,
+    parseRelationsToMap,
+    type TerritoryData,
+    type RelationsMap
 } from '../../utils/geoUtils';
 
 // Definicja kształtu stanu dla SafetyCheck
@@ -136,11 +136,12 @@ const MapScene = () => {
     };
 
     return (
-        /* 1. ODSTĘP OD SAMEJ GÓRY STRONY (Zmień 85px na ile chcesz) */
-        <section className="mx-auto w-5/6 pt-[30px] pb-20 md:h-5/6">
-            <div className="mx-auto flex flex-col">
+        /* Zastosowano page-container dla szerokości 1180px.
+           Zachowano oryginalne pt-[30px] oraz pb-20. */
+        <section className="page-container pt-[30px] pb-20 antialiased">
+            <div className="flex flex-col">
 
-                {/* 2. ODSTĘP POD "TWOJE POŁOŻENIE" A PRZED MAPĄ */}
+                {/* Zachowano odstęp mb-[20px] */}
                 <div className="mb-[20px]">
                     <SafetyCheck
                         title={safetyProps.title}
@@ -150,7 +151,7 @@ const MapScene = () => {
                     />
                 </div>
 
-                {/* 3. ODSTĘP MIĘDZY MAPĄ A LEGENDĄ */}
+                {/* Zachowano odstęp mb-[10px] */}
                 <div className="mb-[10px]">
                     <Map
                         territories={territories}
@@ -161,12 +162,12 @@ const MapScene = () => {
                     />
                 </div>
 
-                {/* 4. ODSTĘP MIĘDZY LEGENDĄ A LISTĄ KLUBÓW (Twoje 80px) */}
+                {/* Zachowano odstęp mb-[60px] */}
                 <div className="mb-[60px]">
                     <Legend />
                 </div>
 
-                {/* 5. SEKCJA LISTY KLUBÓW */}
+                {/* Lista klubów rozciągnięta do szerokości kontenera */}
                 <div className="w-full">
                     <ClubList onClubSelect={handleClubSelect} />
                 </div>
