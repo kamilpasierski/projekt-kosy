@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/stats/', include('api_stats.urls')),
     path('api/add_fav/', include('api_add_fav.urls')),
     path('api/', include('api_area.urls')),
+    path('api/activity_logs/', include('api_logs.urls'))
 ]
 
 if settings.DEBUG:
