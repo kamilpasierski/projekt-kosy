@@ -48,7 +48,7 @@ export default function LoginForm({
             type="text"
             id="username"
             name="username"
-            placeholder="Wpisz email"
+            placeholder="Wpisz email lub login"
             value={formData.username}
             onChange={onChange}
             required

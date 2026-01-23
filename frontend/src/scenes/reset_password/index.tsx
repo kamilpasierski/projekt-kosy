@@ -25,7 +25,7 @@ const ResetPasswordConfirm = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    const inputStyles = "w-full h-14 bg-neutral-700/50 text-white placeholder-gray-400 rounded-[50px] px-6 border border-transparent focus:border-green-500 focus:bg-neutral-700 focus:outline-none transition-all";
+    const inputStyles = "w-full h-14 bg-neutral-700/50 text-white placeholder-gray-400 rounded-[50px] px-6 border border-transparent focus:border-[#274fde] focus:bg-neutral-700 focus:outline-none transition-all";
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -110,7 +110,7 @@ const ResetPasswordConfirm = () => {
                 {success ? (
                     // WIDOK SUKCESU
                     <div className="text-center py-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/30">
+                        <div className="w-16 h-16 bg-[#274fde] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#274fde]/30">
                             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
                             </svg>
@@ -118,9 +118,11 @@ const ResetPasswordConfirm = () => {
                         <h2 className="text-2xl text-white font-bold mb-2">Hasło zmienione!</h2>
                         <p className="text-gray-400 mb-8">Możesz się teraz zalogować używając nowego hasła.</p>
 
-                        <ActionButton onClick={() => navigate('/auth')}>
-                            Przejdź do logowania
-                        </ActionButton>
+                        <div className="flex justify-center">
+                            <ActionButton onClick={() => navigate('/auth')}>
+                                Przejdź do logowania
+                            </ActionButton>
+                        </div>
                     </div>
                 ) : (
                     // WIDOK FORMULARZA
@@ -159,7 +161,7 @@ const ResetPasswordConfirm = () => {
                                 </div>
                             )}
 
-                            <div className="mt-2">
+                            <div className="mt-2 flex justify-center">
                                 <ActionButton type="submit">
                                     Zatwierdź zmianę
                                 </ActionButton>
