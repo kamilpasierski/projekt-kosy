@@ -7,9 +7,9 @@ import Description from "../../components/followed_clubs/Description";
 import FollowedClubsList from "../../components/followed_clubs/FollowedClubsList";
 import { useAuth } from "../../context/AuthContext";
 
-interface FavoriteClubRaw { id: number; club: number; }
+interface FavoriteClubRaw { id: number; club: number; created_at: string; }
 interface ClubDetails { id: number; name: string; path_image?: string; }
-interface HydratedFavoriteClub { favoriteId: number; details: ClubDetails; }
+interface HydratedFavoriteClub { favoriteId: number; created_at: string; details: ClubDetails; }
 
 const FollowedClubsScene = () => {
     const navigate = useNavigate();
@@ -38,6 +38,7 @@ const FollowedClubsScene = () => {
                     api.get<ClubDetails>(`/clubs/${item.club}/`)
                         .then(res => ({
                             favoriteId: item.id,
+                            created_at: item.created_at,
                             details: res.data
                         }))
                         .catch(err => {

@@ -56,12 +56,12 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon = "none" }) => {
   };
 
   return (
-    <div className="w-[270px] h-[240px] bg-[#343434] rounded-[30px] border-[0.5px] border-[#222629] shadow-[-5px_5px_18px_0px_rgba(0,0,0,0.6)] p-11 relative">
-      <h3 className="font-['Montserrat'] text-[20px] font-semibold uppercase text-white leading-[1.3] w-[191px] mb-10 whitespace-pre-wrap">
+    <div className="w-full sm:w-[270px] h-auto sm:h-[240px] bg-[#343434] rounded-[20px] sm:rounded-[30px] border-[0.5px] border-[#222629] shadow-[-5px_5px_18px_0px_rgba(0,0,0,0.6)] p-6 sm:p-11 relative">
+      <h3 className="text-[16px] sm:text-[20px] font-semibold uppercase text-white leading-[1.3] w-full sm:w-[191px] mb-6 sm:mb-10 whitespace-pre-wrap">
         {title}
       </h3>
       <div className="flex items-center justify-between">
-        <p className="font-['Montserrat'] text-[36px] font-semibold text-white leading-[1.3]">
+        <p className="text-[28px] sm:text-[36px] font-semibold text-white leading-[1.3]">
           {value}
         </p>
         {icon !== "none" && <div className="flex-shrink-0">{renderIcon()}</div>}
@@ -114,16 +114,16 @@ const Stats: React.FC = () => {
   }, [authLoading, isLoggedIn]); // Uruchom ponownie, gdy AuthContext skończy inicjalizację
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-[8.4%] py-8">
+    <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[8.4%] py-6 sm:py-8">
       {/* Section Title */}
-      <div className="w-full max-w-[1175px] bg-[rgba(39,79,222,0.19)] rounded-[30px] px-9 py-7 mb-8">
-        <h2 className="font-['Montserrat'] text-[20px] font-medium uppercase text-white leading-[1.3]">
+      <div className="w-full max-w-[1175px] bg-[rgba(39,79,222,0.19)] rounded-[20px] sm:rounded-[30px] px-5 sm:px-9 py-5 sm:py-7 mb-6 sm:mb-8">
+        <h2 className="text-[16px] sm:text-[20px] font-medium uppercase text-white leading-[1.3]">
           Statystyki globalne
         </h2>
       </div>
 
       {/* Stats Cards */}
-      <div className="flex gap-[22px] flex-wrap">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-[22px] flex-wrap">
         <StatCard
           title="Liczba relacji w systemie"
           value={dataLoading || authLoading ? "..." : stats.relations}

@@ -70,7 +70,7 @@ export const useMatches = () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 setData(MOCK_DATA);
-            } catch (err) {
+            } catch {
                 setError("Nie udało się pobrać harmonogramu.");
             } finally {
                 setIsLoading(false);

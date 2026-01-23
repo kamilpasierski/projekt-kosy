@@ -5,6 +5,7 @@ import { getClubImageUrl } from '../../utils/imageUtils';
 
 interface FollowedClub {
   favoriteId: number;
+  created_at: string;
   details: {
     id: number;
     name: string;
@@ -45,7 +46,7 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
       case 'alphabetical':
         return sorted.sort((a, b) => a.details.name.localeCompare(b.details.name));
       case 'date':
-        return sorted; // Można dodać sortowanie po dacie dodania
+        return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       case 'default':
       default:
         return sorted;
@@ -124,7 +125,7 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
                   {club.details.name}
                 </h3>
                 <p className="font-['Montserrat'] font-medium text-[14px] sm:text-[16px] text-white opacity-80">
-                  Planowany mecz wysokiego ryzyka - 24.02.2026
+                  Data dodania do obserwowanych - {new Date(club.created_at).toLocaleDateString('pl-PL')}
                 </p>
               </div>
 

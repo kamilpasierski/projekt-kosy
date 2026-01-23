@@ -1,0 +1,118 @@
+name: CI/CD Pipeline - Projekt Kosy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # ------------------------------------------------------------------
+  # JOB 1: BACKEND QA (Django DRF + MySQL)
+  # ------------------------------------------------------------------
+  backend-qa:
+    name: Backend QA & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    # To tworzy "lokalną" bazę MySQL wewnątrz runnera GitHuba TYLKO na czas testów
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: test_db
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          MYSQL_ROOT_PASSWORD: root_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # KROK KRYTYCZNY DLA MYSQL: Instalacja bibliotek systemowych Ubuntu
+      # Bez tego pip install mysqlclient wywali błąd kompilacji gcc
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-libmysqlclient-dev build-essential pkg-config
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install flake8 pytest pytest-django
+          # Upewnij się, że mysqlclient jest zainstalowany
+          pip install mysqlclient
+
+      - name: Linting (Flake8)
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
+
+      - name: Run Tests (Pytest)
+        env:
+          SECRET_KEY: "django-insecure-test-key"
+          DEBUG: "True"
+          DB_ENGINE: "django.db.backends.mysql"
+          DB_NAME: "test_db"
+          DB_USER: "root"             # Było: test_user
+          DB_PASSWORD: "root_password" # Było: test_password
+          DB_HOST: "127.0.0.1"
+          DB_PORT: "3306"
+        run: |
+          pytest
+
+      - name: Docker Build Verify
+        # Poprawiona ścieżka: kropka (.) zamiast ./backend, bo jesteśmy już w working-directory
+        run: docker build . -t backend-image:test
+
+  # ------------------------------------------------------------------
+  # JOB 2: FRONTEND QA (Vite React TS)
+  # ------------------------------------------------------------------
+  frontend-qa:
+    name: Frontend QA & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Linting (ESLint)
+        # Sprawdź w package.json czy masz skrypt "lint". Jeśli nie, usuń ten krok tymczasowo.
+        run: npm run lint
+
+      - name: Type Checking (TypeScript)
+        run: npx tsc --noEmit
+
+      - name: Production Build Check
+        run: npm run build
+
+      - name: Docker Build Verify (Prod)
+        run: docker build -f Dockerfile.prod -t frontend-prod:test .

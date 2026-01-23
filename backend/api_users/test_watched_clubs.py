@@ -19,7 +19,7 @@ class WatchedClubsTest(APITestCase):
         self.club_1 = Club.objects.create(name="Real", city="Madryt", id=1)
         self.club_2 = Club.objects.create(name="Barca", city="Barcelona", id=2)
 
-        self.list_url = '/api/add_fav/watched_clubs'
+        self.list_url = '/api/add_fav/watched_clubs/'
 
     def test_add_watched_club(self):
         """Sprawdza czy można dodać klub do obserwowanych"""

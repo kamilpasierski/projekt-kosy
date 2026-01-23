@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { AuthContext, type User } from './AuthContext'; // Importujemy typy z pliku .ts
 
@@ -9,8 +9,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const API_URL = 'http://127.0.0.1:8000';
 
+    // 3. Wylogowanie - moved before fetchUserData to avoid dependency issue
+    const logout = useCallback(() => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        
+        delete axios.defaults.headers.common['Authorization'];
+        
+        setIsLoggedIn(false);
+        setUser(null);
+        setIsLoading(false);
+    }, []);
+
     // Funkcja pomocnicza do pobierania danych
-    const fetchUserData = async (token: string) => {
+    const fetchUserData = useCallback(async (token: string) => {
         try {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             const response = await axios.get<User>(`${API_URL}/api/users/me/`);
@@ -22,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [API_URL, logout]);
 
     // 1. Sprawdzenie przy starcie aplikacji (F5)
     useEffect(() => {
@@ -37,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         };
         initAuth();
-    }, []);
+    }, [fetchUserData]);
 
     // 2. Logowanie
     const login = async (access: string, refresh: string, remember: boolean) => {
@@ -49,20 +63,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Pobierz dane usera od razu po zapisaniu tokena
         await fetchUserData(access);
-    };
-
-    // 3. Wylogowanie
-    const logout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
-        
-        delete axios.defaults.headers.common['Authorization'];
-        
-        setIsLoggedIn(false);
-        setUser(null);
-        setIsLoading(false);
     };
 
     return (

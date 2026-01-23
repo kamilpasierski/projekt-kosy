@@ -4,7 +4,7 @@ import { useAuth } from "../../hooks/useAuth.ts";
 import { UserIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon, InformationCircleIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Logo from "@/assets/Logo.png";
 import ActionButton from "../../shared/ActionButton.tsx";
-import { useRelationEditor } from '../../context/RelationEditorContext.tsx';
+import { useRelationEditor } from '../../hooks/useRelationEditor';
 import Notifications from './Notifications.tsx';
 
 const NavbarRigid = () => {

@@ -175,19 +175,19 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     // --- WIDOK SUKCESU ---
     if (isSuccess) {
         return (
-            <div className="w-full p-8 md:p-12 rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 flex flex-col items-center justify-center text-center min-h-[400px]">
-                <div className={`w-20 h-20 ${isDirectMode ? 'bg-blue-600 shadow-blue-900/50' : 'bg-green-600 shadow-green-900/50'} rounded-full flex items-center justify-center mb-6 shadow-lg animate-bounce`}>
-                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-full p-6 sm:p-8 md:p-12 rounded-[20px] sm:rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 flex flex-col items-center justify-center text-center min-h-[300px] sm:min-h-[400px]">
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${isDirectMode ? 'bg-blue-600 shadow-blue-900/50' : 'bg-green-600 shadow-green-900/50'} rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg animate-bounce`}>
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">{successTitle}</h2>
-                <p className="text-gray-300 mb-8 max-w-sm leading-relaxed">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">{successTitle}</h2>
+                <p className="text-sm sm:text-base text-gray-300 mb-6 sm:mb-8 max-w-sm leading-relaxed px-4">
                     {successDesc}
                 </p>
                 <button
                     onClick={handleCloseSuccess}
-                    className={`px-8 py-3 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-bold rounded-[25px] transition-all transform hover:scale-105 shadow-lg`}
+                    className={`px-6 sm:px-8 py-2.5 sm:py-3 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-bold rounded-[25px] transition-all transform hover:scale-105 shadow-lg text-sm sm:text-base`}
                 >
                     OK
                 </button>
@@ -199,41 +199,41 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     return (
         <form
             onSubmit={handleSubmit}
-            className={`w-full p-6 md:p-8 rounded-[30px] shadow-xl bg-color-basic-dark border ${isDirectMode ? 'border-blue-500/50' : 'border-gray-700'} relative`}
+            className={`w-full p-4 sm:p-6 md:p-8 rounded-[20px] sm:rounded-[30px] shadow-xl bg-color-basic-dark border ${isDirectMode ? 'border-blue-500/50' : 'border-gray-700'} relative`}
         >
              {isLoading && (
-                <div className="absolute inset-0 bg-black/50 rounded-[30px] z-50 flex items-center justify-center">
-                    <div className="text-white font-bold animate-pulse">Przetwarzanie...</div>
+                <div className="absolute inset-0 bg-black/50 rounded-[20px] sm:rounded-[30px] z-50 flex items-center justify-center">
+                    <div className="text-white font-bold animate-pulse text-sm sm:text-base">Przetwarzanie...</div>
                 </div>
             )}
 
             {/* Nagłówek */}
-            <div className="flex justify-between items-center mb-6">
-                <h2 className={`text-xl font-semibold ${isDirectMode ? 'text-blue-400' : 'text-white'}`}>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
+                <h2 className={`text-lg sm:text-xl font-semibold ${isDirectMode ? 'text-blue-400' : 'text-white'}`}>
                     {titleText}
                 </h2>
                 {isDirectMode && (
-                    <span className="px-3 py-1 bg-blue-900/50 text-blue-200 text-xs font-bold rounded-full border border-blue-500/30">
+                    <span className="px-2.5 sm:px-3 py-1 bg-blue-900/50 text-blue-200 text-[10px] sm:text-xs font-bold rounded-full border border-blue-500/30 whitespace-nowrap">
                         TRYB ADMINA
                     </span>
                 )}
             </div>
 
             {errorMessage && (
-                <div className="mb-6 p-4 bg-red-900/40 border border-red-500 rounded-[20px] text-red-100 text-sm">
+                <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-900/40 border border-red-500 rounded-[15px] sm:rounded-[20px] text-red-100 text-xs sm:text-sm">
                     ⚠️ {errorMessage}
                 </div>
             )}
 
             {/* SELEKTORY KLUBÓW */}
-            <div className="mb-8">
-                <label className="text-white text-base font-medium mb-3 block">Wybierz kluby</label>
-                <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+            <div className="mb-6 sm:mb-8">
+                <label className="text-white text-sm sm:text-base font-medium mb-2 sm:mb-3 block">Wybierz kluby</label>
+                <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
                     <div className="flex-1 w-full">
                         <select
                             value={selectedClubA}
                             onChange={(e) => setSelectedClubA(e.target.value)}
-                            className="w-full h-12 px-4 text-gray-200 text-base rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[16px] border-transparent"
+                            className="w-full h-10 sm:h-12 px-3 sm:px-4 text-gray-200 text-sm sm:text-base rounded-[15px] sm:rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[12px] sm:border-r-[16px] border-transparent"
                         >
                             <option value="" disabled>Klub A</option>
                             {availableClubs.map(club => (
@@ -242,13 +242,13 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                         </select>
                     </div>
 
-                    <span className="text-gray-400 font-bold text-sm">VS</span>
+                    <span className="text-gray-400 font-bold text-xs sm:text-sm">VS</span>
 
                     <div className="flex-1 w-full">
                         <select
                             value={selectedClubB}
                             onChange={(e) => setSelectedClubB(e.target.value)}
-                            className="w-full h-12 px-4 text-gray-200 text-base rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[16px] border-transparent"
+                            className="w-full h-10 sm:h-12 px-3 sm:px-4 text-gray-200 text-sm sm:text-base rounded-[15px] sm:rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[12px] sm:border-r-[16px] border-transparent"
                         >
                             <option value="" disabled>Klub B</option>
                             {availableClubs.map(club => (
@@ -260,17 +260,17 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
             </div>
 
             {/* TYP RELACJI */}
-            <div className="mb-8">
-                <label className="text-white text-base font-medium mb-3 block">Typ relacji</label>
-                <div className="flex flex-wrap gap-3">
+            <div className="mb-6 sm:mb-8">
+                <label className="text-white text-sm sm:text-base font-medium mb-2 sm:mb-3 block">Typ relacji</label>
+                <div className="flex flex-wrap gap-2 sm:gap-3">
                     {RELATION_OPTIONS.map(option => (
                         <button
                             key={option.type}
                             type="button"
                             onClick={() => setRelationType(option.type)}
                             className={`
-                                flex items-center px-4 py-2 rounded-[20px] transition-all duration-200
-                                text-white text-sm font-bold uppercase tracking-wider
+                                flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-[15px] sm:rounded-[20px] transition-all duration-200
+                                text-white text-xs sm:text-sm font-bold uppercase tracking-wider
                                 ${option.color} 
                                 ${relationType === option.type 
                                     ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-white scale-105' 
@@ -284,8 +284,8 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
             </div>
 
             {/* OPIS */}
-            <div className="mb-8">
-                <label className="text-white text-base font-medium mb-3 block">
+            <div className="mb-6 sm:mb-8">
+                <label className="text-white text-sm sm:text-base font-medium mb-2 sm:mb-3 block">
                     {isDirectMode ? "Komentarz dla zgłaszających" : "Opis"}
                 </label>
                 <textarea
@@ -293,24 +293,24 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder={descPlaceholder}
                     rows={4}
-                    className="w-full p-4 text-gray-200 text-base rounded-[20px] bg-gray-700 shadow-inner resize-none focus:ring-2 focus:ring-blue-600 focus:outline-none placeholder-gray-500"
+                    className="w-full p-3 sm:p-4 text-gray-200 text-sm sm:text-base rounded-[15px] sm:rounded-[20px] bg-gray-700 shadow-inner resize-none focus:ring-2 focus:ring-blue-600 focus:outline-none placeholder-gray-500"
                 ></textarea>
             </div>
 
             {/* ACTIONS */}
-            <div className="flex gap-4 pt-4 border-t border-gray-700">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t border-gray-700">
                 <button
                     type="button"
                     onClick={handleCancel}
                     disabled={isLoading}
-                    className="flex-1 h-12 bg-transparent border border-gray-600 hover:bg-gray-700 text-gray-300 font-semibold rounded-[25px] transition-colors disabled:opacity-50"
+                    className="flex-1 h-10 sm:h-12 bg-transparent border border-gray-600 hover:bg-gray-700 text-gray-300 font-semibold rounded-[20px] sm:rounded-[25px] transition-colors disabled:opacity-50 text-sm sm:text-base"
                 >
                     Anuluj
                 </button>
                 <button
                     type="submit"
                     disabled={!selectedClubA || !selectedClubB || !relationType || isLoading}
-                    className={`flex-[2] h-12 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-semibold rounded-[25px] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`flex-1 sm:flex-[2] h-10 sm:h-12 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-semibold rounded-[20px] sm:rounded-[25px] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base`}
                 >
                     {buttonText}
                 </button>

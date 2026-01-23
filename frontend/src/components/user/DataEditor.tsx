@@ -64,19 +64,25 @@ const handleSave = async () => {
 
       setMessage({ text: 'Zapisano! Odśwież stronę (F5), aby zaktualizować baner.', type: 'success' });
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Błąd zapisu:", error);
 
       // Obsługa wygasłego tokena (401)
-      if (error.response?.status === 401) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: { username?: string[] } } };
+        
+        if (axiosError.response?.status === 401) {
           setMessage({ text: 'Sesja wygasła. Wyloguj się i zaloguj ponownie.', type: 'error' });
-      } 
-      // Obsługa błędu walidacji (np. zajęty nick)
-      else if (error.response?.data?.username) {
-         setMessage({ text: `Błąd: ${error.response.data.username[0]}`, type: 'error' });
-      } 
-      // Inne błędy
-      else {
+        } 
+        // Obsługa błędu walidacji (np. zajęty nick)
+        else if (axiosError.response?.data?.username) {
+          setMessage({ text: `Błąd: ${axiosError.response.data.username[0]}`, type: 'error' });
+        } 
+        // Inne błędy
+        else {
+          setMessage({ text: 'Nie udało się zapisać zmian.', type: 'error' });
+        }
+      } else {
          setMessage({ text: 'Nie udało się zapisać zmian.', type: 'error' });
       }
     } finally {
