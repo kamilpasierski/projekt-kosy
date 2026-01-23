@@ -1,14 +1,16 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from models.models import Club
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     re_password = serializers.CharField(write_only=True)
+    club_id = serializers.IntegerField(required=False, allow_null=True, write_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'password', 're_password', 'email']
+        fields = ['username', 'password', 're_password', 'email', 'club_id']
 
     """
     Password requirements:
@@ -51,6 +53,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('re_password', None)  # usuń re_password tylko tutaj
+        club_id = validated_data.pop('club_id', None)  # pobierz i usuń club_id
         email = validated_data.get('email')  # bezpieczne pobranie email
         user = User.objects.create_user(
             username=validated_data['username'],
@@ -58,4 +61,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=email,
             is_active=False
         )
+        
+        # Ustaw club_id w profilu użytkownika (jeśli podano)
+        if club_id:
+            try:
+                club = Club.objects.get(id=club_id)
+                user.profile.club = club
+                user.profile.save()
+            except Club.DoesNotExist:
+                pass  # Ignoruj jeśli klub nie istnieje
+        
         return user

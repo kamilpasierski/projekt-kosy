@@ -1,5 +1,5 @@
 import React from 'react';
-import ActionButton from '../../shared/ActionButton';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 interface ResetPasswordFormProps {
   resetEmail: string;
@@ -8,8 +8,6 @@ interface ResetPasswordFormProps {
   onBackToLogin: () => void;
 }
 
-const inputStyles = "w-full h-14 bg-neutral-700/50 text-white placeholder-gray-400 rounded-[50px] px-6 border border-transparent focus:border-green-500 focus:bg-neutral-700 focus:outline-none transition-all";
-
 export default function ResetPasswordForm({
   resetEmail,
   onSubmit,
@@ -17,33 +15,62 @@ export default function ResetPasswordForm({
   onBackToLogin
 }: ResetPasswordFormProps) {
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4 animate-in fade-in slide-in-from-right-8 duration-300">
-      <div className="text-gray-300 text-sm text-center mb-2">
-        Wpisz swój login, a wyślemy Ci link do zmiany hasła.
-      </div>
+    <div className="w-full max-w-[356px] mx-auto animate-in fade-in slide-in-from-right-8 duration-300">
+      {/* Nagłówek */}
+      <h2 className="font-['Montserrat',sans-serif] font-semibold text-[24px] text-center text-white mb-2 leading-[1.3] tracking-[1.2px]">
+        Nie pamiętam hasła
+      </h2>
+      <p className="font-['Montserrat',sans-serif] font-semibold text-[14px] text-center text-white mb-8 leading-[20px]">
+        <span className="capitalize">Podaj</span>
+        <span className="lowercase"> ostatni adres email jaki pamiętasz. </span>
+        <br />
+        <span className="capitalize">Wyślemy</span>
+        <span className="lowercase"> na niego link do wygenerowania nowego hasła.</span>
+      </p>
 
-      <input 
-        type="email" 
-        placeholder="Wpisz swój E-mail" 
-        className={inputStyles} 
-        value={resetEmail}
-        onChange={onEmailChange}
-        required
-      />
+      <form onSubmit={onSubmit} className="flex flex-col gap-[21px]">
+        {/* Email Input */}
+        <div className="relative">
+          <input
+            className="w-full h-[59px] bg-[#343434] text-white placeholder-white rounded-[50px] px-6 border border-[#343434] focus:border-[#274fde] focus:outline-none transition-all font-['Montserrat',sans-serif] font-medium text-[16px]"
+            type="email"
+            placeholder="Wpisz email"
+            value={resetEmail}
+            onChange={onEmailChange}
+            required
+          />
+        </div>
 
-      <ActionButton type="submit">
-        Wyślij link resetujący
-      </ActionButton>
-
-      <div className="mt-4 text-center">
+        {/* Submit Button */}
         <button
-          type="button"
-          onClick={onBackToLogin}
-          className="mt-2 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+          type="submit"
+          className="w-full h-[59px] bg-[#274fde] hover:bg-[#1e3fb8] text-white rounded-[50px] font-['Montserrat',sans-serif] font-semibold text-[16px] transition-all cursor-pointer mt-2"
         >
-          ← Wróć do logowania
+          Przypomnij hasło
         </button>
-      </div>
-    </form>
+
+        {/* Back to Login Link */}
+        <div className="text-center mt-2">
+          <button
+            type="button"
+            onClick={onBackToLogin}
+            className="font-['Montserrat',sans-serif] font-medium text-[14px] text-white hover:opacity-80 transition-opacity"
+          >
+            Wróć do{' '}
+            <span className="font-semibold text-[#274fde]">Logowania</span>
+          </button>
+        </div>
+
+        {/* Back Arrow Button */}
+        <button 
+          type="button" 
+          onClick={onBackToLogin} 
+          className="mt-2 text-xs text-gray-500 hover:text-gray-300 transition-colors font-['Montserrat',sans-serif] flex items-center gap-1 mx-auto"
+        >
+          <ArrowLeftIcon className="w-3 h-3" />
+          Wróć do logowania
+        </button>
+      </form>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import ActionButton from '../../shared/ActionButton';
+import React, { useState } from 'react';
+import { EyeIcon, EyeSlashIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 interface LoginFormProps {
   formData: {
@@ -16,8 +16,6 @@ interface LoginFormProps {
   onBackToButtons: () => void;
 }
 
-const inputStyles = "w-full h-14 bg-neutral-700/50 text-white placeholder-gray-400 rounded-[50px] px-6 border border-transparent focus:border-green-500 focus:bg-neutral-700 focus:outline-none transition-all";
-
 export default function LoginForm({
   formData,
   error,
@@ -29,92 +27,130 @@ export default function LoginForm({
   onSwitchToReset,
   onBackToButtons
 }: LoginFormProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4 animate-in fade-in slide-in-from-left-8 duration-300">
-      <input
-        className={inputStyles}
-        type="text"
-        id="username"
-        name="username"
-        placeholder="Wpisz swój login"
-        value={formData.username}
-        onChange={onChange}
-        required
-      />
-      <input
-        className={inputStyles}
-        type="password"
-        id="password"
-        name="password"
-        placeholder="••••••••"
-        value={formData.password}
-        onChange={onChange}
-        required
-      />
-      <div className="flex items-center justify-center mb-2">
-        <input
-          id="remember-me"
-          type="checkbox"
-          name="rememberMe"
-          onChange={onRememberMeChange}
-          checked={rememberMe}
-          className="h-4 w-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
-        />
-        <label htmlFor="remember-me" className="ml-2 block text-sm text-primary-50">
-          Nie wylogowywuj mnie
-        </label>
-      </div>
+    <div className="w-full max-w-[356px] mx-auto animate-in fade-in slide-in-from-left-8 duration-300">
+      {/* Nagłówek */}
+      <h2 className="font-['Montserrat',sans-serif] font-semibold text-[24px] text-center text-white mb-2 leading-[1.3] tracking-[1.2px]">
+        Zaloguj się na swoje konto
+      </h2>
+      <p className="font-['Montserrat',sans-serif] font-semibold text-[14px] text-center text-white mb-8">
+        <span className="capitalize">T</span>
+        <span className="lowercase">WOJE BEZPIECZEŃSTWO ZACZYNA SIĘ TUTAJ</span>
+      </p>
 
-      {/* Sekcja błędów */}
-      {error && (
-        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
-          {error}
+      <form onSubmit={onSubmit} className="flex flex-col gap-[21px]">
+        {/* Email Input */}
+        <div className="relative">
+          <input
+            className="w-full h-[59px] bg-[#343434] text-white placeholder-white rounded-[50px] px-6 border border-[#343434] focus:border-[#274fde] focus:outline-none transition-all font-['Montserrat',sans-serif] font-medium text-[16px]"
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Wpisz email"
+            value={formData.username}
+            onChange={onChange}
+            required
+          />
         </div>
-      )}
 
-      {/* Przycisk Submit */}
-      <div className="flex justify-center mt-4">
-        <ActionButton type="submit">
-          Zaloguj się
-        </ActionButton>
-      </div>
+        {/* Password Input */}
+        <div className="relative">
+          <input
+            className="w-full h-[59px] bg-[#343434] text-white placeholder-white rounded-[50px] px-6 pr-14 border border-[#343434] focus:border-[#274fde] focus:outline-none transition-all font-['Montserrat',sans-serif] font-medium text-[16px]"
+            type={showPassword ? "text" : "password"}
+            id="password"
+            name="password"
+            placeholder="Wpisz hasło"
+            value={formData.password}
+            onChange={onChange}
+            required
+          />
+          {/* Eye Icon */}
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-[22px] h-[22px] flex items-center justify-center text-white hover:opacity-80 transition-opacity"
+            aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="w-full h-full opacity-50" />
+            ) : (
+              <EyeIcon className="w-full h-full opacity-50" />
+            )}
+          </button>
+        </div>
 
-      {/* Switcher do resetu hasła */}
-      <div className="mt-4 text-center">
-        <span className="text-gray-400 text-sm font-medium">
-          Nie pamiętasz hasła?
-        </span>
+        {/* Remember Me & Forgot Password */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <input
+              id="remember-me"
+              type="checkbox"
+              name="rememberMe"
+              onChange={onRememberMeChange}
+              checked={rememberMe}
+              className="w-[15px] h-[15px] bg-[#bdbdbd] border border-[#343434] rounded-none cursor-pointer"
+            />
+            <label 
+              htmlFor="remember-me" 
+              className="font-['Montserrat',sans-serif] font-medium text-[12px] text-white cursor-pointer"
+            >
+              Zapamiętaj mnie
+            </label>
+          </div>
+          <button
+            type="button"
+            onClick={onSwitchToReset}
+            className="font-['Montserrat',sans-serif] font-medium text-[12px] text-[#274fde] hover:underline cursor-pointer"
+          >
+            Nie pamiętam hasła
+          </button>
+        </div>
+
+        {/* Sekcja błędów */}
+        {error && (
+          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm font-['Montserrat',sans-serif]">
+            {error}
+          </div>
+        )}
+
+        {/* Submit Button */}
         <button
-          type="button"
-          onClick={onSwitchToReset}
-          className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
+          type="submit"
+          className="w-full h-[59px] bg-[#274fde] hover:bg-[#1e3fb8] text-white rounded-[50px] font-['Montserrat',sans-serif] font-semibold text-[16px] transition-all cursor-pointer mt-2"
         >
-          Resetuj hasło.
+          Kontynuuj
         </button>
-      </div>
 
-      {/* Switcher do Rejestracji */}
-      <div className="text-center">
-        <span className="text-gray-400 text-sm font-medium">
-          Nie masz jeszcze konta?
-        </span>
-        <button
-          type="button"
-          onClick={onSwitchToRegister}
-          className="text-green-500 hover:text-green-400 text-sm font-bold hover:underline ml-1 cursor-pointer"
+        {/* Register Link */}
+        <div className="text-center mt-2">
+          <button
+            type="button"
+            onClick={onSwitchToRegister}
+            className="font-['Montserrat',sans-serif] font-medium text-[14px] text-white hover:opacity-80 transition-opacity"
+          >
+            Nie masz konta?{' '}
+            <span className="font-semibold text-[#274fde]">Zarejestruj się</span>
+          </button>
+        </div>
+
+        {/* Privacy Policy Text */}
+        <p className="font-['Montserrat',sans-serif] font-semibold text-[12px] text-center text-[#9ca3af] leading-[1.3] mt-4">
+          Klikając dowolny przycisk „kontynuuj z", wyrażasz zgodę na warunki użytkowania i akceptujesz naszą politykę prywatności na naszej stronie internetowej.
+        </p>
+
+        {/* Back to Methods */}
+        <button 
+          type="button" 
+          onClick={onBackToButtons} 
+          className="mt-2 text-xs text-gray-500 hover:text-gray-300 transition-colors font-['Montserrat',sans-serif] flex items-center gap-1 mx-auto"
         >
-          Zarejestruj się tutaj.
+          <ArrowLeftIcon className="w-3 h-3" />
+          Wybierz inną metodę
         </button>
-      </div>
-
-      {/* Powrót do metod */}
-      <button 
-        type="button" 
-        onClick={onBackToButtons} 
-        className="mt-2 text-xs text-gray-500 hover:text-gray-300 transition-colors"
-      >
-        ← Wybierz inną metodę
-      </button>
-    </form>
+      </form>
+    </div>
   );
 }

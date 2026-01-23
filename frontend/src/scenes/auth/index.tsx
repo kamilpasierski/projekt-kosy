@@ -31,6 +31,7 @@ const AuthScene = () => {
         username: '',
         password: '',
         re_password: '',
+        favoriteClub: '',
     });
 
     const [error, setError] = useState<string | null>(null);
@@ -78,7 +79,10 @@ const AuthScene = () => {
                 username: formData.username,
                 password: formData.password,
                 re_password: formData.re_password,
+                club_id: formData.favoriteClub ? parseInt(formData.favoriteClub) : null,
             };
+
+            console.log('Sending registration data:', dataToSend);
 
             await axios.post(API_URL, dataToSend);
             setView('login');
@@ -210,38 +214,13 @@ const AuthScene = () => {
         }
     }
 
-    // Helper do renderowania odpowiedniego nagłówka
-    const getHeaderTitle = () => {
-        if (view === 'login') return 'Witaj ponownie';
-        if (view === 'register') return 'Stwórz konto';
-        return 'Zaloguj się lub Zarejestruj';
-    };
-
     return (
         <div className="w-full min-h-screen bg-stone-900 flex flex-col lg:flex-row relative overflow-hidden">
             {/* ================= LEWA STRONA (LOGO + TŁO) ================= */}
             <AuthBackground />
 
             {/* ================= PRAWA STRONA (CONTENT) ================= */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 relative z-10">{/* Nagłówek */}
-                <div className="text-center mb-8 space-y-2 max-w-md">
-                    <h2 className="text-white text-2xl lg:text-3xl font-semibold tracking-wide transition-all duration-300">
-                        {getHeaderTitle()}
-                    </h2>
-                    <div className="flex justify-center items-center gap-1">
-                        {view === 'buttons' && (
-                            <>
-                                <span className="text-white text-sm font-semibold leading-4">Twoje bezpieczeństwo zaczyna się tutaj</span>
-                            </>
-                        )}
-                        {view !== 'buttons' && (
-                            <span className="text-gray-400 text-sm">
-                        Wypełnij poniższe dane.
-                    </span>
-                        )}
-                    </div>
-                </div>
-
+            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 relative z-10">
                 {/* --- KONTENER GŁÓWNY --- */}
                 <div className="w-full max-w-sm">
 
