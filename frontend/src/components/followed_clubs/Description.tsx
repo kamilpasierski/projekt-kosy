@@ -1,16 +1,16 @@
 export default function Description() {
   return (
-    /* Usunięto px-4/sm/lg oraz styl czcionki, bo page-container i index.css już to mają */
+
     <div
       className="relative w-full mb-[75px] antialiased"
       data-name="OBSERWOWANE - OPIS"
     >
-      {/* Nagłówek - Odstęp 40px od panelu poniżej */}
+      {/* Nagłówek */}
       <p className="font-medium text-[16px] sm:text-[18px] md:text-[20px] text-white uppercase leading-[130%] mb-[40px]">
         TWOJE obserwowane kluby
       </p>
 
-      {/* Panel opisu - Teraz w-full, aby wypełnił 1180px page-containera */}
+      {/* Panel opisu */}
       <div
         className="bg-[#2a2a2a] rounded-[30px] px-4 sm:px-6 md:px-8 py-6 min-h-[108px] flex items-center w-full"
         style={{
