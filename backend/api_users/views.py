@@ -24,3 +24,38 @@ def getCurrentUser(request):
 
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def changePassword(request):
+    """Endpoint do zmiany hasła użytkownika"""
+    user = request.user
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    # Walidacja: sprawdź czy podano oba pola
+    if not old_password or not new_password:
+        return Response({
+            'detail': 'Wymagane są pola: old_password i new_password.'
+        }, status=400)
+
+    # Walidacja: sprawdź czy stare hasło jest poprawne
+    if not user.check_password(old_password):
+        return Response({
+            'old_password': ['Nieprawidłowe hasło.']
+        }, status=400)
+
+    # Walidacja: sprawdź długość nowego hasła
+    if len(new_password) < 8:
+        return Response({
+            'new_password': ['Hasło musi mieć minimum 8 znaków.']
+        }, status=400)
+
+    # Ustaw nowe hasło i zapisz
+    user.set_password(new_password)
+    user.save()
+
+    return Response({
+        'detail': 'Hasło zostało pomyślnie zmienione.'
+    }, status=200)

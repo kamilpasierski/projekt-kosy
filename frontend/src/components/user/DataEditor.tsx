@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { useAuth } from '../../hooks/useAuth';
 
-// Assets
-const IMG_DROPDOWN_ARROW = "https://www.figma.com/api/mcp/asset/a51e733a-42b8-4bf2-a9e2-ab6b4a1816d5";
-
 const DataEditor = () => {
   const { user } = useAuth();
 
@@ -13,6 +10,14 @@ const DataEditor = () => {
     username: '',
     email: ''
   });
+
+  // Stan dla zmiany hasła
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
 
   // Stan UI: czy trwa zapisywanie?
   const [isSaving, setIsSaving] = useState(false);
@@ -36,12 +41,109 @@ const DataEditor = () => {
     }));
   };
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // --- LOGIKA ZMIANY HASŁA ---
+  const handlePasswordSave = async () => {
+    setMessage(null);
+    setIsSaving(true);
+
+    try {
+      // Walidacja hasła
+      if (!passwordData.currentPassword) {
+        setMessage({ text: 'Podaj aktualne hasło.', type: 'error' });
+        setIsSaving(false);
+        return;
+      }
+
+      if (passwordData.newPassword.length < 8) {
+        setMessage({ text: 'Nowe hasło musi mieć minimum 8 znaków.', type: 'error' });
+        setIsSaving(false);
+        return;
+      }
+
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setMessage({ text: 'Nowe hasła nie są identyczne.', type: 'error' });
+        setIsSaving(false);
+        return;
+      }
+
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error("Brak tokena. Zaloguj się ponownie.");
+      }
+
+      const payload = {
+        old_password: passwordData.currentPassword,
+        new_password: passwordData.newPassword
+      };
+
+      await axios.patch('http://127.0.0.1:8000/api/users/change-password/', payload, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      setMessage({ text: '✓ Hasło zostało zmienione pomyślnie!', type: 'success' });
+      
+      // Reset password fields
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      setShowPasswordFields(false);
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+
+    } catch (error: unknown) {
+      console.error("Błąd zmiany hasła:", error);
+
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: { old_password?: string[], new_password?: string[], detail?: string } } };
+        
+        if (axiosError.response?.status === 401) {
+          setMessage({ text: 'Sesja wygasła. Wyloguj się i zaloguj ponownie.', type: 'error' });
+        } else if (axiosError.response?.data?.old_password) {
+          setMessage({ text: 'Nieprawidłowe aktualne hasło.', type: 'error' });
+        } else if (axiosError.response?.data?.new_password) {
+          setMessage({ text: `Błąd: ${axiosError.response.data.new_password[0]}`, type: 'error' });
+        } else if (axiosError.response?.data?.detail) {
+          setMessage({ text: axiosError.response.data.detail, type: 'error' });
+        } else {
+          setMessage({ text: 'Nie udało się zmienić hasła.', type: 'error' });
+        }
+      } else {
+        setMessage({ text: 'Nie udało się zmienić hasła.', type: 'error' });
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // --- LOGIKA ZAPISYWANIA ---
 const handleSave = async () => {
     setMessage(null);
     setIsSaving(true);
 
     try {
+      // Walidacja email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        setMessage({ text: 'Podaj prawidłowy adres email.', type: 'error' });
+        setIsSaving(false);
+        return;
+      }
+
       // 1. POPRAWKA: Używamy Twojej nazwy klucza z localStorage
       const token = localStorage.getItem('accessToken'); 
       
@@ -50,9 +152,10 @@ const handleSave = async () => {
         throw new Error("Brak tokena. Zaloguj się ponownie.");
       }
 
-      // Wysyłamy tylko username
+      // Wysyłamy username i email
       const payload = {
-        username: formData.username
+        username: formData.username,
+        email: formData.email
       };
 
       await axios.patch('http://127.0.0.1:8000/api/users/me/', payload, {
@@ -62,7 +165,12 @@ const handleSave = async () => {
         }
       });
 
-      setMessage({ text: 'Zapisano! Odśwież stronę (F5), aby zaktualizować baner.', type: 'success' });
+      setMessage({ text: '✓ Dane zostały pomyślnie zapisane!', type: 'success' });
+      
+      // Auto-hide success message after 5 seconds
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
       
     } catch (error: unknown) {
       console.error("Błąd zapisu:", error);
@@ -120,57 +228,108 @@ const handleSave = async () => {
             </div>
           </div>
 
-          {/* Password (STATIC) */}
+          {/* Password */}
           <div>
             <label className="font-montserrat font-medium text-[16px] text-white capitalize mb-2 block">
               Hasło
             </label>
-            <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center justify-between opacity-50 cursor-not-allowed">
-              <p className="font-montserrat font-medium text-[16px] text-white tracking-widest mt-1">
-                ************
-              </p>
-            </div>
+            {!showPasswordFields ? (
+              <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center justify-between">
+                <p className="font-montserrat font-medium text-[16px] text-white tracking-widest mt-1">
+                  ************
+                </p>
+                <button
+                  onClick={() => setShowPasswordFields(true)}
+                  className="text-[#274fde] hover:text-[#1e3eb5] font-montserrat font-medium text-[14px] transition-colors"
+                >
+                  Zmień hasło
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center transition-colors focus-within:border-[#274fde]">
+                  <input
+                    type="password"
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                    className="font-montserrat font-medium text-[16px] text-white w-full bg-transparent border-none outline-none placeholder-gray-500"
+                    placeholder="Aktualne hasło"
+                  />
+                </div>
+                <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center transition-colors focus-within:border-[#274fde]">
+                  <input
+                    type="password"
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                    className="font-montserrat font-medium text-[16px] text-white w-full bg-transparent border-none outline-none placeholder-gray-500"
+                    placeholder="Nowe hasło (min. 8 znaków)"
+                  />
+                </div>
+                <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center transition-colors focus-within:border-[#274fde]">
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    className="font-montserrat font-medium text-[16px] text-white w-full bg-transparent border-none outline-none placeholder-gray-500"
+                    placeholder="Potwierdź nowe hasło"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handlePasswordSave}
+                    disabled={isSaving}
+                    className={`flex-1 rounded-[50px] px-4 py-2 font-montserrat font-medium text-[14px] text-white transition-all ${
+                      isSaving ? 'bg-blue-900 cursor-wait' : 'bg-[#274fde] hover:bg-[#1e3eb5]'
+                    }`}
+                  >
+                    {isSaving ? 'Zapisywanie...' : 'Zapisz hasło'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowPasswordFields(false);
+                      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                    }}
+                    className="flex-1 rounded-[50px] px-4 py-2 font-montserrat font-medium text-[14px] text-white bg-[#555] hover:bg-[#666] transition-colors"
+                  >
+                    Anuluj
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Row 2: Email & Club */}
+        {/* Row 2: Email */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           
-          {/* Email (READ ONLY) */}
+          {/* Email */}
           <div>
             <label className="font-montserrat font-medium text-[16px] text-white capitalize mb-2 block">
               Email
             </label>
-            <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center opacity-50 cursor-not-allowed">
+            <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center transition-colors focus-within:border-[#274fde]">
               <input
                 type="email"
                 name="email"
                 value={formData.email}
-                disabled // Zablokowane
-                className="font-montserrat font-medium text-[16px] text-gray-400 w-full bg-transparent border-none outline-none"
+                onChange={handleChange}
+                className="font-montserrat font-medium text-[16px] text-white w-full bg-transparent border-none outline-none placeholder-gray-500"
+                placeholder="Email"
               />
-            </div>
-          </div>
-
-          {/* Favorite Club (STATIC) */}
-          <div>
-            <label className="font-montserrat font-medium text-[16px] text-white capitalize mb-2 block">
-              Ulubiony klub
-            </label>
-            <div className="bg-[#1f1f1f] border-[0.5px] border-[#222629] rounded-[30px] h-[59px] px-6 flex items-center justify-between cursor-pointer opacity-80 hover:opacity-100 transition-opacity">
-              <p className="font-montserrat font-medium text-[16px] text-white">
-                Legia Warszawa
-              </p>
-              <div className="w-[18px] h-[9px]">
-                <img alt="Dropdown" className="block w-full h-full" src={IMG_DROPDOWN_ARROW} />
-              </div>
             </div>
           </div>
         </div>
 
         {/* Feedback Message */}
         {message && (
-            <div className={`mb-6 text-center font-montserrat font-medium ${message.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+            <div className={`mb-6 p-4 rounded-[20px] text-center font-montserrat font-medium text-[16px] transition-all ${
+              message.type === 'success' 
+                ? 'bg-green-500/20 text-green-400 border border-green-500/50' 
+                : 'bg-red-500/20 text-red-400 border border-red-500/50'
+            }`}>
                 {message.text}
             </div>
         )}
