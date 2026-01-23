@@ -34,6 +34,7 @@ export default function RegisterForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [favoriteClub, setFavoriteClub] = useState('');
   const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // Fetch clubs on mount
   useEffect(() => {
@@ -66,6 +67,37 @@ export default function RegisterForm({
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
+    
+    // Validate passwords match on step 1
+    if (currentStep === 1) {
+      if (formData.password !== formData.re_password) {
+        setValidationError('Hasła nie są identyczne');
+        return;
+      }
+      
+      const password = formData.password;
+      const passwordErrors: string[] = [];
+      
+      if (password.length < 8) {
+        passwordErrors.push("Hasło musi składać się przynajmniej z 8 znaków.");
+      }
+      if (!/[A-Z]/.test(password)) {
+        passwordErrors.push("Hasło musi zawierać dużą literę.");
+      }
+      if (!/\d/.test(password)) {
+        passwordErrors.push("Hasło musi zawierać liczbę.");
+      }
+      if (/^[a-zA-Z0-9]*$/.test(password)) {
+        passwordErrors.push("Hasło musi zawierać znak specjalny.");
+      }
+      
+      if (passwordErrors.length > 0) {
+        setValidationError(passwordErrors.join(' '));
+        return;
+      }
+    }
+    
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -157,13 +189,20 @@ export default function RegisterForm({
             {/* Confirm Password Input */}
             <div className="relative">
               <input
-                className="w-full h-[59px] bg-[#343434] text-white placeholder-white rounded-[50px] px-6 pr-14 border border-[#343434] focus:border-[#274fde] focus:outline-none transition-all font-['Montserrat',sans-serif] font-medium text-[16px]"
+                className={`w-full h-[59px] bg-[#343434] text-white placeholder-white rounded-[50px] px-6 pr-14 border transition-all font-['Montserrat',sans-serif] font-medium text-[16px] focus:outline-none ${
+                  formData.re_password && formData.password !== formData.re_password
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-[#343434] focus:border-[#274fde]'
+                }`}
                 type={showConfirmPassword ? "text" : "password"}
                 id="re_password"
                 name="re_password"
                 placeholder="Wpisz ponownie hasło"
                 value={formData.re_password}
-                onChange={onChange}
+                onChange={(e) => {
+                  onChange(e);
+                  setValidationError(null);
+                }}
                 required
               />
               <button
@@ -179,11 +218,16 @@ export default function RegisterForm({
                 )}
               </button>
             </div>
+            {formData.re_password && formData.password !== formData.re_password && (
+              <p className="text-red-500 text-sm font-['Montserrat',sans-serif] -mt-3">
+                Hasła nie są identyczne
+              </p>
+            )}
 
             {/* Error Display */}
-            {error && (
+            {(error || validationError) && (
               <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm font-['Montserrat',sans-serif]">
-                {error}
+                {validationError || error}
               </div>
             )}
 
