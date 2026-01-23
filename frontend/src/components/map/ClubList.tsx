@@ -113,8 +113,8 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
       params.append('page', pageNumber.toString());
       const response = await api.get<{ results: Club[]; next: string | null }>(`/clubs/search/?${params.toString()}`);
       const data = response.data;
-      let newClubs = Array.isArray(data) ? data : (data?.results || []);
-      let hasNextPage = !!data?.next;
+      const newClubs = Array.isArray(data) ? data : (data?.results || []);
+      const hasNextPage = !!data?.next;
       if (isLoadMore) setClubs(prev => [...(prev || []), ...newClubs]);
       else setClubs(newClubs);
       setHasMore(hasNextPage);
@@ -195,6 +195,11 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
           )}
       </div>
 
+      {isLoading ? (
+        <div className="flex justify-center items-center py-12">
+          <p className="text-white text-lg">Ładowanie...</p>
+        </div>
+      ) : (
       <div className="relative w-full overflow-hidden bg-transparent">
         {/* NAGŁÓWEK TABELI */}
         <div className="hidden md:block border border-[#274FDE] rounded-t-[30px] bg-[#2A2A2A] overflow-hidden">
@@ -274,6 +279,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
