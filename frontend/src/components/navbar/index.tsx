@@ -59,7 +59,7 @@ const NavbarRigid = () => {
                 <Link to="/mapa" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px]  hover:text-[#274FDE] transition-colors whitespace-nowrap">
                     Mapa klubów
                 </Link>
-                <Link to="/obserwowani" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px]  hover:text-[#274FDE] transition-colors whitespace-nowrap">
+                <Link to="/obserwowane" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px]  hover:text-[#274FDE] transition-colors whitespace-nowrap">
                     Obserwowane
                 </Link>
             </div>
@@ -164,7 +164,7 @@ const NavbarRigid = () => {
                             Mapa klubów
                         </Link>
                         <Link 
-                            to="/obserwowani" 
+                            to="/obserwowane" 
                             className="text-white text-base font-semibold py-3 px-4 hover:bg-neutral-800 rounded-lg transition-colors"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
