@@ -137,7 +137,9 @@ const DataEditor = () => {
     setIsSaving(true);
 
     try {
-      const token = localStorage.getItem('accessToken');
+      let token = localStorage.getItem('accessToken');
+      if (!token) token = sessionStorage.getItem('accessToken');
+      
       if (!token) {
         throw new Error("Brak tokena. Zaloguj się ponownie.");
       }
@@ -151,6 +153,8 @@ const DataEditor = () => {
       // Wyloguj użytkownika i przekieruj
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
       window.location.href = '/';
 
     } catch (error: unknown) {
