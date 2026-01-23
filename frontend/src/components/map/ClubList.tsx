@@ -51,30 +51,25 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   useEffect(() => {
     const fetchContextData = async () => {
         try {
-            const promises: Promise<any>[] = [
+            const [relationsRes, userClubRes, watchedRes] = await Promise.allSettled([
                 api.get('/relations/'),
-                api.get('/clubs/user/')
-            ];
+                api.get('/clubs/user/'),
+                ...(user ? [api.get<WatchedClubItem[]>('/add_fav/watched_clubs')] : [])
+            ]);
 
-            if (user) {
-                promises.push(api.get<WatchedClubItem[]>('/add_fav/watched_clubs'));
+            if (relationsRes.status === 'fulfilled') {
+                setRelationsMap(parseRelationsToMap(relationsRes.value.data));
             }
 
-            const results = await Promise.allSettled(promises);
-
-            if (results[0].status === 'fulfilled') {
-                setRelationsMap(parseRelationsToMap(results[0].value.data));
-            }
-
-            if (results[1].status === 'fulfilled') {
-                const userData = results[1].value.data;
+            if (userClubRes.status === 'fulfilled') {
+                const userData = userClubRes.value.data;
                 if (userData && userData.club_name) {
                     setUserClub(userData.club_name);
                 }
             }
 
-            if (user && results[2] && results[2].status === 'fulfilled') {
-                const watchedData = results[2].value.data as WatchedClubItem[];
+            if (watchedRes && watchedRes.status === 'fulfilled') {
+                const watchedData = watchedRes.value.data as WatchedClubItem[];
                 const newMap = new Map<number, number>();
                 
                 watchedData.forEach(item => {
@@ -105,7 +100,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
       params.append('ordering', `${orderingPrefix}${sortField}`);
       params.append('page', pageNumber.toString());
 
-      const response = await api.get<any>(`/clubs/search/?${params.toString()}`);
+      const response = await api.get<{ results: Club[]; next: string | null }>(`/clubs/search/?${params.toString()}`);
       const data = response.data;
       
       let newClubs: Club[] = [];

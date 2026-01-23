@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         };
         initAuth();
-    }, []);
+    }, [fetchUserData]);
 
     // 2. Logowanie
     const login = async (access: string, refresh: string, remember: boolean) => {
