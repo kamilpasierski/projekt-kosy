@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { getClubImageUrl } from '../../utils/imageUtils';
+import api from '../../api/axiosConfig';
 
 interface FollowedClub {
   favoriteId: number;
   created_at: string;
+  mute: boolean;
   details: {
     id: number;
     name: string;
@@ -24,7 +26,7 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('default');
   const [notificationsEnabled, setNotificationsEnabled] = useState<Record<number, boolean>>(
-    clubs.reduce((acc, club) => ({ ...acc, [club.favoriteId]: true }), {})
+    clubs.reduce((acc, club) => ({ ...acc, [club.favoriteId]: !club.mute }), {})
   );
 
   const handleSortChange = (option: SortOption) => {
@@ -32,11 +34,29 @@ const FollowedClubsList = ({ clubs }: FollowedClubsListProps) => {
     setSortMenuOpen(false);
   };
 
-  const toggleNotifications = (favoriteId: number) => {
+  const toggleNotifications = async (favoriteId: number) => {
+    const currentValue = notificationsEnabled[favoriteId];
+    const newValue = !currentValue;
+    
+    // Optymistycznie zaktualizuj UI
     setNotificationsEnabled(prev => ({
       ...prev,
-      [favoriteId]: !prev[favoriteId]
+      [favoriteId]: newValue
     }));
+
+    try {
+      // Zaktualizuj bazę danych (mute jest odwrotnością włączonych powiadomień)
+      await api.patch(`/add_fav/watched_clubs/${favoriteId}/`, {
+        mute: !newValue
+      });
+    } catch (error) {
+      console.error('Failed to update notification settings:', error);
+      // Cofnij zmiany w przypadku błędu
+      setNotificationsEnabled(prev => ({
+        ...prev,
+        [favoriteId]: currentValue
+      }));
+    }
   };
 
   const getSortedClubs = () => {

@@ -14,7 +14,7 @@ class UserClubSerializer(serializers.ModelSerializer):
 class FavoriteClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteClub
-        fields = ['id', 'club', 'created_at']
+        fields = ['id', 'club', 'created_at', 'mute']
 
     def create(self, validated_data):
         user = self.context['request'].user

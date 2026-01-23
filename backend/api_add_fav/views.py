@@ -94,3 +94,22 @@ class AddFavoriteClubAPIView(APIView):
         favorite = get_object_or_404(FavoriteClub, pk=pk, user=request.user)
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, pk=None):
+        if pk is None:
+            return Response({"detail": "ID is required for update"}, status=status.HTTP_400_BAD_REQUEST)
+
+        favorite = get_object_or_404(FavoriteClub, pk=pk, user=request.user)
+        
+        if 'mute' in request.data:
+            favorite.mute = request.data['mute']
+            favorite.save()
+            
+            ActivityLog.objects.create(
+                user=request.user,
+                action="UPDATE_FAVORITE_MUTE",
+                object=f"Club: {favorite.club.name}",
+                details=f"Mute set to {favorite.mute}"
+            )
+            
+        return Response(FavoriteClubSerializer(favorite).data, status=status.HTTP_200_OK)

@@ -32,6 +32,7 @@ class TicketActionView(APIView):
 
         notifications = []
 
+        # Pobierz użytkowników, ale wyklucz tych którzy wyciszyli kluby
         users = User.objects.filter(
             Q(favorite_clubs__club__in=[ticket.club_a, ticket.club_b]) |
             Q(profile__club__in=[ticket.club_a, ticket.club_b]) |
@@ -45,15 +46,23 @@ class TicketActionView(APIView):
             # Utworzenie powiadomienia dla usera, któy stworzył ticketa (odrzucone)
 
             for user in users:
-                notifications.append(
-                    Notification(
-                        user=user,
-                        content=(
-                            f"Relacja między {ticket.club_a} a {ticket.club_b} "
-                            f"została odrzucona przez administratora."
+                # Sprawdź czy użytkownik wyciszył którykolwiek z klubów
+                has_muted = FavoriteClub.objects.filter(
+                    user=user,
+                    club__in=[ticket.club_a, ticket.club_b],
+                    mute=True
+                ).exists()
+                
+                if not has_muted:
+                    notifications.append(
+                        Notification(
+                            user=user,
+                            content=(
+                                f"Relacja między {ticket.club_a} a {ticket.club_b} "
+                                f"została odrzucona przez administratora."
+                            )
                         )
                     )
-                )
 
             Notification.objects.bulk_create(notifications)
 
@@ -81,15 +90,23 @@ class TicketActionView(APIView):
             # Utworzenie powiadomienia (zatwierdzone)
 
             for user in users:
-                notifications.append(
-                    Notification(
-                        user=user,
-                        content=(
-                            f"Relacja między {ticket.club_a} a {ticket.club_b} "
-                            f"została zaakceptowana przez administratora."
+                # Sprawdź czy użytkownik wyciszył którykolwiek z klubów
+                has_muted = FavoriteClub.objects.filter(
+                    user=user,
+                    club__in=[ticket.club_a, ticket.club_b],
+                    mute=True
+                ).exists()
+                
+                if not has_muted:
+                    notifications.append(
+                        Notification(
+                            user=user,
+                            content=(
+                                f"Relacja między {ticket.club_a} a {ticket.club_b} "
+                                f"została zaakceptowana przez administratora."
+                            )
                         )
                     )
-                )
 
             Notification.objects.bulk_create(notifications)
 
@@ -117,7 +134,7 @@ class UserNotificationsList(ListAPIView):
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')
 
-# change is_read status API
+# API do zmiany statusu is_read
 
 class NotificationMarkReadView(APIView):
     permission_classes = [IsAuthenticated]

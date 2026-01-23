@@ -7,9 +7,9 @@ import Description from "../../components/followed_clubs/Description";
 import FollowedClubsList from "../../components/followed_clubs/FollowedClubsList";
 import { useAuth } from "../../context/AuthContext";
 
-interface FavoriteClubRaw { id: number; club: number; created_at: string; }
+interface FavoriteClubRaw { id: number; club: number; created_at: string; mute: boolean; }
 interface ClubDetails { id: number; name: string; path_image?: string; }
-interface HydratedFavoriteClub { favoriteId: number; created_at: string; details: ClubDetails; }
+interface HydratedFavoriteClub { favoriteId: number; created_at: string; mute: boolean; details: ClubDetails; }
 
 const FollowedClubsScene = () => {
     const navigate = useNavigate();
@@ -39,6 +39,7 @@ const FollowedClubsScene = () => {
                         .then(res => ({
                             favoriteId: item.id,
                             created_at: item.created_at,
+                            mute: item.mute,
                             details: res.data
                         }))
                         .catch(err => {

@@ -49,15 +49,24 @@ def relation_update_view(request):
             Q(favorite_clubs__club__in=[club_a, club_b]) | Q(profile__club__in=[club_a, club_b])
         ).distinct()
 
-        notifications = [
-            Notification(
+        notifications = []
+        for user in watchers:
+            # Sprawdź czy użytkownik wyciszył którykolwiek z klubów
+            has_muted = FavoriteClub.objects.filter(
                 user=user,
-                content=(
-                    f"Relacja między {club_a.name} a {club_b.name} została zmieniona na {obj.relation_type}."
+                club__in=[club_a, club_b],
+                mute=True
+            ).exists()
+            
+            if not has_muted:
+                notifications.append(
+                    Notification(
+                        user=user,
+                        content=(
+                            f"Relacja między {club_a.name} a {club_b.name} została zmieniona na {obj.relation_type}."
+                        )
+                    )
                 )
-            )
-            for user in watchers
-        ]
 
         if notifications:
             Notification.objects.bulk_create(notifications)
