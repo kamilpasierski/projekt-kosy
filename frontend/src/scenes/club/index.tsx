@@ -42,29 +42,31 @@ export default function ClubPage() {
     fetchDetails();
   }, [id]);
 
-  if (loading) return <div className="text-white text-center mt-10">Ładowanie danych klubu...</div>;
-  if (!clubData) return <div className="text-red-500 text-center mt-10">Nie znaleziono klubu.</div>;
+  if (loading) return <div className="text-white text-center mt-10 px-4">Ładowanie danych klubu...</div>;
+  if (!clubData) return <div className="text-red-500 text-center mt-10 px-4">Nie znaleziono klubu.</div>;
 
   const fullLogoUrl = getClubImageUrl(clubData.path_image);
 
   return (
-    <div className="w-full">
-      <Baner 
-        clubName={clubData.name} 
-        logoImage={fullLogoUrl} 
-      />
-      
-      <Description 
-        description={clubData.desc} 
-      />
-      
-      <Relations 
-        kosaClubs={clubData.kosy}
-        zgodaClubs={clubData.zgody}
-        neutralClubs={clubData.neutralne}
-      />
-      
-      {/*<MatchesTable /> CZEKAMY NA API */}
+    <div className="w-full min-h-screen">
+      <div className="mx-auto max-w-[1440px]">
+        <Baner 
+          clubName={clubData.name} 
+          logoImage={fullLogoUrl} 
+        />
+        
+        <Description 
+          description={clubData.desc} 
+        />
+        
+        <Relations 
+          kosaClubs={clubData.kosy}
+          zgodaClubs={clubData.zgody}
+          neutralClubs={clubData.neutralne}
+        />
+        
+        {/*<MatchesTable /> CZEKAMY NA API */}
       </div>
+    </div>
   );
 }
