@@ -36,7 +36,7 @@ export const useClubFollow = (clubId: number, initialFollowedId: number | null =
                 setIsFollowed(false);
                 setFollowedRelationId(null);
             } else {
-                const response = await api.post<FollowResponse>(ENDPOINT, {
+                const response = await api.post<FollowResponse>(`${ENDPOINT}/`, {
                     club: clubId
                 });
                 setIsFollowed(true);
