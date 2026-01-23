@@ -1,13 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
-
-interface RelationEditorContextType {
-  isOpen: boolean;
-  openEditor: (relationId?: number) => void;
-  closeEditor: () => void;
-  targetId: number | null;
-}
-
-const RelationEditorContext = createContext<RelationEditorContextType | undefined>(undefined);
+import { useState, type ReactNode } from 'react';
+import { RelationEditorContext } from './RelationEditorContextTypes';
 
 export const RelationEditorProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,13 +20,4 @@ export const RelationEditorProvider = ({ children }: { children: ReactNode }) =>
       {children}
     </RelationEditorContext.Provider>
   );
-};
-
-// Custom Hook dla DX
-export const useRelationEditor = () => {
-  const context = useContext(RelationEditorContext);
-  if (!context) {
-    throw new Error('useRelationEditor must be used within a RelationEditorProvider');
-  }
-  return context;
 };

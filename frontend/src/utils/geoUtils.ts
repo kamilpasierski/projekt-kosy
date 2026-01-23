@@ -28,7 +28,7 @@ export interface SafetyAnalysisResult {
 
 // --- HELPERY ---
 
-export const parseRelationsToMap = (rawData: any[]): RelationsMap => {
+export const parseRelationsToMap = (rawData: { club_a_name: string; club_b_name: string; relation_type: string }[]): RelationsMap => {
     const map: RelationsMap = {};
     
     rawData.forEach(rel => {
@@ -70,7 +70,7 @@ export const analyzeSafety = (
 
         try {
             // Normalizacja: API [Lat, Lng] -> Turf [Lng, Lat]
-            const rawCoords = t.polygon.map((c: any) => [c[1], c[0]]);
+            const rawCoords = t.polygon.map((c: number[]) => [c[1], c[0]]);
             let geometry;
 
             // Naprawa geometrii

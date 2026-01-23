@@ -1,4 +1,4 @@
-import { useRelationEditor } from '../../context/RelationEditorContext';
+import { useRelationEditor } from '../../hooks/useRelationEditor';
 import { Modal } from '../ui/Modal';
 // Zakładam, że Twój formularz jest w tym miejscu:
 import RelationEditor from '../admin/RelationEditor'; 
