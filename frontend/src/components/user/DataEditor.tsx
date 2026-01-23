@@ -18,6 +18,7 @@ const DataEditor = () => {
     confirmPassword: ''
   });
   const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Stan UI: czy trwa zapisywanie?
   const [isSaving, setIsSaving] = useState(false);
@@ -127,6 +128,50 @@ const DataEditor = () => {
       }
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // --- LOGIKA USUWANIA KONTA ---
+  const handleDeleteAccount = async () => {
+    setMessage(null);
+    setIsSaving(true);
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error("Brak tokena. Zaloguj się ponownie.");
+      }
+
+      await axios.delete('http://127.0.0.1:8000/api/users/me/delete/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      // Wyloguj użytkownika i przekieruj
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/';
+
+    } catch (error: unknown) {
+      console.error("Błąd usuwania konta:", error);
+
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: { detail?: string } } };
+        
+        if (axiosError.response?.status === 401) {
+          setMessage({ text: 'Sesja wygasła. Wyloguj się i zaloguj ponownie.', type: 'error' });
+        } else if (axiosError.response?.data?.detail) {
+          setMessage({ text: axiosError.response.data.detail, type: 'error' });
+        } else {
+          setMessage({ text: 'Nie udało się usunąć konta.', type: 'error' });
+        }
+      } else {
+        setMessage({ text: 'Nie udało się usunąć konta.', type: 'error' });
+      }
+    } finally {
+      setIsSaving(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -346,12 +391,45 @@ const handleSave = async () => {
           </button>
 
           <button 
+            onClick={() => setShowDeleteConfirm(true)}
             className="bg-[#8a2525] rounded-[50px] px-8 py-3 font-montserrat font-semibold text-[18px] text-white text-center leading-[1.3] hover:bg-[#6d1d1d] transition-colors"
           >
             Usuń konto
           </button>
         </div>
       </div>
+
+      {/* Modal potwierdzenia usunięcia konta */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-[#2a2a2a] rounded-[30px] p-8 max-w-md mx-4 border border-[#8a2525]/50">
+            <h3 className="font-montserrat font-semibold text-[24px] text-white mb-4">
+              Czy na pewno chcesz usunąć konto?
+            </h3>
+            <p className="font-montserrat font-medium text-[16px] text-gray-300 mb-6">
+              Ta operacja jest nieodwracalna. Wszystkie Twoje dane zostaną trwale usunięte.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={handleDeleteAccount}
+                disabled={isSaving}
+                className={`flex-1 rounded-[50px] px-6 py-3 font-montserrat font-semibold text-[16px] text-white transition-all ${
+                  isSaving ? 'bg-red-900 cursor-wait' : 'bg-[#8a2525] hover:bg-[#6d1d1d]'
+                }`}
+              >
+                {isSaving ? 'Usuwanie...' : 'Tak, usuń konto'}
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isSaving}
+                className="flex-1 rounded-[50px] px-6 py-3 font-montserrat font-semibold text-[16px] text-white bg-[#555] hover:bg-[#666] transition-colors disabled:opacity-50"
+              >
+                Anuluj
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

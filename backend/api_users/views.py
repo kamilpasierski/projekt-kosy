@@ -26,6 +26,24 @@ def getCurrentUser(request):
     return Response(serializer.data)
 
 
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def deleteAccount(request):
+    """Endpoint do usunięcia konta użytkownika"""
+    user = request.user
+    user_id = user.id
+    
+    try:
+        user.delete()
+        return Response({
+            'detail': f'Konto użytkownika {user_id} zostało pomyślnie usunięte.'
+        }, status=200)
+    except Exception as e:
+        return Response({
+            'detail': f'Błąd podczas usuwania konta: {str(e)}'
+        }, status=500)
+
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def changePassword(request):
