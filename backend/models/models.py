@@ -39,7 +39,7 @@ class Notification(models.Model):
     content = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    muting = models.BooleanField(default=False)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
@@ -91,7 +91,7 @@ class FavoriteClub(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_clubs')
     club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='favorited_by')
     created_at = models.DateTimeField(auto_now_add=True)
-
+    mute = models.BooleanField(default=False)
     class Meta:
         unique_together = ('user', 'club')
 
