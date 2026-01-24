@@ -58,7 +58,7 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "https://projekt-kosy-m4e6.onrender.com/",
 ]
 
 ROOT_URLCONF = 'Pilkarskie_Kosy.urls'
