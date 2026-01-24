@@ -19,8 +19,6 @@ __pycache__/
 backend/db_storage/db.sqlite3
 .env
 !backend/.env.example
-media/
-backend/media/
 staticfiles/
 backend/staticfiles/
 node_modules/
