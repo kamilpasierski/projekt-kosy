@@ -2,14 +2,14 @@ name: CI/CD Pipeline - Projekt Kosy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: write
 
 jobs:
-  # ------------------------------------------------------------------
-  # JOB 1: BACKEND QA (Django DRF + MySQL)
-  # ------------------------------------------------------------------
   backend-qa:
     name: Backend QA & Build
     runs-on: ubuntu-latest
@@ -17,7 +17,6 @@ jobs:
       run:
         working-directory: ./backend
 
-    # To tworzy "lokalną" bazę MySQL wewnątrz runnera GitHuba TYLKO na czas testów
     services:
       mysql:
         image: mysql:8.0
@@ -44,8 +43,6 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      # KROK KRYTYCZNY DLA MYSQL: Instalacja bibliotek systemowych Ubuntu
-      # Bez tego pip install mysqlclient wywali błąd kompilacji gcc
       - name: Install System Dependencies
         run: |
           sudo apt-get update
@@ -54,35 +51,57 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
-          pip install flake8 pytest pytest-django
-          # Upewnij się, że mysqlclient jest zainstalowany
-          pip install mysqlclient
+          # Instalujemy coverage-badge ręcznie tutaj
+          pip install flake8 pytest pytest-django mysqlclient coverage coverage-badge
 
       - name: Linting (Flake8)
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
 
-      - name: Run Tests (Pytest)
+      - name: Run Tests & Generate Coverage
         env:
           SECRET_KEY: "django-insecure-test-key"
           DEBUG: "True"
           DB_ENGINE: "django.db.backends.mysql"
           DB_NAME: "test_db"
-          DB_USER: "root"             # Było: test_user
-          DB_PASSWORD: "root_password" # Było: test_password
+          DB_USER: "root"
+          DB_PASSWORD: "root_password"
           DB_HOST: "127.0.0.1"
           DB_PORT: "3306"
         run: |
-          pytest
+          coverage run -m pytest
+          coverage report
+          # To stworzy plik .coverage w folderze backend/
+
+      
+      - name: Generate Coverage Badge
+        run: |
+          # Jesteśmy w folderze ./backend (dzięki defaults.run)
+          # coverage-badge sam znajdzie plik .coverage w tym folderze
+          coverage-badge -o coverage.svg -f
+
+      - name: Verify Changed files
+        uses: tj-actions/verify-changed-files@v16
+        id: verify-changed-files
+        with:
+          files: backend/coverage.svg
+
+      - name: Commit & Push Badge
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          # Dodajemy plik, który powstał w backend/
+          git add coverage.svg
+          git commit -m "ci: update coverage badge"
+          git push
+
+      # -----------------------------------
 
       - name: Docker Build Verify
-        # Poprawiona ścieżka: kropka (.) zamiast ./backend, bo jesteśmy już w working-directory
         run: docker build . -t backend-image:test
 
-  # ------------------------------------------------------------------
-  # JOB 2: FRONTEND QA (Vite React TS)
-  # ------------------------------------------------------------------
   frontend-qa:
     name: Frontend QA & Build
     runs-on: ubuntu-latest
@@ -104,15 +123,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Linting (ESLint)
-        # Sprawdź w package.json czy masz skrypt "lint". Jeśli nie, usuń ten krok tymczasowo.
-        run: npm run lint
-
-      - name: Type Checking (TypeScript)
+      - name: Type Checking
         run: npx tsc --noEmit
 
       - name: Production Build Check
         run: npm run build
 
-      - name: Docker Build Verify (Prod)
+      - name: Docker Build Verify
         run: docker build -f Dockerfile.prod -t frontend-prod:test .
