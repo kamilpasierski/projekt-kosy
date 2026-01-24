@@ -21,8 +21,8 @@ export default function ProfilePage() {
 
 
       <Baner
-        userName={user.username}
-        avatarImage={user.avatar}
+        username={user.username}
+        is_staff={user.is_staff}
       />
 
 
