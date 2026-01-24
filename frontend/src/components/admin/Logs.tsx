@@ -20,7 +20,6 @@ const Logs: React.FC = () => {
   useEffect(() => {
     fetchLogs();
 
-    // Logika dostosowująca ilość elementów do ekranu
     const updateItemsPerPage = () => {
       window.innerWidth < 1024 ? setItemsPerPage(1) : setItemsPerPage(6);
     };
@@ -56,7 +55,6 @@ const Logs: React.FC = () => {
   const handlePrevPage = () => { if (currentPage > 1) setCurrentPage(currentPage - 1); };
   const handleNextPage = () => { if (currentPage < totalPages) setCurrentPage(currentPage + 1); };
 
-  // --- LOGIKA PAGINACJI Z WIELOKROPKIEM (1 2 3 ... Ostatnia) ---
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     if (totalPages <= 7) {
@@ -73,14 +71,14 @@ const Logs: React.FC = () => {
     return pages;
   };
 
-  if (loading) return <div className="text-white text-center py-20 font-montserrat">Ładowanie logów...</div>;
+  if (loading) return <div className="text-white text-center py-20 font-montserrat antialiased">Ładowanie logów...</div>;
 
   return (
-    /* Główny kontener - Sztywne 1180px i mt-[50px] */
+
     <div className="w-full max-w-[1180px] mx-auto mt-[50px] mb-[120px] font-montserrat antialiased">
 
-      {/* Tytuł - mb-[10px] zamiast py-10 dla idealnego odstępu */}
-      <h2 className="text-[20px] font-medium uppercase text-white py-10 tracking-normal">
+
+      <h2 className="text-[20px] font-medium uppercase text-white pt-10 py-10 tracking-normal">
         logi aplikacji
       </h2>
 
@@ -99,47 +97,57 @@ const Logs: React.FC = () => {
               <div className="text-center text-[16px] font-medium text-white">Szczegóły</div>
             </div>
 
-            {/* Body z wierszami min-h-[80px] i separatorami 0.8px */}
+
             <div className="bg-[#343434] divide-y divide-[#274FDE]/40">
               {currentLogs.map((log) => (
                 <div key={log.id} className="grid grid-cols-[1.1fr_0.8px_1fr_0.8px_1.1fr_0.8px_1.4fr_0.8px_1.4fr] items-center min-h-[80px] hover:bg-white/5 transition-colors">
                   <div className="text-center text-white text-[16px] font-medium px-2">{formatDate(log.created_at)}</div>
                   <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
-                  <div className="text-center text-white text-[16px] font-medium px-2">{log.user}</div>
+
+
+                  <div className="text-center text-white text-[16px] font-medium px-4 break-all leading-tight">
+                    {log.user}
+                  </div>
+
                   <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
                   <div className="text-center text-white text-[16px] font-medium px-2">{log.action}</div>
                   <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
-                  <div className="text-center text-white text-[16px] font-medium px-4 whitespace-pre-wrap">{log.object}</div>
+
+                  <div className="text-center text-white text-[16px] font-medium px-4 break-words leading-tight">
+                    {log.object}
+                  </div>
+
                   <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
-                  <div className="text-center text-white text-[16px] font-medium px-4">{log.details}</div>
+
+                  <div className="text-center text-white text-[16px] font-medium px-4 break-words leading-tight">
+                    {log.details}
+                  </div>
                 </div>
               ))}
 
-              {/* PUSTE WIERSZE - Utrzymują stałą wysokość tabeli */}
               {Array.from({ length: Math.max(0, itemsPerPage - currentLogs.length) }).map((_, i) => (
                 <div key={`empty-${i}`} className="h-[80px] grid grid-cols-1 opacity-0"><div>-</div></div>
               ))}
             </div>
           </div>
 
-          {/* --- WIDOK MOBILNY (KARTY) --- */}
+          {/* --- WIDOK MOBILNY --- */}
           <div className="lg:hidden space-y-4">
             {currentLogs.map((log) => (
               <div key={log.id} className="bg-[#343434] rounded-[20px] p-6 border border-[#274FDE]/20">
                 <div className="flex justify-between text-[#888] text-[12px] mb-4">
                   <span>{formatDate(log.created_at)}</span>
-                  <span>{log.user}</span>
+                  <span className="break-all ml-4">{log.user}</span>
                 </div>
                 <div className="text-white space-y-3">
                   <div><span className="text-[#888] block text-[11px] uppercase mb-1">Akcja:</span> {log.action}</div>
-                  <div><span className="text-[#888] block text-[11px] uppercase mb-1">Obiekt:</span> {log.object}</div>
-                  {log.details && <div><span className="text-[#888] block text-[11px] uppercase mb-1">Szczegóły:</span> {log.details}</div>}
+                  <div className="break-words"><span className="text-[#888] block text-[11px] uppercase mb-1">Obiekt:</span> {log.object}</div>
+                  {log.details && <div className="break-words"><span className="text-[#888] block text-[11px] uppercase mb-1">Szczegóły:</span> {log.details}</div>}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* --- PAGINACJA (35x35px, Radius 10px) --- */}
           <div className="flex items-center justify-center gap-[10px] mt-8">
             <button onClick={handlePrevPage} disabled={currentPage === 1} className="bg-[#2a2a2a] rounded-[10px] w-[35px] h-[35px] flex items-center justify-center disabled:opacity-50 hover:bg-[#3a3a3a] transition-colors">
               <ChevronLeftIcon className="w-5 h-5 text-white" />

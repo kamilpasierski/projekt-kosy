@@ -116,33 +116,37 @@ const NavbarRigid = () => {
                             </button>
 
                             {isDropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <div className="absolute right-0 mt-4 w-[271px] h-[230px] bg-[#343434] rounded-[30px] shadow-[-8px_4px_5px_3px_rgba(0,0,0,0.32)] py-8 z-50 flex flex-col font-montserrat overflow-hidden">
                                     <button
                                         onClick={() => {
                                             navigate('/profile');
                                             setIsDropdownOpen(false);
                                         }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
+                                        className="w-full text-left px-9 py-3 text-[16px] font-medium text-white hover:bg-neutral-700/30 flex items-center gap-4 transition-colors"
                                     >
-                                        <UserIcon className="w-4 h-4" />
+                                        <UserIcon className="w-5 h-5" />
                                         Mój profil
                                     </button>
                                     <button
                                         onClick={() => {
                                             openEditor();
                                             setIsDropdownOpen(false);
-                                        }}    
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
- 
+                                        }}
+                                        className="w-full text-left px-9 py-3 text-[16px] font-medium text-white hover:bg-neutral-700/30 flex items-center gap-4 transition-colors"
+
                                     >
-                                        <InformationCircleIcon className="w-4 h-4" />
+                                        <InformationCircleIcon className="w-5 h-5" />
                                         Zgłoś zmianę
                                     </button>
+
+                                    {/* Separator z Figmy */}
+                                    <div className="h-[1px] w-[200px] bg-[#464646] mx-auto my-3 shrink-0"></div>
+
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
+                                        className="w-full text-left px-9 py-3 text-[16px] font-medium text-[#983E3E] hover:bg-neutral-700/30 flex items-center gap-4 transition-colors"
                                     >
-                                        <ArrowRightStartOnRectangleIcon className="w-4 h-4" />
+                                        <ArrowRightStartOnRectangleIcon className="w-5 h-5 text-[#983E3E]" />
                                         Wyloguj się
                                     </button>
                                 </div>
