@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { BellIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
+import { API_BASE_URL } from '../../utils/config';
 
 // --- Types ---
 export interface Notification {
@@ -63,7 +64,7 @@ export const Notifications = () => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:8000/api/notifications/', {
+      const response = await axios.get(`${API_BASE_URL}/notifications/`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -121,7 +122,7 @@ export const Notifications = () => {
     try {
       const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
       await axios.patch(
-        `http://localhost:8000/api/tickets/notifications/${notificationId}/read/`,
+        `${API_BASE_URL}/tickets/notifications/${notificationId}/read/`,
         {},
         {
           headers: {
