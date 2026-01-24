@@ -58,7 +58,7 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://projekt-kosy-m4e6.onrender.com/",
+    "https://projekt-kosy-m4e6.onrender.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -66,7 +66,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://projekt-kosy.onrender.com"
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 

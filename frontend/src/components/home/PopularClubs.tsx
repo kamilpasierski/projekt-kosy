@@ -12,7 +12,7 @@ interface Club {
   points: number;
 }
 
-const MEDIA_URL = 'https://projekt-kosy.onrender.com/';
+const MEDIA_URL = 'https://projekt-kosy.onrender.com';
 
 export default function PopularClubs() {
   const [clubs, setClubs] = useState<Club[]>([]);
