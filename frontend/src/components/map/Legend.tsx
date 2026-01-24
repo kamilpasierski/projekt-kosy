@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface LegendItem {
   label: string;
   color: string;
@@ -15,7 +17,7 @@ const defaultItems: LegendItem[] = [
   { label: "BRAK DANYCH", color: "#6b7280" },
 ];
 
-export default function Legend({
+function Legend({
   title = "LEGENDA :",
   items = defaultItems
 }: LegendProps) {
@@ -47,3 +49,5 @@ export default function Legend({
     </div>
   );
 }
+
+export default memo(Legend);
