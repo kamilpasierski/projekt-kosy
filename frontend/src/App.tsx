@@ -3,6 +3,7 @@ import Home from "./scenes/home";
 import AuthScene from "./scenes/auth";
 import MapScene from "./scenes/map";
 import ClubPage from "./scenes/club";
+import AboutUs from "./scenes/about_us";
 import 'leaflet/dist/leaflet.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import {AuthProvider} from "./context/AuthContext.tsx";
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/mapa" element={<MapScene />} />
                     <Route path="/club/:id" element={<ClubPage />} />
                     <Route path="/obserwowane" element={<FollowedClubsScene />} />
+                    <Route path="/o-nas" element={<AboutUs />} />
                     <Route path="/profile" element={
                         <ProtectedRoute>
                             <ProfilePage />

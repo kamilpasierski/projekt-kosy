@@ -13,7 +13,7 @@ interface FooterProps {
 const defaultLinks: FooterLink[] = [
   { label: "Strona główna", href: "/" },
   { label: "Kluby", href: "/mapa" },
-  { label: "O nas", href: "/" },
+  { label: "O nas", href: "/o-nas" },
 ];
 
 export default function Footer({
