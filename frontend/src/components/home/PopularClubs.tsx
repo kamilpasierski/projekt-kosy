@@ -1,5 +1,8 @@
+
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL, MEDIA_URL } from '../../utils/config';
+
 
 interface Club {
   id: number;
@@ -8,9 +11,6 @@ interface Club {
   path_image: string;
   points: number;
 }
-
-const API_BASE_URL = 'http://127.0.0.1:8000';
-const MEDIA_URL = `${API_BASE_URL}`;
 
 export default function PopularClubs() {
   const [clubs, setClubs] = useState<Club[]>([]);
