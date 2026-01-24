@@ -22,17 +22,26 @@ const Backdrop = ({ onClick }: { onClick: () => void }) => (
 
 const NotificationItem = ({
   notification,
-  onMarkAsRead
+  onMarkAsRead,
+  onDelete
 }: {
   notification: Notification;
   onMarkAsRead: (id: string) => void;
+  onDelete: (id: string) => void;
 }) => {
   const isApproved = notification.content.toLowerCase().includes('zatwierdzono');
   const isRisk = notification.content.toLowerCase().includes('ryzyko');
   const strokeColor = isApproved ? '#20CA5F' : isRisk ? '#CB0000' : '#464646';
 
   return (
-    <div className="relative flex items-start gap-4 p-5 transition-all cursor-default group hover:bg-white/5">
+    <div 
+      className={`relative flex items-start gap-4 p-5 transition-all cursor-default group hover:bg-white/5 ${!notification.is_read ? 'border-l-4 border-red-500' : ''}`}
+      onMouseEnter={() => {
+        if (!notification.is_read) {
+          onMarkAsRead(notification.id);
+        }
+      }}
+    >
       {/* Kółko ikony */}
       <div
         className="w-[30px] h-[30px] rounded-full flex-shrink-0 bg-[#464646] border-[0.5px] flex items-center justify-center mt-1"
@@ -51,11 +60,11 @@ const NotificationItem = ({
         </span>
       </div>
 
-      {/* PRZYCISK X: Oznacza jako przeczytane i "zamyka" (usuwa z widoku nieprzeczytanych) */}
+      {/* PRZYCISK X: Usuwa powiadomienie z listy */}
       <button
         onClick={(e) => {
           e.stopPropagation();
-          onMarkAsRead(notification.id);
+          onDelete(notification.id);
         }}
         className="absolute right-4 top-5 text-gray-500 hover:text-white transition-colors p-1"
       >
@@ -85,7 +94,9 @@ export const Notifications = () => {
       const response = await axios.get('http://localhost:8000/api/notifications/', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      setNotifications(response.data);
+      // Filter to only show unread notifications
+      const unreadOnly = response.data.filter((n: Notification) => !n.is_read);
+      setNotifications(unreadOnly);
     } catch (error) {
       console.error("Błąd pobierania", error);
     } finally {
@@ -127,6 +138,18 @@ export const Notifications = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
+  // Disable body scrolling when notifications are open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   const markAsRead = async (notificationId: string) => {
     try {
       const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
@@ -141,6 +164,15 @@ export const Notifications = () => {
 
     } catch (error) {
       console.error("Błąd oznaczania", error);
+    }
+  };
+
+  const deleteNotification = (notificationId: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    // Aktualizuj licznik widzianych jeśli usunięte powiadomienie było nieprzeczytane
+    const notification = notifications.find(n => n.id === notificationId);
+    if (notification && !notification.is_read) {
+      setLastSeenCount(prev => Math.max(0, prev - 1));
     }
   };
 
@@ -201,22 +233,23 @@ export const Notifications = () => {
             <div className="max-h-[500px] overflow-y-auto divide-y divide-[#464646]">
               {isLoading ? (
                 <div className="p-10 text-center text-white">Ładowanie...</div>
-              ) : unreadNotifications.length === 0 ? (
+              ) : notifications.length === 0 ? (
                 <div className="h-[250px] flex flex-col items-center justify-center text-center px-10">
                   <BellIcon className="w-14 h-14 text-[#939393] mb-4 opacity-10" />
                   <p className="text-white text-[15px] font-bold mb-2 tracking-[0.05em]">
-                    Nie masz nowych powiadomień
+                    Nie masz powiadomień
                   </p>
                   <p className="text-white text-[13px] font-normal opacity-60">
-                    Wszystkie wiadomości zostały przeczytane.
+                    Brak powiadomień do wyświetlenia.
                   </p>
                 </div>
               ) : (
-                unreadNotifications.map((notification) => (
+                notifications.map((notification) => (
                   <NotificationItem
                     key={notification.id}
                     notification={notification}
                     onMarkAsRead={markAsRead}
+                    onDelete={deleteNotification}
                   />
                 ))
               )}
