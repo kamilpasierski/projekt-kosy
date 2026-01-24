@@ -158,7 +158,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
 
   return (
     <div className="relative w-full py-6 md:py-8 antialiased">
-      <h2 className="mb-4 md:mb-[40px] text-lg md:text-[20px] font-medium uppercase text-white tracking-widest leading-[130%]">
+      <h2 className="mb-4 md:mb-[40px] text-lg md:text-[20px] font-medium uppercase text-white leading-[130%]">
         Lista klubów
       </h2>
 

@@ -13,25 +13,23 @@ interface RelationOption {
 }
 
 const RELATION_OPTIONS: RelationOption[] = [
-    { type: 'kosa', label: 'KOSA', color: 'bg-red-700' },
-    { type: 'zgoda', label: 'ZGODA', color: 'bg-green-600' },
-    { type: 'neutralnie', label: 'NEUTRALNIE', color: 'bg-yellow-400' },
+    { type: 'kosa', label: 'KOSA', color: 'bg-[#CB0000]' },
+    { type: 'zgoda', label: 'ZGODA', color: 'bg-[#20CA5F]' },
+    { type: 'neutralnie', label: 'NEUTRALNIE', color: 'bg-[#FBF201]' },
 ];
 
 interface RelationEditorProps {
     relationId?: number | null;
     onSuccess?: () => void;
     onCancel?: () => void;
-    
-    // Czy to tryb administratora (bezpośredni zapis)?
-    isDirectMode?: boolean; 
+    isDirectMode?: boolean;
 }
 
-const RelationEditor: React.FC<RelationEditorProps> = ({ 
-    relationId: propId, 
-    onSuccess, 
+const RelationEditor: React.FC<RelationEditorProps> = ({
+    relationId: propId,
+    onSuccess,
     onCancel,
-    isDirectMode = false 
+    isDirectMode = false
 }) => {
     const { id: urlId } = useParams();
     const navigate = useNavigate();
@@ -39,22 +37,17 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
     const effectiveId = propId !== undefined ? propId : (urlId ? Number(urlId) : null);
     const isEditMode = effectiveId !== null;
 
-    // --- STATE ---
     const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isSuccess, setIsSuccess] = useState(false);
-    
-    // NOWY STAN: Liczba automatycznie rozwiązanych zgłoszeń (zwracana przez Backend)
     const [resolvedCount, setResolvedCount] = useState<number>(0);
 
-    // Form State
     const [selectedClubA, setSelectedClubA] = useState<string>('');
     const [selectedClubB, setSelectedClubB] = useState<string>('');
     const [relationType, setRelationType] = useState<RelationType | null>(null);
     const [description, setDescription] = useState('');
 
-    // --- 1. POBIERANIE DANYCH ---
     useEffect(() => {
         const fetchClubs = async () => {
             try {
@@ -68,7 +61,6 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         fetchClubs();
     }, []);
 
-    // --- 2. OBSŁUGA ZAPISU ---
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMessage(null);
@@ -87,38 +79,23 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
             club_a: clubAObj.name,
             club_b: clubBObj.name,
             relation: relationType,
-            description: description // W trybie Admina to jest "admin_response"
+            description: description
         };
 
         try {
             if (isDirectMode) {
-                // Tryb Admina: Zapisuje relację i odbiera info o zamkniętych ticketach
                 const response = await relationsApi.updateRelationDirectly(payload);
-                
-                // Backend zwraca np: { status: "success", tickets_resolved: 5, ... }
                 if (response && typeof response.tickets_resolved === 'number') {
                     setResolvedCount(response.tickets_resolved);
                 }
             } else {
-                // Tryb Usera: Tworzy ticket
                 await relationsApi.createTicket(payload);
             }
-
             setIsSuccess(true);
-            
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const data = error.response.data;
-                if (data.non_field_errors) {
-                    setErrorMessage(data.non_field_errors.join(' '));
-                } else if (Array.isArray(data)) {
-                    setErrorMessage(data.join(' '));
-                } else {
-                    const details = Object.entries(data)
-                        .map(([key, msg]) => `${key}: ${msg}`)
-                        .join(', ');
-                    setErrorMessage(details || "Wystąpił błąd walidacji danych.");
-                }
+                setErrorMessage(typeof data === 'string' ? data : "Wystąpił błąd zapisu.");
             } else {
                 setErrorMessage("Błąd połączenia z serwerem.");
             }
@@ -127,19 +104,14 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         }
     };
 
-   const handleCloseSuccess = () => {
+    const handleCloseSuccess = () => {
         setIsSuccess(false);
-
         setSelectedClubA('');
         setSelectedClubB('');
         setRelationType(null);
         setDescription('');
-        
         setResolvedCount(0);
-        
-        if (onSuccess) {
-            onSuccess();
-        }
+        if (onSuccess) onSuccess();
     };
 
     const handleCancel = () => {
@@ -147,18 +119,16 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         else navigate(-1);
     };
 
-    // --- TEKSTY DYNAMICZNE ---
-    const titleText = isDirectMode 
-        ? (isEditMode ? `EDYCJA RELACJI #${effectiveId}` : 'ZARZĄDZANIE RELACJĄ')
+    const titleText = isDirectMode
+        ? (isEditMode ? `EDYCJA RELACJI #${effectiveId}` : 'EDYTOR RELACJI')
         : (isEditMode ? `EDYCJA ZGŁOSZENIA` : 'NOWA RELACJA (ZGŁOSZENIE)');
-        
-    const buttonText = isLoading 
-        ? 'Zapisywanie...' 
-        : (isDirectMode ? 'Zapisz w bazie i zamknij zgłoszenia' : 'Wyślij zgłoszenie');
+
+    const buttonText = isLoading
+        ? 'Zapisywanie...'
+        : (isDirectMode ? 'Zapisz w bazie i zamknij zgłoszenie' : 'Wyślij zgłoszenie');
 
     const successTitle = isDirectMode ? "Baza zaktualizowana!" : "Ticket utworzony!";
-    
-    // Dynamiczny opis sukcesu
+
     let successDesc = "Twoje zgłoszenie relacji zostało wysłane do akceptacji.";
     if (isDirectMode) {
         successDesc = "Zmiany zostały wprowadzone bezpośrednio do bazy danych.";
@@ -167,155 +137,144 @@ const RelationEditor: React.FC<RelationEditorProps> = ({
         }
     }
 
-    // Placeholder opisu
-    const descPlaceholder = isDirectMode 
-        ? "Wpisz powód zmiany / komentarz dla użytkowników (np. 'Potwierdzone info')..." 
+    const descPlaceholder = isDirectMode
+        ? "Wpisz powód zmiany / komentarz dla użytkowników (np. 'Potwierdzone info')..."
         : "Opisz nową relację...";
 
-    // --- WIDOK SUKCESU ---
     if (isSuccess) {
         return (
-            <div className="w-full p-6 sm:p-8 md:p-12 rounded-[20px] sm:rounded-[30px] shadow-xl bg-color-basic-dark border border-gray-700 flex flex-col items-center justify-center text-center min-h-[300px] sm:min-h-[400px]">
-                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${isDirectMode ? 'bg-blue-600 shadow-blue-900/50' : 'bg-green-600 shadow-green-900/50'} rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg animate-bounce`}>
-                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
+            <div className="w-full max-w-[1180px] mx-auto mt-[50px] font-montserrat antialiased">
+                <div className="w-full bg-[#2A2A2A] rounded-[30px] border-[0.5px] border-[#222629] p-12 flex flex-col items-center justify-center text-center shadow-[0_7px_9.9px_rgba(0,0,0,0.25)] min-h-[350px]">
+                    <div className={`w-20 h-20 ${isDirectMode ? 'bg-blue-600' : 'bg-green-600'} rounded-full flex items-center justify-center mb-6 shadow-lg animate-bounce`}>
+                        <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-white mb-2">{successTitle}</h2>
+                    <p className="text-base text-gray-300 mb-8 max-w-md leading-relaxed">{successDesc}</p>
+                    <button onClick={handleCloseSuccess} className="px-12 py-3 bg-[#274FDE] hover:bg-[#1e3fbd] text-white font-bold rounded-[50px] transition-all transform hover:scale-105 shadow-lg">OK</button>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">{successTitle}</h2>
-                <p className="text-sm sm:text-base text-gray-300 mb-6 sm:mb-8 max-w-sm leading-relaxed px-4">
-                    {successDesc}
-                </p>
-                <button
-                    onClick={handleCloseSuccess}
-                    className={`px-6 sm:px-8 py-2.5 sm:py-3 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-bold rounded-[25px] transition-all transform hover:scale-105 shadow-lg text-sm sm:text-base`}
-                >
-                    OK
-                </button>
             </div>
         );
     }
 
-    // --- WIDOK FORMULARZA ---
     return (
-        <form
-            onSubmit={handleSubmit}
-            className={`w-full p-4 sm:p-6 md:p-8 rounded-[20px] sm:rounded-[30px] shadow-xl bg-color-basic-dark border ${isDirectMode ? 'border-blue-500/50' : 'border-gray-700'} relative`}
-        >
-             {isLoading && (
-                <div className="absolute inset-0 bg-black/50 rounded-[20px] sm:rounded-[30px] z-50 flex items-center justify-center">
-                    <div className="text-white font-bold animate-pulse text-sm sm:text-base">Przetwarzanie...</div>
-                </div>
-            )}
+        /* GŁÓWNY KONTENER: 1180px, 50px od góry */
+        <div className="w-full max-w-[1180px] mx-auto mt-[50px] mb-12 font-montserrat antialiased">
 
-            {/* Nagłówek */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
-                <h2 className={`text-lg sm:text-xl font-semibold ${isDirectMode ? 'text-blue-400' : 'text-white'}`}>
-                    {titleText}
-                </h2>
-                {isDirectMode && (
-                    <span className="px-2.5 sm:px-3 py-1 bg-blue-900/50 text-blue-200 text-[10px] sm:text-xs font-bold rounded-full border border-blue-500/30 whitespace-nowrap">
-                        TRYB ADMINA
-                    </span>
+            {/* Tytuł: 10px odstępu do ramki */}
+            <h2 className="text-[20px] font-medium uppercase text-white py-10 tracking-normal">
+                {titleText}
+            </h2>
+
+            <form
+                onSubmit={handleSubmit}
+                /* Baner: shadow 0 7 9.9 25% black */
+                className="w-full bg-[#2A2A2A] rounded-[30px] border-[0.5px] border-[#222629] shadow-[0_7px_9.9px_rgba(0,0,0,0.25)] pt-10 px-10 pb-8 relative overflow-hidden"
+            >
+                {isLoading && (
+                    <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+                        <div className="text-white font-bold animate-pulse">Przetwarzanie...</div>
+                    </div>
                 )}
-            </div>
 
-            {errorMessage && (
-                <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-900/40 border border-red-500 rounded-[15px] sm:rounded-[20px] text-red-100 text-xs sm:text-sm">
-                    ⚠️ {errorMessage}
-                </div>
-            )}
-
-            {/* SELEKTORY KLUBÓW */}
-            <div className="mb-6 sm:mb-8">
-                <label className="text-white text-sm sm:text-base font-medium mb-2 sm:mb-3 block">Wybierz kluby</label>
-                <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
-                    <div className="flex-1 w-full">
-                        <select
-                            value={selectedClubA}
-                            onChange={(e) => setSelectedClubA(e.target.value)}
-                            className="w-full h-10 sm:h-12 px-3 sm:px-4 text-gray-200 text-sm sm:text-base rounded-[15px] sm:rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[12px] sm:border-r-[16px] border-transparent"
-                        >
-                            <option value="" disabled>Klub A</option>
-                            {availableClubs.map(club => (
-                                <option key={club.id} value={club.id}>{club.name}</option>
-                            ))}
-                        </select>
+                {errorMessage && (
+                    <div className="mb-8 p-4 bg-red-900/40 border border-red-500 rounded-[20px] text-red-100 text-sm">
+                        ⚠️ {errorMessage}
                     </div>
+                )}
 
-                    <span className="text-gray-400 font-bold text-xs sm:text-sm">VS</span>
+                {/* WYBÓR KLUBÓW */}
+                <div className="mb-10">
+                    <label className="text-white text-[16px] font-medium mb-4 block">Wybierz kluby</label>
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                        <div className="flex-1 w-full relative">
+                            <select
+                                value={selectedClubA}
+                                onChange={(e) => setSelectedClubA(e.target.value)}
+                                className="w-full h-[48px] px-6 text-white text-[16px] rounded-[50px] bg-[#464646] appearance-none focus:ring-2 focus:ring-[#274FDE] outline-none border-none shadow-inner cursor-pointer"
+                            >
+                                <option value="" disabled>Klub A</option>
+                                {availableClubs.map(club => (
+                                    <option key={club.id} value={club.id}>{club.name}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    <div className="flex-1 w-full">
-                        <select
-                            value={selectedClubB}
-                            onChange={(e) => setSelectedClubB(e.target.value)}
-                            className="w-full h-10 sm:h-12 px-3 sm:px-4 text-gray-200 text-sm sm:text-base rounded-[15px] sm:rounded-[20px] bg-gray-700 shadow-inner appearance-none focus:ring-2 focus:ring-blue-600 focus:outline-none border-r-[12px] sm:border-r-[16px] border-transparent"
-                        >
-                            <option value="" disabled>Klub B</option>
-                            {availableClubs.map(club => (
-                                <option key={club.id} value={club.id}>{club.name}</option>
-                            ))}
-                        </select>
+                        <span className="text-white font-bold text-[16px] uppercase">vs</span>
+
+                        <div className="flex-1 w-full relative">
+                            <select
+                                value={selectedClubB}
+                                onChange={(e) => setSelectedClubB(e.target.value)}
+                                className="w-full h-[48px] px-6 text-white text-[16px] rounded-[50px] bg-[#464646] appearance-none focus:ring-2 focus:ring-[#274FDE] outline-none border-none shadow-inner cursor-pointer"
+                            >
+                                <option value="" disabled>Klub B</option>
+                                {availableClubs.map(club => (
+                                    <option key={club.id} value={club.id}>{club.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* TYP RELACJI */}
-            <div className="mb-6 sm:mb-8">
-                <label className="text-white text-sm sm:text-base font-medium mb-2 sm:mb-3 block">Typ relacji</label>
-                <div className="flex flex-wrap gap-2 sm:gap-3">
-                    {RELATION_OPTIONS.map(option => (
-                        <button
-                            key={option.type}
-                            type="button"
-                            onClick={() => setRelationType(option.type)}
-                            className={`
-                                flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-[15px] sm:rounded-[20px] transition-all duration-200
-                                text-white text-xs sm:text-sm font-bold uppercase tracking-wider
-                                ${option.color} 
-                                ${relationType === option.type 
-                                    ? 'ring-2 ring-offset-2 ring-offset-gray-800 ring-white scale-105' 
-                                    : 'opacity-70 hover:opacity-100'}
-                            `}
-                        >
-                            {option.label}
-                        </button>
-                    ))}
+                {/* TYP RELACJI - Szara "ramka" i szary buton pojawiają się tylko po kliknięciu */}
+                <div className="mb-10">
+                    <label className="text-white text-[16px] font-medium mb-4 block">Typ relacji</label>
+                    <div className="flex flex-wrap gap-10">
+                        {RELATION_OPTIONS.map(option => (
+                            <button
+                                key={option.type}
+                                type="button"
+                                onClick={() => setRelationType(option.type)}
+                                className={`
+                                    flex items-center gap-3 h-[56px] px-6 rounded-[50px] transition-all duration-200
+                                    text-white text-[16px] font-medium uppercase tracking-wider
+                                    ${relationType === option.type
+                                        ? 'bg-[#3A3A3A] ring-2 ring-gray-500 ring-offset-2 ring-offset-[#2A2A2A]'
+                                        : 'bg-transparent border-none'}
+                                `}
+                            >
+                                <div className={`w-[28px] h-[28px] rounded-full ${option.color}`} />
+                                {option.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            {/* OPIS */}
-            <div className="mb-6 sm:mb-8">
-                <label className="text-white text-sm sm:text-base font-medium mb-2 sm:mb-3 block">
-                    {isDirectMode ? "Komentarz dla zgłaszających" : "Opis"}
-                </label>
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder={descPlaceholder}
-                    rows={4}
-                    className="w-full p-3 sm:p-4 text-gray-200 text-sm sm:text-base rounded-[15px] sm:rounded-[20px] bg-gray-700 shadow-inner resize-none focus:ring-2 focus:ring-blue-600 focus:outline-none placeholder-gray-500"
-                ></textarea>
-            </div>
+                {/* OPIS - SKRÓCONY DO 120px */}
+                <div className="mb-4">
+                    <label className="text-white text-[16px] font-medium mb-4 block">
+                        {isDirectMode ? "Komentarz dla zgłaszających" : "Opis"}
+                    </label>
+                    <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder={descPlaceholder}
+                        className="w-full h-[120px] p-6 text-white text-[16px] rounded-[30px] bg-[#464646] shadow-inner resize-none focus:ring-2 focus:ring-[#274FDE] outline-none placeholder-gray-500"
+                    ></textarea>
+                </div>
 
-            {/* ACTIONS */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t border-gray-700">
-                <button
-                    type="button"
-                    onClick={handleCancel}
-                    disabled={isLoading}
-                    className="flex-1 h-10 sm:h-12 bg-transparent border border-gray-600 hover:bg-gray-700 text-gray-300 font-semibold rounded-[20px] sm:rounded-[25px] transition-colors disabled:opacity-50 text-sm sm:text-base"
-                >
-                    Anuluj
-                </button>
-                <button
-                    type="submit"
-                    disabled={!selectedClubA || !selectedClubB || !relationType || isLoading}
-                    className={`flex-1 sm:flex-[2] h-10 sm:h-12 ${isDirectMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-green-600 hover:bg-green-500'} text-white font-semibold rounded-[20px] sm:rounded-[25px] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base`}
-                >
-                    {buttonText}
-                </button>
-            </div>
-        </form>
+                {/* ACTIONS - Sentence Case, mt-0 */}
+                <div className="flex flex-row gap-6 mt-0">
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        disabled={isLoading}
+                        className="flex-1 h-[55px] bg-transparent border border-gray-600 hover:bg-white/5 text-gray-300 font-bold rounded-[50px] transition-all disabled:opacity-50 text-[16px]"
+                    >
+                        Anuluj
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={!selectedClubA || !selectedClubB || !relationType || isLoading}
+                        className="flex-[2] h-[55px] bg-[#274FDE] hover:bg-[#1e3fbd] text-white font-bold rounded-[50px] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[16px]"
+                    >
+                        {buttonText}
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 };
 
