@@ -1,4 +1,4 @@
-![Coverage](./coverage.svg)
+![Coverage](backend/coverage.svg)
 
 
 
