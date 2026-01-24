@@ -7,6 +7,7 @@ import Relations, { type RelatedClub } from "../../components/club/Relations";
 import { getClubImageUrl } from '../../utils/imageUtils';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axiosConfig';
+import NewestRelations from '../../components/club/NewestRelations';
 
 // Typ danych z API
 interface ClubDetailData {
@@ -85,6 +86,14 @@ export default function ClubPage() {
         />
 
         <Relations
+          kosaClubs={clubData.kosy}
+          zgodaClubs={clubData.zgody}
+          neutralClubs={clubData.neutralne}
+        />
+
+        <NewestRelations 
+          clubName={clubData.name}
+          clubImage={clubData.path_image}
           kosaClubs={clubData.kosy}
           zgodaClubs={clubData.zgody}
           neutralClubs={clubData.neutralne}
