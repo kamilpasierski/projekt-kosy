@@ -61,6 +61,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://projekt-kosy-m4e6.onrender.com/",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'Pilkarskie_Kosy.urls'
 
 TEMPLATES = [
