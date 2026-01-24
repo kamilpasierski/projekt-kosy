@@ -1,18 +1,5 @@
 services:
 
-  db:
-    image: mysql:8.0
-    container_name: mysql-db
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "3306:3306"        # opcjonalnie do testów lokalnych
-    networks:
-      - kosy-net
-    volumes:
-      - db_data:/var/lib/mysql
-    command: --bind-address=0.0.0.0
   backend:
     build:
       context: ./backend
@@ -21,8 +8,9 @@ services:
       - .env
     networks:
       - kosy-net
-    depends_on:
-      - db
+    ports:
+      - "8000:8000"
+
   frontend:
     build:
       context: ./frontend
@@ -37,6 +25,3 @@ services:
 networks:
   kosy-net:
     driver: bridge
-
-volumes:
-  db_data:
