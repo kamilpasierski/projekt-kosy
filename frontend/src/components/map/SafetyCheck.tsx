@@ -1,14 +1,16 @@
+import { memo } from 'react';
+import type { ReactNode } from 'react';
 import { MapPinIcon } from '@heroicons/react/24/solid';
 import { RELATION_COLORS } from '../../utils/geoUtils';
 
 interface SafetyCheckProps {
   title?: string;
   statusTitle: string;
-  description: string;
+  description: string | ReactNode;
   color?: string;
 }
 
-export default function SafetyCheck({
+function SafetyCheck({
   title = "TWOJE POŁOŻENIE",
   statusTitle,
   description,
@@ -50,3 +52,5 @@ export default function SafetyCheck({
     </div>
   );
 }
+
+export default memo(SafetyCheck);
