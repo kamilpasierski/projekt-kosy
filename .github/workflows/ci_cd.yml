@@ -6,12 +6,10 @@ on:
   pull_request:
     branches: [ "main", "master" ]
 
-
 permissions:
   contents: write
 
 jobs:
-
   backend-qa:
     name: Backend QA & Build
     runs-on: ubuntu-latest
@@ -53,16 +51,15 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
-          # Instalujemy też coverage
-          pip install flake8 pytest pytest-django mysqlclient coverage
+          # Instalujemy coverage-badge ręcznie tutaj
+          pip install flake8 pytest pytest-django mysqlclient coverage coverage-badge
 
       - name: Linting (Flake8)
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
 
-
-      - name: Run Tests & Generate Report
+      - name: Run Tests & Generate Coverage
         env:
           SECRET_KEY: "django-insecure-test-key"
           DEBUG: "True"
@@ -73,15 +70,16 @@ jobs:
           DB_HOST: "127.0.0.1"
           DB_PORT: "3306"
         run: |
-          # Używamy coverage run -m pytest zamiast samego pytest
           coverage run -m pytest
           coverage report
-          coverage xml
+          # To stworzy plik .coverage w folderze backend/
 
-      - name: Coverage Badge
-        uses: tj-actions/coverage-badge-py@v2
-        with:
-          output: backend/coverage.svg 
+      
+      - name: Generate Coverage Badge
+        run: |
+          # Jesteśmy w folderze ./backend (dzięki defaults.run)
+          # coverage-badge sam znajdzie plik .coverage w tym folderze
+          coverage-badge -o coverage.svg -f
 
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v16
@@ -94,13 +92,15 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add backend/coverage.svg
+          # Dodajemy plik, który powstał w backend/
+          git add coverage.svg
           git commit -m "ci: update coverage badge"
           git push
 
+      # -----------------------------------
+
       - name: Docker Build Verify
         run: docker build . -t backend-image:test
-
 
   frontend-qa:
     name: Frontend QA & Build
