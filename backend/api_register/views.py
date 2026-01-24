@@ -10,7 +10,6 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator as token_generator
-from .env import VITE_API_BASE_URL
 
 @csrf_exempt
 @api_view(['POST'])
@@ -23,7 +22,7 @@ def register_user(request):
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = token_generator.make_token(user)
-        activation_link = f"{VITE_API_BASE_URL}/api/register/activate/{uid}/{token}"
+        activation_link = f"https://projekt-kosy.onrender.com/api/register/activate/{uid}/{token}"
 
         # Wysłanie maila aktywacyjnego
         context = {
