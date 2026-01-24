@@ -20,6 +20,10 @@ export default function Footer({
   links = defaultLinks,
   copyrightText = "© Copyright 2025 - Piłkarskie Kosy"
 }: FooterProps) {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="relative w-full border-t border-white/5 bg-black/5 py-8 md:py-12">
       <div className="flex flex-col items-center gap-6 md:gap-12 px-4">
@@ -29,6 +33,7 @@ export default function Footer({
             <Link
               key={index}
               to={link.href}
+              onClick={scrollToTop}
               className="text-sm md:text-[14px] font-normal leading-[16px] text-white hover:text-[#274fde] transition-colors"
             >
               {link.label}
