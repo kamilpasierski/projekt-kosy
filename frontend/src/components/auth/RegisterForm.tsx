@@ -23,7 +23,6 @@ interface RegisterFormProps {
 
 export default function RegisterForm({
   formData,
-  error,
   onSubmit,
   onChange,
   onSwitchToLogin,
@@ -34,7 +33,6 @@ export default function RegisterForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [favoriteClub, setFavoriteClub] = useState('');
   const [availableClubs, setAvailableClubs] = useState<Club[]>([]);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchClubs = async () => {
@@ -62,7 +60,6 @@ export default function RegisterForm({
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    setValidationErrors([]);
 
     if (currentStep === 1) {
       const errors: string[] = [];
@@ -76,7 +73,6 @@ export default function RegisterForm({
       if (/^[a-zA-Z0-9]*$/.test(password)) errors.push("znak specjalny");
 
       if (errors.length > 0) {
-        setValidationErrors(errors);
         return;
       }
     }
@@ -171,7 +167,7 @@ export default function RegisterForm({
                 name="re_password"
                 placeholder="Wpisz ponownie hasło"
                 value={formData.re_password}
-                onChange={(e) => { onChange(e); setValidationErrors([]); }}
+                onChange={onChange}
                 required
               />
               <button

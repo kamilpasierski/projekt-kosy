@@ -2,9 +2,15 @@ import { getClubImageUrl } from '../../utils/imageUtils';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
 export interface RelatedClub {
-  id: number;
+  id?: number;
   name: string;
   path_image: string;
+}
+
+interface Relation {
+  clubA: RelatedClub;
+  clubB: RelatedClub;
+  relationType: 'kosa' | 'zgoda' | 'neutralnie';
 }
 
 interface NewestRelationsProps {
@@ -47,7 +53,7 @@ export default function NewestRelations({
     return '#FBF201';
   };
 
-  const renderRelationCard = (relation: any) => {
+  const renderRelationCard = (relation: Relation) => {
     const { clubA, clubB, relationType } = relation;
     
     return (

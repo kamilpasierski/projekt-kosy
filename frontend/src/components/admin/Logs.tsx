@@ -21,7 +21,11 @@ const Logs: React.FC = () => {
     fetchLogs();
 
     const updateItemsPerPage = () => {
-      window.innerWidth < 1024 ? setItemsPerPage(1) : setItemsPerPage(6);
+      if (window.innerWidth < 1024) {
+        setItemsPerPage(1);
+      } else {
+        setItemsPerPage(6);
+      }
     };
 
     updateItemsPerPage();
