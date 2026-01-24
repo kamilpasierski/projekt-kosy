@@ -1,3 +1,7 @@
+![Coverage](./coverage.svg)
+
+
+
 cd projekt-kosy
 
 docker-compose up --build
@@ -11,3 +15,4 @@ cd backend
 docker-compose run backend bash
 
 python manage.py test
+
