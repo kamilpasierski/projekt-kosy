@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../hooks/useAuth"; // Importujemy naszego hooka
+  import { API_BASE_URL } from '../../utils/config';
 
 // --- TYPY I INTERFEJSY ---
 type IconType = "arrow-up" | "arrow-down" | "users" | "clock" | "none";
@@ -83,7 +84,6 @@ const Stats: React.FC = () => {
   });
 
   const [dataLoading, setDataLoading] = useState<boolean>(true);
-  const API_BASE_URL = 'http://127.0.0.1:8000'; 
 
   useEffect(() => {
     const fetchStats = async () => {

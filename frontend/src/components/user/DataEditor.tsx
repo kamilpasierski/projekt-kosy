@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { useAuth } from '../../hooks/useAuth';
+import { API_BASE_URL } from '../../utils/config';
 
 const DataEditor = () => {
   const { user } = useAuth();
@@ -85,7 +86,7 @@ const DataEditor = () => {
         new_password: passwordData.newPassword
       };
 
-      await axios.patch('http://127.0.0.1:8000/api/users/change-password/', payload, {
+      await axios.patch(`${API_BASE_URL}/api/users/change-password/`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -144,7 +145,7 @@ const DataEditor = () => {
         throw new Error("Brak tokena. Zaloguj się ponownie.");
       }
 
-      await axios.delete('http://127.0.0.1:8000/api/users/me/delete/', {
+      await axios.delete(`${API_BASE_URL}/api/users/me/delete/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -194,7 +195,7 @@ const handleSave = async () => {
       }
 
       // 1. POPRAWKA: Używamy Twojej nazwy klucza z localStorage
-      const token = localStorage.getItem('accessToken'); 
+      const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
       
       // Guard clause: jeśli token nie istnieje (np. użytkownik wyczyścił cache)
       if (!token) {
@@ -207,7 +208,7 @@ const handleSave = async () => {
         email: formData.email
       };
 
-      await axios.patch('http://127.0.0.1:8000/api/users/me/', payload, {
+      await axios.patch(`${API_BASE_URL}/api/users/me/`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`, // Ważne: spacja po Bearer
           'Content-Type': 'application/json'

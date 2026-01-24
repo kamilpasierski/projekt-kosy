@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { API_BASE_URL } from '../../utils/config';
 
 interface Club {
     id: number;
@@ -15,13 +16,12 @@ export default function ClubSearch() {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
-    const API_URL = 'http://127.0.0.1:8000';
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
             if (query.length >= 2) {
                 try {
-                    const response = await axios.get<Club[]>(`${API_URL}/clubs/autocomplete/?q=${query}`);
+                    const response = await axios.get<Club[]>(`${API_BASE_URL}/clubs/autocomplete/?q=${query}`);
                     setSuggestions(response.data);
                     setIsOpen(true);
                 } catch (error) {
@@ -54,7 +54,7 @@ export default function ClubSearch() {
 
         // Inkrementuj punkty klubu
         try {
-            await axios.post(`${API_URL}/api/clubs/popular/increment/${club.id}/`);
+            await axios.post(`${API_BASE_URL}/api/clubs/popular/increment/${club.id}/`);
         } catch (error) {
             console.error("Błąd inkrementacji punktów:", error);
         }

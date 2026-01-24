@@ -7,6 +7,7 @@ import { FollowButton } from '../common/FollowButton';
 import { useAuth } from '../../context/AuthContext';
 import { getClubImageUrl, DEFAULT_LOGO } from '../../utils/imageUtils';
 import axios from 'axios';
+import { API_BASE_URL } from '../../utils/config';
 
 interface ClubListProps {
   onClubSelect: (clubName: string) => void;
@@ -48,14 +49,13 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const debouncedSearch = useDebounce(searchQuery, 500);
-  const API_URL = 'http://127.0.0.1:8000';
 
   // Obsługa Autocomplete
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (searchQuery.length >= 2) {
         try {
-          const response = await axios.get<Club[]>(`${API_URL}/clubs/autocomplete/?q=${searchQuery}`);
+          const response = await axios.get<Club[]>(`${API_BASE_URL}/clubs/autocomplete/?q=${searchQuery}`);
           setSuggestions(response.data);
           setIsSuggestionsOpen(true);
         } catch (error) {

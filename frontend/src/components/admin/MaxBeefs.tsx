@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { getClubImageUrl } from '../../utils/imageUtils';
+import { API_BASE_URL } from '../../utils/config';
 
 interface ClubData {
   id: number;
@@ -14,7 +15,6 @@ const MaxBeefs: React.FC = () => {
   const [clubs, setClubs] = useState<ClubData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const API_BASE_URL = 'http://127.0.0.1:8000'; 
 
   useEffect(() => {
     const fetchMaxBeefs = async () => {

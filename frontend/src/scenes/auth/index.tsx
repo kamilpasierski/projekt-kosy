@@ -8,6 +8,7 @@ import AuthButtons from '../../components/auth/AuthButtons';
 import RegisterForm from '../../components/auth/RegisterForm';
 import LoginForm from '../../components/auth/LoginForm';
 import ResetPasswordForm from '../../components/auth/ResetPasswordForm';
+import { API_BASE_URL } from '../../utils/config.ts';
 
 interface DjangoErrorResponse {
     [key: string]: string[];
@@ -72,7 +73,6 @@ const AuthScene = () => {
         }
 
         try {
-            const API_URL = 'http://127.0.0.1:8000/api/register/';
 
             const dataToSend = {
                 email: formData.email,
@@ -84,7 +84,7 @@ const AuthScene = () => {
 
             console.log('Sending registration data:', dataToSend);
 
-            await axios.post(API_URL, dataToSend);
+            await axios.post(`${API_BASE_URL}/api/register/`, dataToSend);
             setView('login');
             alert("Sprawdź swoją skrzynkę mailową, aby aktywować konto.")
 
@@ -119,7 +119,7 @@ const AuthScene = () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/google/register/', {
+            const response = await fetch(`${API_BASE_URL}/google/register/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ const AuthScene = () => {
         setError(null);
 
         try {
-            const API_URL = 'http://127.0.0.1:8000/api/token/';
+            const API_URL = `${API_BASE_URL}/api/token/`;
 
             // Oczekiwanie na odpowiedzi z tokenami
             const response = await axios.post<TokenResponse>(API_URL, formData);
@@ -197,7 +197,7 @@ const AuthScene = () => {
         }
 
         try {
-            const API_URL = 'http://127.0.0.1:8000/password-reset/';
+            const API_URL = `${API_BASE_URL}/password-reset/`;
 
             await axios.post(API_URL, { email: resetEmail });
 

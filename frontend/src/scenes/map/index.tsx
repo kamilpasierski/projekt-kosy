@@ -12,6 +12,7 @@ import {
     type TerritoryData,
     type RelationsMap
 } from '../../utils/geoUtils';
+import { API_BASE_URL } from '../../utils/config';
 
 // Definicja kształtu stanu dla SafetyCheck
 interface SafetyState {
@@ -47,8 +48,8 @@ const MapScene = () => {
         const initData = async () => {
             try {
                 const [areasRes, relRes] = await Promise.all([
-                    fetch('http://127.0.0.1:8000/api/area/'),
-                    fetch('http://127.0.0.1:8000/api/relations/')
+                    fetch(`${API_BASE_URL}/api/area/`),
+                    fetch(`${API_BASE_URL}/api/relations/`)
                 ]);
                 const areas = await areasRes.json();
                 const rels = await relRes.json();
@@ -56,7 +57,7 @@ const MapScene = () => {
                 setRelationsMap(parseRelationsToMap(rels));
                 const token = localStorage.getItem('accessToken');
                 if (token) {
-                    const userRes = await fetch('http://127.0.0.1:8000/api/clubs/user/', {
+                    const userRes = await fetch(`${API_BASE_URL}/api/clubs/user/`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',

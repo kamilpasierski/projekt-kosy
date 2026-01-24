@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api/axiosConfig";
+import { API_BASE_URL } from '../../utils/config';
 
 // --- TYPES ---
 type RelationType = "kosa" | "zgoda" | "neutralnie";
@@ -67,7 +68,6 @@ const PendingSubmissionsTable: React.FC = () => {
 
   if (isLoading) return <div className="text-white text-center py-10">Ładowanie...</div>;
 
-  const API_URL = "http://localhost:8000"; 
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[8.4%] py-6 sm:py-8">
@@ -113,7 +113,7 @@ const PendingSubmissionsTable: React.FC = () => {
               {/* Clubs & Relation Visual */}
               <div className="flex items-center gap-2 sm:gap-3 mb-3 md:mb-0">
                 <img
-                  src={submission.clubA.logoUrl ? (submission.clubA.logoUrl.startsWith('http') ? submission.clubA.logoUrl : `${API_URL}${submission.clubA.logoUrl}`) : "https://via.placeholder.com/38"}
+                  src={submission.clubA.logoUrl ? (submission.clubA.logoUrl.startsWith('http') ? submission.clubA.logoUrl : `${API_BASE_URL}${submission.clubA.logoUrl}`) : "https://via.placeholder.com/38"}
                   alt={submission.clubA.name}
                   className="w-[38px] h-[48px] object-contain"
                 />
@@ -124,7 +124,7 @@ const PendingSubmissionsTable: React.FC = () => {
                 </svg>
 
                 <img
-                  src={submission.clubB.logoUrl ? (submission.clubB.logoUrl.startsWith('http') ? submission.clubB.logoUrl : `${API_URL}${submission.clubB.logoUrl}`) : "https://via.placeholder.com/38"}
+                  src={submission.clubB.logoUrl ? (submission.clubB.logoUrl.startsWith('http') ? submission.clubB.logoUrl : `${API_BASE_URL}${submission.clubB.logoUrl}`) : "https://via.placeholder.com/38"}
                   alt={submission.clubB.name}
                   className="w-[32px] h-[40px] sm:w-[38px] sm:h-[48px] object-contain"
                 />

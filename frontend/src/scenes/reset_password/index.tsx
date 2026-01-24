@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios, { isAxiosError } from 'axios';
 import Logo from "@/assets/Logo.png";
 import ActionButton from "../../shared/ActionButton.tsx";
+import { API_BASE_URL } from '../../utils/config.ts';
 
 interface BackendErrorResponse {
     error?: string;
@@ -60,7 +61,7 @@ const ResetPasswordConfirm = () => {
         }
 
         try {
-            const API_URL = 'http://127.0.0.1:8000/password-reset/confirm/';
+            const API_URL = `${API_BASE_URL}/password-reset/confirm/`;
 
             await axios.post(API_URL, {
                 uid: uid,

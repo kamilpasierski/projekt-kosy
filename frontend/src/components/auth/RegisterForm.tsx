@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { EyeIcon, EyeSlashIcon, ArrowLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
+import { API_BASE_URL } from '../../utils/config';
 
 interface Club {
   id: number;
@@ -41,7 +42,7 @@ export default function RegisterForm({
     const fetchClubs = async () => {
       try {
         // Fetch without authentication (registration doesn't require auth)
-        const response = await axios.get<Club[]>('http://localhost:8000/api/clubs/all/');
+        const response = await axios.get<Club[]>(`${API_BASE_URL}/api/clubs/all/`);
         setAvailableClubs(response.data);
       } catch (err) {
         console.error('Failed to fetch clubs:', err);

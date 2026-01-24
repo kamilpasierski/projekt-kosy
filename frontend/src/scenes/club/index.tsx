@@ -7,6 +7,7 @@ import Relations, { type RelatedClub } from "../../components/club/Relations";
 import { getClubImageUrl } from '../../utils/imageUtils';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axiosConfig';
+import { API_BASE_URL } from '../../utils/config';
 
 // Typ danych z API
 interface ClubDetailData {
@@ -24,7 +25,6 @@ interface WatchedClubItem {
   club: number;
 }
 
-const API_BASE = "http://127.0.0.1:8000"; // Still used for API calls
 
 export default function ClubPage() {
   const { id } = useParams<{ id: string }>(); // Pobieramy ID z URL
@@ -38,7 +38,7 @@ export default function ClubPage() {
       if (!id) return;
       try {
         const [clubRes, watchedRes] = await Promise.allSettled([
-          fetch(`${API_BASE}/api/clubs/${id}/`),
+          fetch(`${API_BASE_URL}/api/clubs/${id}/`),
           ...(user ? [api.get<WatchedClubItem[]>('/add_fav/watched_clubs/')] : [])
         ]);
 

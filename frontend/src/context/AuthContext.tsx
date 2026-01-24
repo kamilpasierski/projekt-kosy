@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { AuthContext, type User } from './AuthContext'; // Importujemy typy z pliku .ts
+import { API_BASE_URL } from '../utils/config';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const API_URL = 'http://127.0.0.1:8000';
 
     // 3. Wylogowanie - moved before fetchUserData to avoid dependency issue
     const logout = useCallback(() => {
@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fetchUserData = useCallback(async (token: string) => {
         try {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            const response = await axios.get<User>(`${API_URL}/api/users/me/`);
+            const response = await axios.get<User>(`${API_BASE_URL}/api/users/me/`);
             setUser(response.data);
             setIsLoggedIn(true);
         } catch (error) {
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             setIsLoading(false);
         }
-    }, [API_URL, logout]);
+    }, [API_BASE_URL, logout]);
 
     // 1. Sprawdzenie przy starcie aplikacji (F5)
     useEffect(() => {
