@@ -50,10 +50,10 @@ const FollowedClubs = () => {
   if (isLoading) return <div className="text-white p-6">Ładowanie...</div>;
 
   return (
-    <div className="relative w-full max-w-[1180px] mx-auto font-montserrat antialiased" data-name="MOJE OBSERWOWANE KLUBY">
+    <div className="relative w-full max-w-[1180px] mb-[80px] mx-auto font-montserrat antialiased" data-name="MOJE OBSERWOWANE KLUBY">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6 px-2 md:px-0">
+      <div className="flex justify-between items-center mb-10 px-2 md:px-0">
         <p className="font-medium text-[20px] text-white uppercase tracking-widest">
           Mój ulubiony klub
         </p>

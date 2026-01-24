@@ -92,7 +92,7 @@ export default function History() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-[1175px] mx-auto py-8">
+      <div className="w-full max-w-[1175px] mx-auto py-8 ">
         <p className="font-montserrat font-medium text-[20px] text-white uppercase leading-[1.3] mb-8">
           Historia zgłoszonych zmian
         </p>
@@ -102,8 +102,8 @@ export default function History() {
   }
 
   return (
-    <div className="w-full max-w-[1175px] mx-auto py-8" data-component="History">
-      <p className="font-montserrat font-medium text-[20px] text-white uppercase leading-[1.3] mb-8">
+    <div className="w-full max-w-[1175px] mx-auto py-8 pb-[120px]" data-component="History ">
+      <p className="font-montserrat font-medium text-[20px] text-white uppercase leading-[1.3] mb-10">
         Historia zgłoszonych zmian
       </p>
 
