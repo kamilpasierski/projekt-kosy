@@ -2,7 +2,7 @@ import BanerImage from "@/assets/O_nas_1.png";
 
 export default function Banner() {
   return (
-    <div className="relative w-full h-[594px] -mt-[85px] antialiased overflow-hidden mb-16 md:mb-20">
+    <div className="relative w-full h-[550px] -mt-[85px] antialiased overflow-hidden mb-16 md:mb-20">
       <div className="absolute inset-0 w-full h-full">
         <img
           alt="background"

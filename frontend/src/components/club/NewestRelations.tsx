@@ -51,26 +51,26 @@ export default function NewestRelations({
     const { clubA, clubB, relationType } = relation;
     
     return (
-      <div key={`${clubA.name}-${clubB.name}`} className="bg-[#2a2a2a] rounded-[20px] md:rounded-[30px] p-4 md:p-6 flex flex-col gap-2 md:gap-3">
-        {/* Loga i nazwy klubów */}
-        <div className="flex items-center gap-3 md:gap-4">
+
+      <div key={`${clubA.name}-${clubB.name}`} className="p-4 md:p-6 flex flex-col justify-center font-montserrat min-h-[100px]">
+        <div className="flex items-center gap-4">
           <img
             src={getClubImageUrl(clubA.path_image)}
             alt={clubA.name}
-            className="h-[50px] w-[50px] md:h-[70px] md:w-[69px] object-contain flex-shrink-0"
+            className="h-[50px] w-[50px] md:h-[60px] md:w-[60px] object-contain flex-shrink-0"
           />
             <div className="flex items-center justify-center flex-shrink-0">
-            <ArrowRightIcon 
-              className="h-5 w-5 md:h-6 md:w-6" 
+            <ArrowRightIcon
+              className="h-5 w-5 md:h-6 md:w-6"
               style={{ color: getArrowColor(relationType) }}
             />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-['Montserrat'] text-[14px] md:text-[16px] font-medium uppercase text-white leading-[1.3] truncate">
+          <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+            <p className="font-montserrat text-[16px] font-medium uppercase text-white leading-[130%] truncate">
               {clubA.name}
             </p>
-            <div className="h-[0.3px] bg-white/40 my-1.5 md:my-2" />
-            <p className="font-['Montserrat'] text-[14px] md:text-[16px] font-medium uppercase text-white leading-[1.3] truncate">
+
+            <p className="font-montserrat text-[16px] font-medium uppercase text-white leading-[130%] truncate">
               {clubB.name}
             </p>
           </div>
@@ -79,63 +79,61 @@ export default function NewestRelations({
     );
   };
 
-  const renderColumn = (
-    title: string,
-    bgColor: string,
-    textColor: string,
-    relations: any[]
-  ) => {
-    return (
-      <div className="flex flex-col gap-3 md:gap-4">
-        {/* Nagłówek */}
-        <div
-          className="h-[45px] md:h-[50px] flex items-center justify-center rounded-t-[20px] md:rounded-t-[30px]"
-          style={{ backgroundColor: bgColor }}
-        >
-          <h3
-            className="font-['Montserrat'] text-[16px] md:text-[18px] lg:text-[20px] font-semibold uppercase leading-[1.3]"
-            style={{ color: textColor }}
-          >
-            {title}
-          </h3>
-        </div>
-
-        {/* Lista relacji */}
-        <div className="space-y-3 md:space-y-4">
-          {relations.length > 0 ? (
-            relations.map(relation => renderRelationCard(relation))
-          ) : (
-            <div className="bg-[#2a2a2a] rounded-[20px] md:rounded-[30px] p-4 md:p-6 text-center">
-              <p className="font-['Montserrat'] text-gray-500 text-xs md:text-sm italic">
-                Brak nowych relacji
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className="w-full py-8 md:py-12 lg:py-16 antialiased font-['Montserrat']">
+    <div className="w-full py-8 md:py-12 lg:py-16 antialiased font-montserrat">
+      {/* Kontener ograniczony do 1180px */}
       <div className="max-w-[1180px] mx-auto px-4 md:px-6 lg:px-0">
-        {/* Header */}
-        <div className="mb-6 md:mb-8 lg:mb-10">
-          <h2 className="font-['Montserrat'] text-[16px] md:text-[18px] lg:text-[20px] font-medium uppercase leading-[130%] text-white">
+        {/* Header Sekcji */}
+        <div className="mb-6 md:mb-10">
+          <h2 className="text-[20px] font-medium uppercase leading-[130%] text-white tracking-normal">
             NAJNOWSZE RELACJE
           </h2>
         </div>
 
-        {/* Siatka trzech kolumn */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
-          {/* Kolumna KOSA */}
-          {renderColumn('KOSA', '#8A2525', '#FFFFFF', kosaRelations)}
+        <div className="w-full border-x border-b border-[#274FDE]/20 rounded-[30px] overflow-hidden bg-[#2a2a2a] shadow-xl">
 
-          {/* Kolumna NEUTRALNIE */}
-          {renderColumn('NEUTRALNIE', '#FBF201', '#000000', neutralRelations)}
 
-          {/* Kolumna ZGODA */}
-          {renderColumn('ZGODA', '#247F46', '#FFFFFF', zgodaRelations)}
+          <div className="grid grid-cols-1 md:grid-cols-3 h-auto md:h-[50px]">
+            <div className="bg-[#8A2525] flex items-center justify-center py-3 md:py-0 border-b md:border-b-0 md:border-r border-[#575757]/30">
+              <h3 className="text-white text-[18px] font-semibold uppercase tracking-wider">Kosa</h3>
+            </div>
+            <div className="bg-[#FBF201] flex items-center justify-center py-3 md:py-0 border-b md:border-b-0 md:border-r border-[#575757]/30">
+              <h3 className="text-black text-[18px] font-semibold uppercase tracking-wider">Neutralnie</h3>
+            </div>
+            <div className="bg-[#247F46] flex items-center justify-center py-3 md:py-0">
+              <h3 className="text-white text-[18px] font-semibold uppercase tracking-wider">Zgoda</h3>
+            </div>
+          </div>
+
+
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#575757]">
+            {/* Kolumna KOSA */}
+            <div className="flex flex-col divide-y divide-[#575757]/40">
+              {kosaRelations.length > 0 ? (
+                kosaRelations.map(rel => renderRelationCard(rel))
+              ) : (
+                <div className="p-8 text-center text-gray-500 italic text-sm flex items-center justify-center min-h-[100px]">Brak nowych relacji</div>
+              )}
+            </div>
+
+            {/* Kolumna NEUTRALNIE */}
+            <div className="flex flex-col divide-y divide-[#575757]/40">
+              {neutralRelations.length > 0 ? (
+                neutralRelations.map(rel => renderRelationCard(rel))
+              ) : (
+                <div className="p-8 text-center text-gray-500 italic text-sm flex items-center justify-center min-h-[100px]">Brak nowych relacji</div>
+              )}
+            </div>
+
+            {/* Kolumna ZGODA */}
+            <div className="flex flex-col divide-y divide-[#575757]/40">
+              {zgodaRelations.length > 0 ? (
+                zgodaRelations.map(rel => renderRelationCard(rel))
+              ) : (
+                <div className="p-8 text-center text-gray-500 italic text-sm flex items-center justify-center min-h-[100px]">Brak nowych relacji</div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
