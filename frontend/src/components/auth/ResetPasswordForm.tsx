@@ -17,10 +17,10 @@ export default function ResetPasswordForm({
   return (
     <div className="w-full max-w-[356px] mx-auto animate-in fade-in slide-in-from-right-8 duration-300">
       {/* Nagłówek */}
-      <h2 className="font-['Montserrat',sans-serif] font-semibold text-[24px] text-center text-white mb-2 leading-[1.3] tracking-[1.2px]">
+      <h2 className="font-['Montserrat',sans-serif] font-semibold text-[24px] text-center text-white mb-5 leading-[1.3] tracking-[1.2px]">
         Nie pamiętam hasła
       </h2>
-      <p className="font-['Montserrat',sans-serif] font-semibold text-[14px] text-center text-white mb-8 leading-[20px]">
+      <p className="font-['Montserrat',sans-serif] font-medium text-[14px] text-center text-white mb-10 leading-[20px]">
         <span className="capitalize">Podaj</span>
         <span className="lowercase"> ostatni adres email jaki pamiętasz. </span>
         <br />
