@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-^r!)8uwwex!f(@zombrl#b8eq4l8m2idjxd4tutkq_ggn+x6uw
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['projekt-kosy.onrender.com']
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail19.lh.pl'
