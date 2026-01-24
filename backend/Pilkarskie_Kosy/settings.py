@@ -4,6 +4,8 @@ import sys
 from dotenv import load_dotenv
 from datetime import timedelta
 
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR.parent / ".env"
 load_dotenv(ENV_PATH)
@@ -95,6 +97,15 @@ DATABASES = {
     }
 }
 
+import django.db
+try:
+    c = django.db.connections['default']
+    c.cursor()
+    print("Połączenie z DB działa")
+except Exception as e:
+    print("Błąd połączenia z DB:", e)
+
+"""
 running_tests = 'test' in sys.argv or 'pytest' in sys.modules
 
 if running_tests and not os.getenv('CI'):
@@ -102,7 +113,7 @@ if running_tests and not os.getenv('CI'):
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-
+"""
 
 AUTH_PASSWORD_VALIDATORS = [
     {
