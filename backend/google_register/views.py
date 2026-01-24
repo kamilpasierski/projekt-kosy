@@ -20,7 +20,8 @@ class GoogleLoginAPIView(APIView):
             idinfo = id_token.verify_oauth2_token(
                 token,
                 requests.Request(),
-                settings.GOOGLE_CLIENT_ID
+                settings.GOOGLE_CLIENT_ID,
+                clock_skew_in_seconds=5
             )
 
             email = idinfo["email"]
@@ -28,7 +29,7 @@ class GoogleLoginAPIView(APIView):
             last_name = idinfo.get("family_name", "")
 
         except Exception:
-            return Response({"error": "Nieprawidłowy token Google"}, status=400)
+            return Response({"error": f"Nieprawidłowy token Google"}, status=400)
 
         # Pobranie lub utworzenie użytkownika
         user, created = User.objects.get_or_create(
