@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { API_BASE_URL, MEDIA_URL } from '../../utils/config';
+import { API_BASE_URL } from '../../utils/config';
 
 
 interface Club {
@@ -11,6 +11,8 @@ interface Club {
   path_image: string;
   points: number;
 }
+
+const MEDIA_URL = 'https://projekt-kosy.onrender.com/';
 
 export default function PopularClubs() {
   const [clubs, setClubs] = useState<Club[]>([]);
