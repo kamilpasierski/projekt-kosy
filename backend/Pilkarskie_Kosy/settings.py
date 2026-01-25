@@ -66,6 +66,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://projekt-kosy.onrender.com"
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
