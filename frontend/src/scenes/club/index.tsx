@@ -7,6 +7,7 @@ import Relations, { type RelatedClub } from "../../components/club/Relations";
 import { getClubImageUrl } from '../../utils/imageUtils';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axiosConfig';
+import NewestRelations from '../../components/club/NewestRelations';
 import { API_BASE_URL } from '../../utils/config';
 
 // Typ danych z API
