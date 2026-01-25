@@ -6,8 +6,7 @@ import { parseRelationsToMap, type RelationsMap } from '../../utils/geoUtils';
 import { FollowButton } from '../common/FollowButton';
 import { useAuth } from '../../context/AuthContext';
 import { getClubImageUrl, DEFAULT_LOGO } from '../../utils/imageUtils';
-import axios from 'axios';
-import { API_BASE_URL } from '../../utils/config';
+
 
 interface ClubListProps {
   onClubSelect: (clubName: string) => void;
