@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-FRONTEND_URL = "http://localhost:3000"   # adres gdzie jest reset hasła
+FRONTEND_URL = "https://projekt-kosy-m4e6.onrender.com/"   # adres gdzie jest reset hasła
 
 # Tutaj idzie frontend kiedy user wpisze email na który ma przyjsc link do resetu
 
