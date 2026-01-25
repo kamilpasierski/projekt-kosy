@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react';
+import { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import api from '../../api/axiosConfig';
 import { useDebounce } from '../../hooks/useDebounce';
 import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
@@ -111,42 +111,10 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   const [relationsMap, setRelationsMap] = useState<RelationsMap>({});
   const [followedMap, setFollowedMap] = useState<Map<number, number>>(new Map());
 
-  // Autocomplete state
-  const [suggestions, setSuggestions] = useState<Club[]>([]);
-  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // Obsługa Autocomplete
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (searchQuery.length >= 2) {
-        try {
-          const response = await axios.get<Club[]>(`${API_BASE_URL}/clubs/autocomplete/?q=${searchQuery}`);
-          setSuggestions(response.data);
-          setIsSuggestionsOpen(true);
-        } catch (error) {
-          console.error("Błąd autocomplete:", error);
-        }
-      } else {
-        setSuggestions([]);
-        setIsSuggestionsOpen(false);
-      }
-    };
-    fetchSuggestions();
-  }, [searchQuery]);
 
-  // Zamykanie podpowiedzi
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setIsSuggestionsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   useEffect(() => {
     const fetchContextData = async () => {
@@ -226,38 +194,18 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
         Lista klubów
       </h2>
 
-      <div ref={wrapperRef} className="relative w-full mb-[40px]">
-          <div className="flex h-[60px] items-center gap-4 rounded-[50px] bg-[#2A2A2A] px-6 shadow-[0px_6px_7px_rgba(0,0,0,0.25)] border border-transparent focus-within:border-[#274fde]/50 transition-all">
-              <MagnifyingGlassIcon className="h-7 w-7 text-white" />
-              <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Szukaj klubu..."
-                  className="flex-1 bg-transparent text-[18px] font-medium text-white placeholder-gray-400 outline-none w-full leading-[130%]"
-              />
-          </div>
-
-          {isSuggestionsOpen && suggestions.length > 0 && (
-              <div className="absolute left-0 top-[65px] z-[100] w-full overflow-hidden rounded-[20px] border border-[#444] bg-[#2a2a2a] shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
-                  <ul className="max-h-[250px] overflow-y-auto py-2 custom-scrollbar">
-                      {suggestions.map((club) => (
-                          <li
-                              key={club.id}
-                              onClick={() => {
-                                setSearchQuery(club.name);
-                                setIsSuggestionsOpen(false);
-                                onClubSelect(club.name);
-                              }}
-                              className="cursor-pointer px-6 py-3 text-[16px] text-white hover:bg-[#343434] transition-colors border-b border-white/5 last:border-0 font-medium leading-[130%]"
-                          >
-                              {club.name}
-                          </li>
-                      ))}
-                  </ul>
-              </div>
-          )}
-      </div>
+        <div className="relative w-full mb-[40px]">
+        <div className="flex h-[60px] items-center gap-4 rounded-[50px] bg-[#2A2A2A] px-6 shadow-[0px_6px_7px_rgba(0,0,0,0.25)] border border-transparent focus-within:border-[#274fde]/50 transition-all">
+          <MagnifyingGlassIcon className="h-7 w-7 text-white" />
+          <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Szukaj klubu..."
+          className="flex-1 bg-transparent text-[18px] font-medium text-white placeholder-gray-400 outline-none w-full leading-[130%]"
+          />
+        </div>
+        </div>
 
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
