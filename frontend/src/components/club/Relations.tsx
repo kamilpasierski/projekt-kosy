@@ -44,7 +44,7 @@ export default function Relations({
             </p>
             </div>
             {index < clubs.length - 1 && (
-            /* Linia podziału #575757 o grubości 0.2px */
+
             <div className="mt-4 h-[0.2px] bg-[#575757] w-full" />
             )}
         </div>
@@ -56,8 +56,7 @@ export default function Relations({
   );
 
   return (
-    /* W-FULL zapewnia tło na całą szerokość, jeśli byś go potrzebowała,
-       ale MX-AUTO i MAX-W-[1180px] pilnują szerokości kontenera z Figmy */
+
     <div className="w-full py-8 md:py-16 antialiased font-['Montserrat']">
       <div className="max-w-[1180px] mx-auto px-4 md:px-0">
 
@@ -68,11 +67,11 @@ export default function Relations({
           </h2>
         </div>
 
-        {/* Główna karta - tło #2A2A2A, zaokrąglenie 30px */}
+        {/* Główna karta  */}
         <div className="w-full rounded-[30px] bg-[#2a2a2a] p-4 md:p-6 shadow-xl">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* KOLUMNA KOSA - tło nagłówka #8A2525, tło listy 10% */}
+            {/* KOLUMNA KOSA  */}
             <div className="flex flex-col bg-[#8a25251a] rounded-[30px] overflow-hidden min-h-[341px]">
               <div className="bg-[#8a2525] h-[50px] flex items-center justify-center rounded-t-[30px]">
                 <h3 className="font-['Montserrat'] text-[18px] font-semibold uppercase text-white">KOSA</h3>
@@ -80,7 +79,7 @@ export default function Relations({
               {renderList(kosaClubs)}
             </div>
 
-            {/* KOLUMNA NEUTRALNIE - tło nagłówka #FBF201, tło listy 10% */}
+            {/* KOLUMNA NEUTRALNIE */}
             <div className="flex flex-col bg-[#fbf2011a] rounded-[30px] overflow-hidden min-h-[341px]">
               <div className="bg-[#fbf201] h-[50px] flex items-center justify-center rounded-t-[30px]">
                   <h3 className="font-['Montserrat'] text-[18px] font-semibold uppercase text-black">NEUTRALNIE</h3>
@@ -88,7 +87,7 @@ export default function Relations({
               {renderList(neutralClubs)}
             </div>
 
-            {/* KOLUMNA ZGODA - tło nagłówka #247F46, tło listy 10% */}
+            {/* KOLUMNA ZGODA */}
             <div className="flex flex-col bg-[#247f461a] rounded-[30px] overflow-hidden min-h-[341px]">
               <div className="bg-[#247f46] h-[50px] flex items-center justify-center rounded-t-[30px]">
                 <h3 className="font-['Montserrat'] text-[18px] font-semibold uppercase text-white">ZGODA</h3>

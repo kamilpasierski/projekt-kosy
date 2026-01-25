@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import Map from '../../components/map/Map';
+import { useState, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import LazyMap from '../../components/map/LazyMap';
 import SafetyCheck from '../../components/map/SafetyCheck';
 import Legend from '../../components/map/Legend';
 import ClubList from '../../components/map/ClubList';
@@ -18,7 +19,7 @@ import { API_BASE_URL } from '../../utils/config';
 interface SafetyState {
     title: string;
     statusTitle: string;
-    description: string;
+    description: string | ReactNode;
     color: string;
 }
 
@@ -34,12 +35,13 @@ const MapScene = () => {
     // --- STAN UŻYTKOWNIKA ---
     const [userClub, setUserClub] = useState<string | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     // --- STAN UI (SafetyCheck) ---
     const [safetyProps, setSafetyProps] = useState<SafetyState>({
         title: "WITAJ KIBICU",
         statusTitle: "ŁADOWANIE DANYCH...",
-        description: "Pobieramy informacje o strefach i Twoim profilu.",
+        description: "Pobieramy informacje o strefach.",
         color: "#6b7280"
     });
 
@@ -47,6 +49,18 @@ const MapScene = () => {
     useEffect(() => {
         const initData = async () => {
             try {
+                const token = localStorage.getItem('accessToken');
+                
+                // Show loading message for logged in users
+                if (token) {
+                    setSafetyProps({
+                        title: "WITAJ KIBICU",
+                        statusTitle: "ŁADOWANIE RELACJI...",
+                        description: "Pobieramy informacje o Twoim profilu i relacjach klubowych.",
+                        color: "#6b7280"
+                    });
+                }
+                
                 const [areasRes, relRes] = await Promise.all([
                     fetch(`${API_BASE_URL}/api/area/`),
                     fetch(`${API_BASE_URL}/api/relations/`)
@@ -55,7 +69,7 @@ const MapScene = () => {
                 const rels = await relRes.json();
                 setTerritories(areas);
                 setRelationsMap(parseRelationsToMap(rels));
-                const token = localStorage.getItem('accessToken');
+                
                 if (token) {
                     const userRes = await fetch(`${API_BASE_URL}/api/clubs/user/`, {
                         method: 'GET',
@@ -75,6 +89,7 @@ const MapScene = () => {
                         }
                     }
                 }
+                setIsLoading(false);
             } catch (e) {
                 console.error("Critical API Error in MapScene:", e);
                 setSafetyProps(prev => ({
@@ -90,6 +105,8 @@ const MapScene = () => {
 
     // 2. AKTUALIZACJA UI STATUSU
     useEffect(() => {
+        if (isLoading) return; // Don't update while loading
+        
         if (isLoggedIn && userClub) {
             setSafetyProps({
                 title: "TWOJE POŁOŻENIE",
@@ -101,14 +118,19 @@ const MapScene = () => {
             setSafetyProps({
                 title: "WITAJ KIBICU",
                 statusTitle: "WYMAGANE LOGOWANIE",
-                description: "Zaloguj się i wybierz swój ulubiony klub w profilu, aby korzystać z mapy.",
+                description: (
+                    <span>
+                        <a href="/auth" className="text-[#274fde] hover:underline font-semibold">Zaloguj się</a>
+                        {' '}i wybierz swój ulubiony klub w profilu, aby korzystać z mapy.
+                    </span>
+                ),
                 color: "#6b7280"
             });
         }
-    }, [isLoggedIn, userClub]);
+    }, [isLoggedIn, userClub, isLoading]);
 
     // 3. LOGIKA GEOLOKALIZACJI
-    const handleLocationFound = (lat: number, lng: number) => {
+    const handleLocationFound = useCallback((lat: number, lng: number) => {
         if (!userClub) {
             alert("Nie wykryto ulubionego klubu! Zaloguj się.");
             return;
@@ -120,9 +142,9 @@ const MapScene = () => {
             description: result.description,
             color: result.color
         });
-    };
+    }, [userClub, territories, relationsMap]);
 
-    const handleClubSelect = (clubName: string) => {
+    const handleClubSelect = useCallback((clubName: string) => {
         const targetTerritory = territories.find(t => t.owner_name === clubName);
         if (targetTerritory && targetTerritory.polygon && targetTerritory.polygon.length > 0) {
             const bounds = targetTerritory.polygon.map(coord => [coord[0], coord[1]] as [number, number]);
@@ -134,7 +156,7 @@ const MapScene = () => {
         } else {
             alert(`Nie znaleziono strefy na mapie dla klubu: ${clubName}`);
         }
-    };
+    }, [territories]);
 
     return (
         /* Zastosowano page-container dla szerokości 1180px.
@@ -154,7 +176,7 @@ const MapScene = () => {
 
                 {/* Zachowano odstęp mb-[10px] */}
                 <div className="mb-[10px]">
-                    <Map
+                    <LazyMap
                         territories={territories}
                         userClub={userClub}
                         relationsMap={relationsMap}

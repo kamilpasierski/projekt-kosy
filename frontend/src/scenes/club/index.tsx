@@ -33,6 +33,18 @@ export default function ClubPage() {
   const [loading, setLoading] = useState(true);
   const [followedRelationId, setFollowedRelationId] = useState<number | null>(null);
 
+  const handleDescriptionUpdate = async (newDescription: string) => {
+    if (!id) return;
+    
+    const response = await api.patch(`/clubs/${id}/update-description/`, {
+      desc: newDescription
+    });
+    
+    if (response.status === 200) {
+      setClubData(prev => prev ? { ...prev, desc: newDescription } : null);
+    }
+  };
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!id) return;
@@ -82,9 +94,20 @@ export default function ClubPage() {
 
         <Description
           description={clubData.desc}
+          clubId={clubData.id}
+          isAdmin={user?.is_staff}
+          onDescriptionUpdate={handleDescriptionUpdate}
         />
 
         <Relations
+          kosaClubs={clubData.kosy}
+          zgodaClubs={clubData.zgody}
+          neutralClubs={clubData.neutralne}
+        />
+
+        <NewestRelations 
+          clubName={clubData.name}
+          clubImage={clubData.path_image}
           kosaClubs={clubData.kosy}
           zgodaClubs={clubData.zgody}
           neutralClubs={clubData.neutralne}

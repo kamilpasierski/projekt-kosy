@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, memo, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Polygon, Circle, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { type LatLngTuple, type LatLngBoundsExpression } from 'leaflet';
@@ -11,13 +11,15 @@ import {
 // --- KOMPONENTY POMOCNICZE ---
 
 // 1. Helper do ustawiania widoku (startowy)
-function ChangeView({ center, zoom }: { center: LatLngTuple; zoom: number }) {
+const ChangeView = memo(({ center, zoom }: { center: LatLngTuple; zoom: number }) => {
     const map = useMap();
-    map.setView(center, zoom);
+    useEffect(() => {
+        map.setView(center, zoom);
+    }, [center, zoom, map]);
     return null;
-}
+});
 
-function MapController({ bounds }: { bounds: LatLngBoundsExpression | null }) {
+const MapController = memo(({ bounds }: { bounds: LatLngBoundsExpression | null }) => {
     const map = useMap();
 
     useEffect(() => {
@@ -31,7 +33,7 @@ function MapController({ bounds }: { bounds: LatLngBoundsExpression | null }) {
     }, [bounds, map]);
 
     return null;
-}
+});
 
 // --- GŁÓWNY KOMPONENT ---
 
@@ -43,7 +45,7 @@ interface MapProps {
     focusedTerritoryBounds: LatLngBoundsExpression | null;
 }
 
-export default function Map({
+function Map({
     territories,
     userClub,
     relationsMap,
@@ -80,7 +82,7 @@ export default function Map({
     }, [territories, userClub, relationsMap]);
 
     // --- LOGIKA KOLOROWANIA ---
-    const getTerritoryColor = (owner: string | null): string => {
+    const getTerritoryColor = useCallback((owner: string | null): string => {
         if (!userClub || !owner) return RELATION_COLORS.DEFAULT;
         if (owner === userClub) return RELATION_COLORS.FRIENDLY;
 
@@ -96,10 +98,10 @@ export default function Map({
             default:
                 return RELATION_COLORS.DEFAULT;
         }
-    };
+    }, [userClub, relationsMap]);
 
     // --- GEOLOKALIZACJA ---
-    const handleLocateClick = () => {
+    const handleLocateClick = useCallback(() => {
         if (!navigator.geolocation) return;
 
         navigator.geolocation.getCurrentPosition(
@@ -114,7 +116,7 @@ export default function Map({
             },
             (err) => console.error("Błąd GPS:", err)
         );
-    };
+    }, [onLocationFound]);
 
     return (
         <div className="relative w-full h-[450px] rounded-[30px] overflow-hidden shadow-xl border border-[#2a2a2a] antialiased">
@@ -166,3 +168,5 @@ export default function Map({
         </div>
     );
 }
+
+export default memo(Map);

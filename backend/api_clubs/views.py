@@ -2,7 +2,7 @@ from rest_framework import generics, filters, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from django.shortcuts import get_object_or_404
 
 from models.models import Club, UserProfile
@@ -57,3 +57,20 @@ class SetUserClubView(APIView):
             serializer.save()
             return Response({"message": "Klub zaktualizowany"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# --- AKTUALIZACJA OPISU KLUBU (TYLKO DLA ADMINÓW) ---
+class ClubDescriptionUpdateView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, id):
+        club = get_object_or_404(Club, id=id)
+        
+        if 'desc' in request.data:
+            club.desc = request.data['desc']
+            club.save()
+            return Response({
+                "message": "Opis klubu zaktualizowany",
+                "desc": club.desc
+            }, status=status.HTTP_200_OK)
+        
+        return Response({"error": "Brak pola 'desc' w żądaniu"}, status=status.HTTP_400_BAD_REQUEST)

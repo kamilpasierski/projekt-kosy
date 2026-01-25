@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react';
 import api from '../../api/axiosConfig';
 import { useDebounce } from '../../hooks/useDebounce';
 import { MagnifyingGlassIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
@@ -28,6 +28,74 @@ interface WatchedClubItem {
 type SortField = 'name' | 'city' | 'relation';
 type SortOrder = 'asc' | 'desc';
 type RelationStatus = 'favorite' | 'safe' | 'dangerous' | 'neutral' | 'unknown';
+
+// Memoized ClubRow component to prevent unnecessary re-renders
+const ClubRow = memo(({ 
+  club, 
+  status, 
+  followedMap, 
+  onClubSelect 
+}: { 
+  club: Club; 
+  status: RelationStatus; 
+  followedMap: Map<number, number>; 
+  onClubSelect: (name: string) => void;
+}) => {
+  const getRelationStyle = (status: RelationStatus) => {
+    switch (status) {
+      case 'favorite': return { bg: 'bg-[#20CA5F]/30', border: 'border-[#20CA5F]', label: 'Ulubiony' };
+      case 'safe': return { bg: 'bg-[#20CA5F]/30', border: 'border-[#20CA5F]', label: 'Zgoda' };
+      case 'dangerous': return { bg: 'bg-[#CB0000]/30', border: 'border-[#CB0000]', label: 'Kosa' };
+      case 'neutral': return { bg: 'bg-[#FBF201]/30', border: 'border-[#FBF201]', label: 'Neutralnie' };
+      default: return { bg: 'bg-[#727681]/30', border: 'border-[#727681]', label: 'Brak danych' };
+    }
+  };
+
+  const style = useMemo(() => getRelationStyle(status), [status]);
+  const handleClick = useCallback(() => onClubSelect(club.name), [club.name, onClubSelect]);
+
+  return (
+    <div className="group hover:bg-[#3a3a3a] transition-colors">
+      <div className="hidden md:grid grid-cols-[1fr_0.8px_1.5fr_0.8px_1fr_0.8px_1fr] items-center h-[80px]">
+        <div className="flex justify-center items-center">
+          <FollowButton clubId={club.id} initialRelationId={followedMap.get(club.id)} />
+        </div>
+        <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
+
+        <div className="flex items-center justify-start gap-4 pl-12 cursor-pointer" onClick={handleClick}>
+          <img
+            src={getClubImageUrl(club.path_image)}
+            alt={club.name}
+            className="h-[54px] w-[54px] object-contain"
+            onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_LOGO; }}
+          />
+          <p className="text-[16px] font-medium text-white truncate leading-[130%]">{club.name}</p>
+        </div>
+        <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
+
+        <div className="flex justify-center items-center cursor-pointer" onClick={handleClick}>
+          <p className="text-[16px] font-medium text-white leading-[130%]">{club.city}</p>
+        </div>
+        <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
+
+        <div className="flex justify-center items-center">
+          <div className={`${style.bg} ${style.border} border-2 w-[180px] h-[40px] rounded-[30px] flex items-center justify-center text-white text-[14px] font-medium tracking-wide leading-[130%]`}>
+            {style.label}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex md:hidden items-center gap-4 px-4 py-4 text-white cursor-pointer" onClick={handleClick}>
+        <img src={getClubImageUrl(club.path_image)} className="h-10 w-10 object-contain" />
+        <div className="flex-1">
+          <p className="font-semibold leading-[130%]">{club.name}</p>
+          <p className="text-xs text-gray-400 leading-[130%]">{club.city}</p>
+        </div>
+        <div className={`${style.bg} ${style.border} border px-3 py-1 rounded-full text-[10px] text-white font-medium leading-[130%]`}>{style.label}</div>
+      </div>
+    </div>
+  );
+});
 
 export default function ClubList({ onClubSelect }: ClubListProps) {
   const { user } = useAuth();
@@ -83,21 +151,27 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
   useEffect(() => {
     const fetchContextData = async () => {
         try {
-            const [relationsRes, userClubRes, watchedRes] = await Promise.allSettled([
+            // Fetch followed clubs first for faster UI feedback
+            if (user) {
+                try {
+                    const watchedRes = await api.get<WatchedClubItem[]>('/add_fav/watched_clubs');
+                    const newMap = new Map<number, number>();
+                    watchedRes.data.forEach(item => newMap.set(item.club, item.id));
+                    setFollowedMap(newMap);
+                } catch (error) {
+                    console.error("Błąd pobierania obserwowanych klubów:", error);
+                }
+            }
+
+            // Then fetch other context data in parallel
+            const [relationsRes, userClubRes] = await Promise.allSettled([
                 api.get('/relations/'),
-                api.get('/clubs/user/'),
-                ...(user ? [api.get<WatchedClubItem[]>('/add_fav/watched_clubs')] : [])
+                api.get('/clubs/user/')
             ]);
             if (relationsRes.status === 'fulfilled') setRelationsMap(parseRelationsToMap(relationsRes.value.data));
             if (userClubRes.status === 'fulfilled') {
                 const userData = userClubRes.value.data;
                 if (userData && userData.club_name) setUserClub(userData.club_name);
-            }
-            if (watchedRes && watchedRes.status === 'fulfilled') {
-                const watchedData = watchedRes.value.data as WatchedClubItem[];
-                const newMap = new Map<number, number>();
-                watchedData.forEach(item => newMap.set(item.club, item.id));
-                setFollowedMap(newMap);
             }
         } catch (error) { console.error("Błąd danych kontekstowych:", error); }
     };
@@ -131,7 +205,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
     else { setSortField(field); setSortOrder('asc'); }
   };
 
-  const calculateRelation = (clubName: string): RelationStatus => {
+  const calculateRelation = useCallback((clubName: string): RelationStatus => {
     if (!userClub) return 'unknown';
     if (clubName === userClub) return 'favorite';
     const relation = relationsMap[userClub]?.[clubName]?.toUpperCase();
@@ -139,17 +213,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
     if (relation === 'ZGODA') return 'safe';
     if (relation === 'NEUTRALNIE') return 'neutral';
     return 'unknown';
-  };
-
-  const getRelationStyle = (status: RelationStatus) => {
-    switch (status) {
-      case 'favorite': return { bg: 'bg-[#20CA5F]/30', border: 'border-[#20CA5F]', label: 'Ulubiony' };
-      case 'safe': return { bg: 'bg-[#20CA5F]/30', border: 'border-[#20CA5F]', label: 'Zgoda' };
-      case 'dangerous': return { bg: 'bg-[#CB0000]/30', border: 'border-[#CB0000]', label: 'Kosa' };
-      case 'neutral': return { bg: 'bg-[#FBF201]/30', border: 'border-[#FBF201]', label: 'Neutralnie' };
-      default: return { bg: 'bg-[#727681]/30', border: 'border-[#727681]', label: 'Brak danych' };
-    }
-  };
+  }, [userClub, relationsMap]);
 
   const renderSortArrow = (field: SortField) => {
     if (sortField !== field) return null;
@@ -158,7 +222,7 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
 
   return (
     <div className="relative w-full py-6 md:py-8 antialiased">
-      <h2 className="mb-4 md:mb-[40px] text-lg md:text-[20px] font-medium uppercase text-white tracking-widest leading-[130%]">
+      <h2 className="mb-4 md:mb-[40px] text-lg md:text-[20px] font-medium uppercase text-white leading-[130%]">
         Lista klubów
       </h2>
 
@@ -223,48 +287,14 @@ export default function ClubList({ onClubSelect }: ClubListProps) {
           <div className="divide-y divide-[#274FDE]/40">
             {clubs.map((club) => {
               const status = calculateRelation(club.name);
-              const style = getRelationStyle(status);
               return (
-                <div key={club.id} className="group hover:bg-[#3a3a3a] transition-colors">
-                  <div className="hidden md:grid grid-cols-[1fr_0.8px_1.5fr_0.8px_1fr_0.8px_1fr] items-center h-[80px]">
-
-                    <div className="flex justify-center items-center">
-                        <FollowButton clubId={club.id} initialRelationId={followedMap.get(club.id)} />
-                    </div>
-                    <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
-
-                    <div className="flex items-center justify-start gap-4 pl-12 cursor-pointer" onClick={() => onClubSelect(club.name)}>
-                        <img
-                          src={getClubImageUrl(club.path_image)}
-                          alt={club.name}
-                          className="h-[54px] w-[54px] object-contain"
-                          onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_LOGO; }}
-                        />
-                        <p className="text-[16px] font-medium text-white truncate leading-[130%]">{club.name}</p>
-                    </div>
-                    <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
-
-                    <div className="flex justify-center items-center cursor-pointer" onClick={() => onClubSelect(club.name)}>
-                        <p className="text-[16px] font-medium text-white leading-[130%]">{club.city}</p>
-                    </div>
-                    <div className="h-full w-[0.8px] bg-[#274FDE]/40" />
-
-                    <div className="flex justify-center items-center">
-                        <div className={`${style.bg} ${style.border} border-2 w-[180px] h-[40px] rounded-[30px] flex items-center justify-center text-white text-[14px] font-medium tracking-wide leading-[130%]`}>
-                            {style.label}
-                        </div>
-                    </div>
-                  </div>
-
-                  <div className="flex md:hidden items-center gap-4 px-4 py-4 text-white cursor-pointer" onClick={() => onClubSelect(club.name)}>
-                      <img src={getClubImageUrl(club.path_image)} className="h-10 w-10 object-contain" />
-                      <div className="flex-1">
-                          <p className="font-semibold leading-[130%]">{club.name}</p>
-                          <p className="text-xs text-gray-400 leading-[130%]">{club.city}</p>
-                      </div>
-                      <div className={`${style.bg} ${style.border} border px-3 py-1 rounded-full text-[10px] text-white font-medium leading-[130%]`}>{style.label}</div>
-                  </div>
-                </div>
+                <ClubRow 
+                  key={club.id}
+                  club={club}
+                  status={status}
+                  followedMap={followedMap}
+                  onClubSelect={onClubSelect}
+                />
               );
             })}
           </div>

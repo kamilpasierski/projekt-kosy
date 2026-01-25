@@ -26,7 +26,6 @@ const NavbarRigid = () => {
 
     const { openEditor } = useRelationEditor();
 
-
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -37,144 +36,111 @@ const NavbarRigid = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-
     const iconContainerStyles = "w-[45px] h-[45px] min-w-[35px] min-h-[35px] relative bg-[#343434] rounded-full flex items-center justify-center text-white hover:bg-[#444444] transition-colors cursor-pointer";
 
     return (
-        <nav className="w-full h-20 md:h-24 flex items-center px-4 lg:px-8 relative bg-transparent z-50">
-            {/* Logo i nazwa */}
-            <div className="relative shrink-0 md:w-80 md:h-24">
-                <div className="hidden md:block w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px] ]"></div>
-                <div className="hidden md:block left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold leading-[130%] tracking-[1.8px] whitespace-nowrap font-montserrat ">
-                   PIŁKARSKIE KOSY
-            </div>
+        <nav className="w-full h-20 md:h-24 relative bg-transparent z-50">
 
-                <Link to="/">
-                    <img className="w-16 h-16 md:w-24 md:h-24 md:absolute md:left-0 md:top-0 cursor-pointer hover:scale-105 transition-transform" src={Logo} alt="Logo" />
-                </Link>
-            </div>
+            <div className="w-full max-w-[1250px] mx-auto h-full flex items-center px-4 lg:px-0">
 
-            {/* Linki desktop */}
-            <div className="hidden lg:flex items-center gap-[50px] ml-15">
-                <Link to="/mapa" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px]  hover:text-[#274FDE] transition-colors whitespace-nowrap">
-                    Mapa klubów
-                </Link>
-                <Link to="/obserwowane" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px]  hover:text-[#274FDE] transition-colors whitespace-nowrap">
-                    Obserwowane
-                </Link>
-            </div>
+                {/* Logo i nazwa */}
+                <div className="relative shrink-0 md:w-80 md:h-24">
+                    <div className="hidden md:block w-80 h-16 left-[6px] top-[17px] absolute bg-gradient-to-r from-neutral-400/70 via-neutral-500/50 to-stone-900/30 rounded-[50px]"></div>
+                    <div className="hidden md:block left-[91px] top-[37px] absolute justify-start text-white text-lg font-semibold leading-[130%] tracking-[1.8px] whitespace-nowrap font-montserrat">
+                       PIŁKARSKIE KOSY
+                    </div>
 
-            {/* Prawa strona */}
-            <div className="flex items-center gap-3 md:gap-6 ml-auto">
-                {isLoggedOut ? (
-                    <>
-                        {/* Hamburger menu dla mobile (gdy wylogowany) */}
-                        <button
-                            className="lg:hidden text-white"
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        >
-                            {isMobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
-                        </button>
+                    <Link to="/">
+                        <img className="w-16 h-16 md:w-24 md:h-24 md:absolute md:left-0 md:top-0 cursor-pointer hover:scale-105 transition-transform" src={Logo} alt="Logo" />
+                    </Link>
+                </div>
 
-                        <ActionButton onClick={() => navigate('auth')}
-                          className=" w-[150px] h-[64px] !bg-[#44444480] !hover:bg-[#444444cc] rounded-[50px] text-white font-montserrat font-semibold text-[16px] leading-[150%] tracking-[0.5px] flex items-center justify-center">
-                          <span className="hidden sm:inline">ZALOGUJ SIĘ</span>
-                          <span className="sm:hidden">Zaloguj</span>
-                        </ActionButton>
-                        </>
-                ) : (
-                    <div className="flex items-center gap-3 md:gap-4">
-                        {/* Hamburger menu dla mobile (gdy zalogowany) */}
-                        <button
-                            className="lg:hidden text-white"
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        >
-                            {isMobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
-                        </button>
 
-                        {/* Ikona admina */}
-                        {user?.is_staff && (
-                            <Link
-                                to="/adminpanel"
-                                className={iconContainerStyles}
-                                aria-label="Panel Administratora"
-                            >
-                                <Cog6ToothIcon className="w-5 h-5" />
-                            </Link>
-                        )}
+                <div className="hidden lg:flex items-center gap-[50px] ml-15">
+                    <Link to="/mapa" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px] hover:text-[#274FDE] transition-colors whitespace-nowrap">
+                        Mapa klubów
+                    </Link>
+                    <Link to="/obserwowane" className="text-white font-montserrat text-[16px] font-semibold leading-[130%] tracking-[0.5px] hover:text-[#274FDE] transition-colors whitespace-nowrap">
+                        Obserwowane
+                    </Link>
+                </div>
 
-                        {/* Komponent powiadomień */}
-                        <Notifications />
-
-                        {/* Ikona profilu -  */}
-                        <div className="relative" ref={dropdownRef}>
-                            <button
-                                className={iconContainerStyles}
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            >
-                                <UserIcon className="w-5 h-5" />
+                {/* Prawa strona */}
+                <div className="flex items-center gap-3 md:gap-6 ml-auto">
+                    {isLoggedOut ? (
+                        <>
+                            <button className="lg:hidden text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                                {isMobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
                             </button>
 
-                            {isDropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                    <button
-                                        onClick={() => {
-                                            navigate('/profile');
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
-                                    >
-                                        <UserIcon className="w-4 h-4" />
-                                        Mój profil
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            openEditor();
-                                            setIsDropdownOpen(false);
-                                        }}    
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
- 
-                                    >
-                                        <InformationCircleIcon className="w-4 h-4" />
-                                        Zgłoś zmianę
-                                    </button>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-700 flex items-center gap-2 transition-colors"
-                                    >
-                                        <ArrowRightStartOnRectangleIcon className="w-4 h-4" />
-                                        Wyloguj się
-                                    </button>
-                                </div>
+                            <ActionButton onClick={() => navigate('auth')}
+                              className="w-[150px] h-[64px] !bg-[#44444480] !hover:bg-[#444444cc] rounded-[50px] text-white font-montserrat font-semibold text-[16px] leading-[150%] tracking-[0.5px] flex items-center justify-center">
+                              <span className="hidden sm:inline">ZALOGUJ SIĘ</span>
+                              <span className="sm:hidden">Zaloguj</span>
+                            </ActionButton>
+                        </>
+                    ) : (
+                        <div className="flex items-center gap-3 md:gap-4">
+                            <button className="lg:hidden text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                                {isMobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
+                            </button>
+
+                            {user?.is_staff && (
+                                <Link to="/adminpanel" className={iconContainerStyles} aria-label="Panel Administratora">
+                                    <Cog6ToothIcon className="w-5 h-5" />
+                                </Link>
                             )}
+
+                            <Notifications />
+
+                            <div className="relative" ref={dropdownRef}>
+                                <button className={iconContainerStyles} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                                    <UserIcon className="w-5 h-5" />
+                                </button>
+
+                                {isDropdownOpen && (
+                                    <div className="absolute right-0 mt-4 w-[271px] h-[230px] bg-[#343434] rounded-[30px] shadow-[-8px_4px_5px_3px_rgba(0,0,0,0.32)] py-8 z-50 flex flex-col font-montserrat overflow-hidden">
+                                        <button onClick={() => { navigate('/profile'); setIsDropdownOpen(false); }}
+                                            className="w-full text-left px-9 py-3 text-[16px] font-medium text-white hover:bg-neutral-700/30 flex items-center gap-4 transition-colors">
+                                            <UserIcon className="w-5 h-5" />
+                                            Mój profil
+                                        </button>
+                                        <button onClick={() => { openEditor(); setIsDropdownOpen(false); }}
+                                            className="w-full text-left px-9 py-3 text-[16px] font-medium text-white hover:bg-neutral-700/30 flex items-center gap-4 transition-colors">
+                                            <InformationCircleIcon className="w-5 h-5" />
+                                            Zgłoś zmianę
+                                        </button>
+
+                                        <div className="h-[1px] w-[200px] bg-[#464646] mx-auto my-3 shrink-0"></div>
+
+                                        <button onClick={handleLogout}
+                                            className="w-full text-left px-9 py-3 text-[16px] font-medium text-[#983E3E] hover:bg-neutral-700/30 flex items-center gap-4 transition-colors">
+                                            <ArrowRightStartOnRectangleIcon className="w-5 h-5 text-[#983E3E]" />
+                                            Wyloguj się
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
-            {/* menu mobilne */}
+            {/* menu mobilne - pozostaje na całej szerokości navbara */}
             {isMobileMenuOpen && (
                 <div className="absolute top-full left-0 w-full bg-neutral-900/95 backdrop-blur-sm lg:hidden shadow-lg border-t border-white/10">
                     <div className="flex flex-col p-4 gap-3">
-                        <Link 
-                            to="/mapa" 
-                            className="text-white text-base font-semibold py-3 px-4 hover:bg-neutral-800 rounded-lg transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
+                        <Link to="/mapa" className="text-white text-base font-semibold py-3 px-4 hover:bg-neutral-800 rounded-lg transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                             Mapa klubów
                         </Link>
-                        <Link 
-                            to="/obserwowane" 
-                            className="text-white text-base font-semibold py-3 px-4 hover:bg-neutral-800 rounded-lg transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
+                        <Link to="/obserwowane" className="text-white text-base font-semibold py-3 px-4 hover:bg-neutral-800 rounded-lg transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                             Obserwowane
                         </Link>
                     </div>
                 </div>
             )}
         </nav>
-    )
+    );
 };
 
 export default NavbarRigid;

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { BellIcon } from '@heroicons/react/24/outline';
+import { BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { API_BASE_URL } from '../../utils/config';
 
@@ -23,34 +23,57 @@ const Backdrop = ({ onClick }: { onClick: () => void }) => (
 
 const NotificationItem = ({
   notification,
-  onMarkAsRead
+  onMarkAsRead,
+  onDelete
 }: {
   notification: Notification;
   onMarkAsRead: (id: string) => void;
-}) => (
-  <div
-    className={`p-4 rounded-2xl border shadow-sm mb-2 relative transition-all cursor-default ${
-      notification.is_read
-        ? 'bg-neutral-700/60 border-neutral-600/50'
-        : 'bg-neutral-700/80 border-red-500/30 hover:bg-neutral-700/70'
-    }`}
-    onMouseEnter={() => {
-      if (!notification.is_read) {
-        onMarkAsRead(notification.id);
-      }
-    }}
-  >
-    {!notification.is_read && (
-      <div className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-    )}
-    <p className={`text-sm leading-snug mb-1.5 ${notification.is_read ? 'text-neutral-300' : 'text-white font-medium'}`}>
-      {notification.content}
-    </p>
-    <span className="text-neutral-400 text-[10px] uppercase tracking-wider font-medium">
-      {notification.timestamp}
-    </span>
-  </div>
-);
+  onDelete: (id: string) => void;
+}) => {
+  const isApproved = notification.content.toLowerCase().includes('zatwierdzono');
+  const isRisk = notification.content.toLowerCase().includes('ryzyko');
+  const strokeColor = isApproved ? '#20CA5F' : isRisk ? '#CB0000' : '#464646';
+
+  return (
+    <div 
+      className={`relative flex items-start gap-4 p-5 transition-all cursor-default group hover:bg-white/5 ${!notification.is_read ? 'border-l-4 border-red-500' : ''}`}
+      onMouseEnter={() => {
+        if (!notification.is_read) {
+          onMarkAsRead(notification.id);
+        }
+      }}
+    >
+      {/* Kółko ikony */}
+      <div
+        className="w-[30px] h-[30px] rounded-full flex-shrink-0 bg-[#464646] border-[0.5px] flex items-center justify-center mt-1"
+        style={{ borderColor: strokeColor }}
+      >
+        <BellIcon className="w-[16px] h-[16px] text-[#939393]" />
+      </div>
+
+      <div className="flex-1 pr-8">
+        {/* Treść: Zmieniona na FONT-MEDIUM */}
+        <p className="text-[16px] font-medium text-white leading-tight capitalize font-montserrat">
+          {notification.content}
+        </p>
+        <span className="text-[#FFF] text-[11px] font-normal lowercase font-montserrat opacity-60">
+          {notification.timestamp}
+        </span>
+      </div>
+
+      {/* PRZYCISK X: Usuwa powiadomienie z listy */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(notification.id);
+        }}
+        className="absolute right-4 top-5 text-gray-500 hover:text-white transition-colors p-1"
+      >
+        <XMarkIcon className="w-[18px] h-[18px]" />
+      </button>
+    </div>
+  );
+};
 
 // --- Main Component ---
 
@@ -58,6 +81,11 @@ export const Notifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+
+  // NOWA LOGIKA: Zapamiętujemy ile powiadomień użytkownik "zaakceptował" wzrokiem
+  const [lastSeenCount, setLastSeenCount] = useState(0);
+
+  const [coords, setCoords] = useState({ top: 0, right: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -69,9 +97,11 @@ export const Notifications = () => {
             'Authorization': `Bearer ${token}`
         }
       });
-      setNotifications(response.data);
+      // Filter to only show unread notifications
+      const unreadOnly = response.data.filter((n: Notification) => !n.is_read);
+      setNotifications(unreadOnly);
     } catch (error) {
-      console.error("Błąd pobierania powiadomień", error);
+      console.error("Błąd pobierania", error);
     } finally {
       setIsLoading(false);
     }
@@ -79,137 +109,158 @@ export const Notifications = () => {
 
   useEffect(() => {
     fetchNotifications();
-    // Odświeżanie co 30 sekund
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
+    if (isOpen && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+
+      // --- RĘCZNA REGULACJA POZYCJI (PRAWO / LEWO) ---
+      // Aby przesunąć baner w PRAWO: zmniejsz tę liczbę (np. na -20)
+      // Aby przesunąć baner w LEWO: zwiększ tę liczbę (np. na 20)
+      const manualOffset = -80;
+
+      setCoords({
+        top: rect.bottom + 15,
+        right: Math.max(10, (window.innerWidth - rect.right) + manualOffset)
+      });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isOpen &&
-        triggerRef.current &&
-        dropdownRef.current &&
-        !triggerRef.current.contains(event.target as Node) &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (isOpen && triggerRef.current && dropdownRef.current &&
+          !triggerRef.current.contains(event.target as Node) &&
+          !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
+    if (isOpen) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
+  // Disable body scrolling when notifications are open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-
     return () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
 
-  const toggleDropdown = () => setIsOpen((prev) => !prev);
-
   const markAsRead = async (notificationId: string) => {
     try {
       const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
-      await axios.patch(
-        `${API_BASE_URL}/tickets/notifications/${notificationId}/read/`,
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
+      await axios.patch(`${API_BASE_URL}/api/tickets/notifications/${notificationId}/read/`, {}, {
+          headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n));
 
-      // Update local state optimistically
-      setNotifications(prev =>
-        prev.map(n =>
-          n.id === notificationId ? { ...n, is_read: true } : n
-        )
-      );
+      // Jeśli czytamy powiadomienie, musimy też zaktualizować licznik "widzianych",
+      // żeby kółko nie wróciło nagle z powodu różnicy liczb
+      setLastSeenCount(prev => Math.max(0, prev - 1));
+
     } catch (error) {
-      console.error("Błąd oznaczania powiadomienia jako przeczytane", error);
+      console.error("Błąd oznaczania", error);
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  const deleteNotification = (notificationId: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    // Aktualizuj licznik widzianych jeśli usunięte powiadomienie było nieprzeczytane
+    const notification = notifications.find(n => n.id === notificationId);
+    if (notification && !notification.is_read) {
+      setLastSeenCount(prev => Math.max(0, prev - 1));
+    }
+  };
+
+  const unreadNotifications = notifications.filter(n => !n.is_read);
+
+  // Funkcja obsługująca kliknięcie w dzwonek
+  const handleToggle = () => {
+    if (!isOpen) {
+      // W momencie otwarcia menu, uznajemy że użytkownik "zobaczył" wszystkie obecne powiadomienia.
+      // Czerwona kropka zniknie, dopóki unreadNotifications.length nie stanie się większe niż ta wartość.
+      setLastSeenCount(unreadNotifications.length);
+    }
+    setIsOpen(!isOpen);
+  };
 
   return (
     <div className="relative inline-block">
-      {/* Trigger: Bell Icon - Rozmiar ustawiony na 45x45px, kolor #343434, brak cieni */}
+      {/* IKONA DZWONKA NA NAVBARZE */}
       <button
         ref={triggerRef}
-        onClick={toggleDropdown}
-        className="w-[45px] h-[45px] min-w-[45px] min-h-[45px] relative bg-[#343434] rounded-full flex items-center justify-center text-white hover:bg-[#444444] transition-all active:scale-95 cursor-pointer z-50"
+        onClick={handleToggle}
+        className="w-[50px] h-[50px] relative bg-[#343434] rounded-full flex items-center justify-center text-white hover:bg-[#444444] transition-all cursor-pointer z-50"
       >
-        <BellIcon className="w-6 h-6" />
-        {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-lg border border-[#343434]">
-            {unreadCount > 9 ? '9+' : unreadCount}
+        <BellIcon className="w-7 h-7" />
+
+        {/* IKONKA LICZNIKA: Pojawia się tylko, gdy liczba nieprzeczytanych jest WIĘKSZA niż liczba ostatnio widzianych */}
+        {unreadNotifications.length > lastSeenCount && (
+          <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center border border-[#343434]">
+            {unreadNotifications.length - lastSeenCount}
           </span>
         )}
       </button>
 
-      {/* Overlay */}
-      {isOpen && (
+      {isOpen && createPortal(
         <>
-          {createPortal(
-            <>
-              <Backdrop onClick={() => setIsOpen(false)} />
+          <Backdrop onClick={() => setIsOpen(false)} />
 
-              <div
-                ref={dropdownRef}
-                className="fixed right-4 top-20 w-[380px] max-w-[95vw] bg-[#2a2a2a]/95 backdrop-blur-xl rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 overflow-hidden border border-neutral-700/50 animate-in fade-in slide-in-from-top-2 duration-200"
-              >
-                <div className="p-6">
-                  <header className="flex items-center justify-between mb-5">
-                    <h3 className="text-white text-xl font-bold tracking-tight">Powiadomienia</h3>
-                  </header>
+          <div
+            ref={dropdownRef}
+            style={{
+              top: coords.top,
+              right: coords.right,
+              maxWidth: 'calc(100vw - 20px)'
+            }}
+            className="fixed w-[450px] bg-[#343434] rounded-[30px] shadow-[-8px_4px_5px_3px_rgba(0,0,0,0.25)] z-50 overflow-hidden flex flex-col font-montserrat animate-in fade-in slide-in-from-top-2"
+          >
+            {/* NAGŁÓWEK */}
+            <div className="flex items-center gap-3 px-10 pt-7 pb-4">
+              <BellIcon className="w-[26px] h-[28px] text-[#E9E44B] fill-[#E9E44B]" />
+              <h3 className="text-white text-[18px] font-bold capitalize tracking-[0.05em]">
+                Powiadomienia
+              </h3>
+            </div>
 
-                  <div className="space-y-2.5 max-h-[450px] overflow-y-auto pr-1 custom-scrollbar">
-                    {isLoading ? (
-                      <div className="flex flex-col gap-3 animate-pulse">
-                        {[1, 2, 3].map(i => <div key={i} className="h-20 bg-neutral-700/50 rounded-2xl" />)}
-                      </div>
-                    ) : notifications.length === 0 ? (
-                      <div className="py-12 text-center">
-                        <p className="text-neutral-500 font-medium">Brak powiadomień</p>
-                      </div>
-                    ) : (
-                      notifications.map((notification) => (
-                        <NotificationItem
-                          key={notification.id}
-                          notification={notification}
-                          onMarkAsRead={markAsRead}
-                        />
-                      ))
-                    )}
-                  </div>
+            {/* LINIA */}
+            <div className="h-[1px] w-[92%] mx-auto bg-[#464646] mb-2" />
 
-                  <footer className="mt-5 pt-4 border-t border-neutral-700/50 text-center">
-                    <button
-                      onClick={() => setIsOpen(false)}
-                      className="text-neutral-400 hover:text-white text-sm font-medium transition-colors"
-                    >
-                      Zamknij
-                    </button>
-                  </footer>
+            <div className="max-h-[500px] overflow-y-auto divide-y divide-[#464646]">
+              {isLoading ? (
+                <div className="p-10 text-center text-white">Ładowanie...</div>
+              ) : notifications.length === 0 ? (
+                <div className="h-[250px] flex flex-col items-center justify-center text-center px-10">
+                  <BellIcon className="w-14 h-14 text-[#939393] mb-4 opacity-10" />
+                  <p className="text-white text-[15px] font-bold mb-2 tracking-[0.05em]">
+                    Nie masz powiadomień
+                  </p>
+                  <p className="text-white text-[13px] font-normal opacity-60">
+                    Brak powiadomień do wyświetlenia.
+                  </p>
                 </div>
-              </div>
-            </>,
-            document.body
-          )}
-        </>
+              ) : (
+                notifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    notification={notification}
+                    onMarkAsRead={markAsRead}
+                    onDelete={deleteNotification}
+                  />
+                ))
+              )}
+            </div>
+            <div className="h-4 w-full" />
+          </div>
+        </>,
+        document.body
       )}
     </div>
   );

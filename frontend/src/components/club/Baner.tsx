@@ -22,25 +22,22 @@ export default function Baner({
   );
 
   return (
-    /* Wysokość zmniejszona do 480px (ok. 2/3 pierwotnej wysokości).
-       Zachowano -mt, aby baner zaczynał się pod Navbarem. */
+
     <div className="relative w-full h-[580px] -mt-[85px] antialiased overflow-hidden">
 
-      {/* Background Image - Pełna szerokość ekranu */}
       <div className="absolute inset-0 w-full h-full">
         <img
           alt="background"
           className="h-full w-full object-cover pointer-events-none rounded-bl-[40px] rounded-br-[40px]"
           src={BanerImage}
         />
-        {/* Overlay dla czytelności (nieco ciemniejszy, by skompensować mniejszą wysokość) */}
+
         <div className="absolute inset-0 bg-black/40 rounded-bl-[40px] rounded-br-[40px]" />
       </div>
 
-      {/* Kontener treści - Skalowanie elementów w górę przy mniejszej wysokości baneru */}
       <div className="relative h-full w-full flex flex-col items-center justify-center pt-[60px] z-10">
 
-        {/* Herb - Zeskalowany minimalnie w górę (280px zamiast 260px), by wypełnić przestrzeń */}
+
         <div className="relative flex items-center justify-center w-[240px] h-[240px] md:w-[260px] md:h-[260px] rounded-full bg-white shadow-2xl">
           <div className="w-[230px] h-[230px] md:w-[260px] md:h-[260px] rounded-full bg-white flex items-center justify-center overflow-hidden">
             {logoImage && (
@@ -53,12 +50,12 @@ export default function Baner({
           </div>
         </div>
 
-        {/* Nazwa Klubu - Montserrat BOLD, nieco większa skala (52px) i mniejszy margines góra */}
+
         <h1 className="mt-[25px] text-center text-[32px] md:text-[52px] font-bold leading-[110%] tracking-[4.8px] text-white uppercase drop-shadow-2xl px-4">
           {clubName || "Ładowanie..."}
         </h1>
 
-        {/* Przycisk Obserwuj - Zmniejszony odstęp, by zmieścić się w 480px */}
+
         <div className="mt-[30px]">
           <button
             onClick={clubId ? handleToggleFollowed : undefined}
