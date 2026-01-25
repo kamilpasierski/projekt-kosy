@@ -63,7 +63,7 @@ export const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
-      const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       const response = await axios.get(`${API_BASE_URL}/notifications/`, {
         headers: {
             'Authorization': `Bearer ${token}`
