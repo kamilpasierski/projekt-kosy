@@ -15,7 +15,7 @@ class AccountSecurityTest(APITestCase):
         self.user = User.objects.create_user(username='tester', password='OldPassword123!')
 
         self.change_pass_url = '/api/users/change-password/'
-        self.delete_acc_url = '/api/users/me/delete/' 
+        self.delete_acc_url = '/api/users/me/delete/'
                           
     def test_change_password_success(self):
         """Użytkownik zmienia hasło podając poprawne stare hasło"""

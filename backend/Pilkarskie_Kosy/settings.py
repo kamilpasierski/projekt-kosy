@@ -97,10 +97,21 @@ DATABASES = {
 
 running_tests = 'test' in sys.argv or 'pytest' in sys.modules
 
+if running_tests:
+    class DisableMigrations(dict):
+        def __contains__(self, item):
+            return True
+
+        def __getitem__(self, item):
+            return None
+
+    MIGRATION_MODULES = DisableMigrations()
+
+
 if running_tests and not os.getenv('CI'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': ':memory:',
     }
 
 
